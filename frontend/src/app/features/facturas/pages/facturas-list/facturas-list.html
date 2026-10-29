@@ -1,0 +1,152 @@
+<section class="page-container">
+  <div class="page-header">
+    <div>
+      <h1>Facturas</h1>
+      <p>Gestiona todas las facturas y documentos de tu taller</p>
+    </div>
+    <div class="page-actions">
+      <button mat-flat-button color="primary" routerLink="/facturas/nuevo">
+        <mat-icon>add</mat-icon>Nueva factura
+      </button>
+    </div>
+  </div>
+
+  <div class="search-bar invoice-filters">
+    <mat-form-field appearance="outline">
+      <mat-label>Fecha desde</mat-label>
+      <input matInput type="date" [(ngModel)]="filtro.fecha_desde">
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Fecha hasta</mat-label>
+      <input matInput type="date" [(ngModel)]="filtro.fecha_hasta">
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Importe desde</mat-label>
+      <input matInput type="number" min="0" step="0.01" [(ngModel)]="filtro.total_desde">
+      <span matTextSuffix>€</span>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Importe hasta</mat-label>
+      <input matInput type="number" min="0" step="0.01" [(ngModel)]="filtro.total_hasta">
+      <span matTextSuffix>€</span>
+    </mat-form-field>
+
+    <app-autocomplete-select
+      [(ngModel)]="filtro.cliente_id"
+      name="clienteFiltro"
+      etiqueta="Cliente"
+      placeholder="Nombre, DNI, teléfono o correo"
+      [items]="clientes"
+      [mostrar]="etiquetaCliente">
+    </app-autocomplete-select>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Tipo</mat-label>
+      <mat-select [(ngModel)]="filtro.tipo_documento">
+        <mat-option value="">Todos</mat-option>
+        @for (tipo of tiposDocumento; track tipo) {
+          <mat-option [value]="tipo">{{ tipo }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+
+    <button mat-flat-button color="primary" (click)="buscar()">
+      <mat-icon>search</mat-icon>Filtrar
+    </button>
+    <button mat-stroked-button (click)="limpiarFiltros()">
+      <mat-icon>clear</mat-icon>Limpiar
+    </button>
+  </div>
+
+  @if (loading) {
+    <div class="loading-container">
+      <mat-spinner diameter="40"></mat-spinner>
+      <p>Cargando facturas...</p>
+    </div>
+  } @else {
+    <div class="panel">
+      <div class="data-table">
+        <table mat-table [dataSource]="dataSource">
+          <ng-container matColumnDef="numero">
+            <th mat-header-cell *matHeaderCellDef>Número</th>
+            <td mat-cell *matCellDef="let factura">
+              <strong>{{ factura.numero }}</strong>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="tipo">
+            <th mat-header-cell *matHeaderCellDef>Tipo</th>
+            <td mat-cell *matCellDef="let factura">{{ getTipoFacturaLabel(factura.tipo_factura) }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="fecha">
+            <th mat-header-cell *matHeaderCellDef>Fecha</th>
+            <td mat-cell *matCellDef="let factura">
+              {{ factura.fecha_emision | date: 'dd/MM/yyyy' }}
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="cliente">
+            <th mat-header-cell *matHeaderCellDef>Cliente</th>
+            <td mat-cell *matCellDef="let factura">{{ factura.cliente?.apellidos ? (factura.cliente?.apellidos + ', ') : '' }}{{ factura.cliente?.nombre || '-' }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="estado">
+            <th mat-header-cell *matHeaderCellDef>Estado</th>
+            <td mat-cell *matCellDef="let factura">
+              <span class="badge" [class.badge-success]="factura.estado === 'Pagada'"
+                    [class.badge-warning]="factura.estado === 'Pendiente'"
+                    [class.badge-danger]="factura.estado === 'Cancelada'">
+                {{ factura.estado }}
+              </span>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="total">
+            <th mat-header-cell *matHeaderCellDef>Total</th>
+            <td mat-cell *matCellDef="let factura">
+              <strong>{{ factura.total | number: '1.2-2' }} €</strong>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="acciones">
+            <th mat-header-cell *matHeaderCellDef>Acciones</th>
+            <td mat-cell *matCellDef="let factura">
+              <div class="actions-cell">
+                <button mat-icon-button [routerLink]="['/facturas', factura.id]" matTooltip="Ver">
+                  <mat-icon>visibility</mat-icon>
+                </button>
+                <button mat-icon-button [routerLink]="['/facturas', factura.id]" matTooltip="Editar">
+                  <mat-icon>edit</mat-icon>
+                </button>
+                @if (
+                  factura.estado === 'BORRADOR'
+                  || factura.es_prueba
+                  || factura.modo_facturacion === 'PRUEBAS'
+                ) {
+                  <button mat-icon-button (click)="eliminar(factura.id)" matTooltip="Eliminar factura de prueba o borrador">
+                  <mat-icon>delete</mat-icon>
+                  </button>
+                }
+              </div>
+            </td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+        </table>
+      </div>
+    </div>
+
+    <mat-paginator
+      [length]="facturas?.total ?? 0"
+      [pageIndex]="page - 1"
+      [pageSize]="size"
+      [pageSizeOptions]="[10, 20, 50]"
+      (page)="cambiarPagina($event)">
+    </mat-paginator>
+  }
+</section>

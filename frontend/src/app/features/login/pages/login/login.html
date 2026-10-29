@@ -1,0 +1,82 @@
+<div class="login-container">
+  <mat-card>
+    <mat-card-header>
+      <mat-card-title>MotorDesk</mat-card-title>
+      <mat-card-subtitle>
+        {{ modoRegistro ? 'Crear una cuenta' : 'Iniciar sesión' }}
+      </mat-card-subtitle>
+    </mat-card-header>
+
+    <mat-card-content>
+      @if (!modoRegistro) {
+        <form [formGroup]="loginForm" (ngSubmit)="login()">
+          <mat-form-field appearance="outline">
+            <mat-label>Email</mat-label>
+            <input matInput type="email" formControlName="email" autocomplete="email">
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Contraseña</mat-label>
+            <input matInput type="password" formControlName="password" autocomplete="current-password">
+          </mat-form-field>
+
+          @if (mensajeAcceso) {
+            <p class="mensaje-acceso">{{ mensajeAcceso }}</p>
+          }
+
+          <button mat-raised-button color="primary" type="submit" [disabled]="enviando">
+            {{ enviando ? 'Accediendo...' : 'Iniciar sesión' }}
+          </button>
+          <button mat-stroked-button type="button" (click)="mostrarRegistro()">
+            Registrarme
+          </button>
+        </form>
+      } @else {
+        <form [formGroup]="registerForm" (ngSubmit)="registrar()">
+          <mat-form-field appearance="outline">
+            <mat-label>Nombre</mat-label>
+            <input matInput formControlName="nombre" autocomplete="given-name">
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Apellidos</mat-label>
+            <input matInput formControlName="apellidos" autocomplete="family-name">
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Email</mat-label>
+            <input matInput type="email" formControlName="email" autocomplete="email">
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Contraseña</mat-label>
+            <input matInput type="password" formControlName="password" autocomplete="new-password">
+            <mat-hint>Mínimo 6 caracteres</mat-hint>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Confirmar contraseña</mat-label>
+            <input matInput type="password" formControlName="confirmarPassword" autocomplete="new-password">
+            @if (registerForm.controls['confirmarPassword'].hasError('mismatch')) {
+              <mat-error>Las contraseñas no coinciden.</mat-error>
+            }
+          </mat-form-field>
+
+          <p class="registro-ayuda">
+            La cuenta se crea con acceso inicial de recepción. Un administrador puede ajustar el rol después.
+          </p>
+          @if (mensajeAcceso) {
+            <p class="mensaje-acceso">{{ mensajeAcceso }}</p>
+          }
+
+          <button mat-raised-button color="primary" type="submit" [disabled]="enviando">
+            {{ enviando ? 'Registrando...' : 'Crear cuenta' }}
+          </button>
+          <button mat-stroked-button type="button" (click)="mostrarInicioSesion()">
+            Ya tengo cuenta
+          </button>
+        </form>
+      }
+    </mat-card-content>
+  </mat-card>
+</div>

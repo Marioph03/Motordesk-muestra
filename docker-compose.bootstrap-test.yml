@@ -1,0 +1,46 @@
+services:
+  # Backend efimero para comprobar el flujo de bootstrap sobre una base vacia.
+  # No reemplaza ni modifica el servicio backend de la instalacion real.
+  backend-bootstrap-test:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+
+    container_name: motordesk-backend-bootstrap-test
+
+    depends_on:
+      db:
+        condition: service_healthy
+
+    environment:
+      DATABASE_URL: postgresql+psycopg2://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/motordesk_bootstrap_test
+      SECRET_KEY: ${SECRET_KEY}
+      ENCRYPTION_KEY: ${ENCRYPTION_KEY}
+      ALGORITHM: HS256
+      ACCESS_TOKEN_EXPIRE_MINUTES: 360
+      BACKUP_AUTO_ENABLED: "false"
+
+    ports:
+      - "8001:8000"
+
+    volumes:
+      - ./backend/uploads:/app/uploads
+      - ./backend/static/uploads:/app/static/uploads
+      - ./backups:/app/backups
+
+  # Frontend efimero que apunta al backend de bootstrap a traves de Nginx.
+  frontend-bootstrap-test:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+
+    container_name: motordesk-frontend-bootstrap-test
+
+    depends_on:
+      - backend-bootstrap-test
+
+    ports:
+      - "8081:80"
+
+    volumes:
+      - ./frontend/nginx.bootstrap-test.conf:/etc/nginx/conf.d/default.conf:ro

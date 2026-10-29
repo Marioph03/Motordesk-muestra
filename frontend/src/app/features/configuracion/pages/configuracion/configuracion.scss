@@ -1,0 +1,281 @@
+.configuracion-page {
+  padding: 32px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+
+/* =========================================================
+   CABECERA
+   ========================================================= */
+
+.page-header {
+  margin-bottom: 36px;
+
+  h1 {
+    margin: 0;
+    font-size: 30px;
+    font-weight: 600;
+  }
+
+  p {
+    margin: 8px 0 0;
+    color: #6b7280;
+    font-size: 15px;
+  }
+}
+
+
+/* =========================================================
+   SECCIÓN
+   ========================================================= */
+
+.config-section {
+  margin-bottom: 40px;
+}
+
+.section-header {
+  margin-bottom: 18px;
+
+  h2 {
+    margin: 0;
+    font-size: 20px;
+    font-weight: 600;
+  }
+
+  p {
+    margin: 5px 0 0;
+    color: #6b7280;
+    font-size: 14px;
+  }
+}
+
+
+/* =========================================================
+   TARJETA DE INTEGRACIÓN
+   ========================================================= */
+
+.integration-card {
+  border-radius: 14px;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.integration-card mat-card-content {
+  padding: 24px;
+}
+
+.certificate-shortcut {
+  margin-top: 16px;
+}
+
+.integration-layout {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 30px;
+}
+
+
+/* =========================================================
+   INFORMACIÓN
+   ========================================================= */
+
+.integration-info {
+  display: flex;
+  align-items: flex-start;
+  gap: 18px;
+}
+
+.integration-icon {
+  width: 52px;
+  height: 52px;
+
+  flex-shrink: 0;
+
+  border-radius: 12px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  mat-icon {
+    width: 28px;
+    height: 28px;
+    font-size: 28px;
+  }
+}
+
+.integration-icon.whatsapp {
+  background: #dcfce7;
+  color: #16a34a;
+}
+
+.integration-icon.business {
+  background: var(--md-primary-soft);
+  color: var(--md-primary);
+}
+
+.integration-icon.agenda {
+  background: var(--md-purple-soft);
+  color: var(--md-purple);
+}
+
+.integration-icon.documents {
+  background: var(--md-warning-soft);
+  color: var(--md-warning);
+}
+
+.integration-icon.notifications {
+  background: var(--md-danger-soft);
+  color: var(--md-danger);
+}
+
+.integration-icon.security {
+  background: var(--md-info-soft);
+  color: var(--md-info);
+}
+
+.integration-icon.system {
+  background: var(--md-purple-soft);
+  color: var(--md-purple);
+}
+
+.integration-icon.appearance {
+  background: var(--md-info-soft);
+  color: var(--md-info);
+}
+
+.integration-text {
+
+  h3 {
+    margin: 2px 0 6px;
+    font-size: 18px;
+    font-weight: 600;
+  }
+
+  p {
+    max-width: 620px;
+
+    margin: 0;
+
+    line-height: 1.5;
+
+    color: #6b7280;
+    font-size: 14px;
+  }
+}
+
+
+/* =========================================================
+   ESTADO
+   ========================================================= */
+
+.status {
+  display: inline-flex;
+  align-items: center;
+
+  gap: 7px;
+
+  margin-top: 14px;
+
+  padding: 5px 10px;
+
+  border-radius: 20px;
+
+  background: #f3f4f6;
+
+  color: #6b7280;
+
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.status-dot {
+  width: 8px;
+  height: 8px;
+
+  border-radius: 50%;
+
+  background: #9ca3af;
+}
+
+.status.connected {
+  background: #dcfce7;
+  color: #15803d;
+
+  .status-dot {
+    background: #22c55e;
+  }
+}
+
+
+/* =========================================================
+   BOTÓN
+   ========================================================= */
+
+.integration-action {
+  flex-shrink: 0;
+}
+
+.whatsapp-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.connect-button {
+  min-height: 42px;
+
+  mat-icon {
+    margin-right: 6px;
+  }
+}
+
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 768px) {
+
+  .configuracion-page {
+    padding: 20px;
+  }
+
+  .integration-layout {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .integration-action {
+
+    button {
+      width: 100%;
+    }
+  }
+
+  .whatsapp-actions {
+    flex-direction: column;
+  }
+
+}
+
+.whatsapp-error {
+  margin-top: 16px;
+  padding: 12px 14px;
+
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  border-radius: 8px;
+
+  background: #fef2f2;
+  color: #b91c1c;
+
+  font-size: 14px;
+
+  mat-icon {
+    flex-shrink: 0;
+  }
+}

@@ -1,0 +1,2 @@
+export interface LineaOrdenInterna { id: number; tipo: string; articulo_stock_id?: number | null; referencia?: string | null; descripcion: string; cantidad: number; coste_unitario: number; }
+export interface OrdenInterna { id: number; numero: string; titulo: string; categoria: string; vehiculo_id?: number | null; referencia_activo?: string | null; descripcion: string; estado: string; responsable_id?: number | null; coste_total: number; fecha_apertura: string; fecha_cierre?: string | null; lineas: LineaOrdenInterna[]; }

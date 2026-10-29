@@ -1,0 +1,886 @@
+:host {
+
+    display: block;
+
+    max-width: 900px;
+
+    margin: 2rem auto;
+
+}
+
+/* Barra de acciones: evita que los textos largos se monten entre botones. */
+.orden-form-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 12px;
+
+  padding: 20px 24px 24px;
+}
+
+.orden-form-actions button {
+  min-height: 44px;
+  white-space: normal;
+  line-height: 20px;
+}
+
+@media (max-width: 760px) {
+  .orden-form-actions {
+    justify-content: stretch;
+  }
+
+  .orden-form-actions button {
+    flex: 1 1 190px;
+  }
+}
+
+@media (max-width: 460px) {
+  .orden-form-actions button {
+    flex-basis: 100%;
+  }
+}
+
+.form {
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 1rem;
+
+}
+
+.seguimiento-presupuesto { margin-top: 20px; border: 1px solid var(--md-border); }
+.seguimiento-presupuesto mat-card-title { display: flex; align-items: center; gap: 8px; }
+.seguimiento-fila { display: flex; justify-content: space-between; gap: 20px; padding: 10px 0; border-bottom: 1px solid var(--md-border); }
+.seguimiento-fila span { color: var(--md-text-secondary); }
+.seguimiento-fila strong { text-align: right; }
+.garantia-sin-factura {
+  margin: 16px 0 0;
+  padding: 12px;
+  border-radius: 8px;
+  color: var(--md-success);
+  background: var(--md-success-soft);
+}
+.seguimiento-orden { align-items: center; border-bottom: 0; }
+.seguimiento-orden mat-icon { margin-left: 4px; }
+
+
+mat-form-field {
+
+    width: 100%;
+
+}
+
+.summary-card {
+  margin-top: 24px;
+}
+
+.summary-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 0;
+}
+
+.summary-row.total {
+  font-size: 18px;
+  font-weight: 700;
+  margin-top: 8px;
+}
+
+.orden-form-content {
+  padding: 24px 20px 8px;
+}
+
+.full-width {
+  width: 100%;
+}
+
+.personal-asignado {
+  margin: 20px 0;
+}
+
+.personal-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.archivo-seleccionado {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 8px 0 20px;
+}
+
+.archivo-seleccionado small {
+  opacity: 0.7;
+}
+
+.lista-archivos {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 20px;
+}
+
+.archivo-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  padding: 12px 16px;
+
+  border: 1px solid var(--md-border);
+  border-radius: 8px;
+}
+
+.archivo-info {
+  display: flex;
+  flex-direction: column;
+
+  flex: 1;
+}
+
+.archivo-info span {
+  font-size: 13px;
+  opacity: 0.7;
+}
+
+.sin-archivos {
+  padding: 40px;
+
+  text-align: center;
+  opacity: 0.6;
+}
+
+.sin-archivos mat-icon {
+  width: 40px;
+  height: 40px;
+  font-size: 40px;
+}
+
+/* =========================================================
+   ARCHIVOS
+   ========================================================= */
+
+.archivos-container {
+  padding: 24px;
+}
+
+.archivos-container h3 {
+  margin: 0 0 24px;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.subida-archivo {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.subida-archivo mat-form-field {
+  width: 260px;
+}
+
+
+/* =========================================================
+   INPUT NATIVO
+   ========================================================= */
+
+.file-input {
+  display: none;
+}
+
+
+/* =========================================================
+   BOTÓN ELEGIR ARCHIVO
+   ========================================================= */
+
+.file-select-button {
+  height: 56px;
+  min-width: 175px;
+
+  padding: 0 20px;
+
+  border-radius: 8px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+
+  font-weight: 500;
+}
+
+.file-select-button mat-icon {
+  margin: 0;
+}
+
+
+/* =========================================================
+   BOTÓN SUBIR
+   ========================================================= */
+
+.upload-button {
+  height: 56px;
+  min-width: 160px;
+
+  padding: 0 20px;
+
+  border-radius: 8px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.upload-button mat-icon {
+  margin: 0;
+}
+
+
+/* =========================================================
+   ARCHIVO SELECCIONADO
+   ========================================================= */
+
+.archivo-seleccionado {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  margin-top: 16px;
+  padding: 12px 16px;
+
+  border: 1px solid var(--md-border);
+  border-radius: 8px;
+}
+
+.archivo-seleccionado-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.archivo-seleccionado-info span {
+  font-weight: 500;
+}
+
+.archivo-seleccionado-info small {
+  opacity: 0.65;
+}
+
+
+/* =========================================================
+   LISTA
+   ========================================================= */
+
+.lista-archivos {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+
+  margin-top: 24px;
+}
+
+.archivo-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  padding: 12px 16px;
+
+  border: 1px solid var(--md-border);
+  border-radius: 8px;
+}
+
+.archivo-info {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+
+  flex: 1;
+  min-width: 0;
+}
+
+.archivo-info strong {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.archivo-info span {
+  font-size: 13px;
+  opacity: 0.7;
+}
+
+
+/* =========================================================
+   SIN ARCHIVOS
+   ========================================================= */
+
+.sin-archivos {
+  padding: 48px 20px;
+
+  text-align: center;
+  opacity: 0.6;
+}
+
+.sin-archivos mat-icon {
+  width: 42px;
+  height: 42px;
+
+  font-size: 42px;
+}
+
+.sin-archivos p {
+  margin: 10px 0 0;
+}
+
+.seccion-archivos {
+  margin-top: 28px;
+}
+
+.seccion-archivos h4 {
+  margin: 0 0 14px;
+
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.galeria-imagenes {
+  display: grid;
+
+  grid-template-columns:
+    repeat(auto-fill, minmax(220px, 1fr));
+
+  gap: 16px;
+}
+
+.imagen-card {
+  overflow: hidden;
+
+  border: 1px solid var(--md-border);
+  border-radius: 10px;
+
+  background: var(--md-surface);
+}
+
+.imagen-preview {
+  width: 100%;
+  height: 160px;
+
+  overflow: hidden;
+
+  background: var(--md-bg);
+}
+
+.imagen-preview img {
+  width: 100%;
+  height: 100%;
+
+  display: block;
+
+  object-fit: cover;
+}
+
+.imagen-cargando {
+  width: 100%;
+  height: 100%;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  opacity: 0.45;
+}
+
+.imagen-cargando mat-icon {
+  width: 40px;
+  height: 40px;
+
+  font-size: 40px;
+}
+
+.imagen-info {
+  display: flex;
+  align-items: center;
+
+  gap: 8px;
+
+  padding: 10px 12px;
+}
+
+.imagen-datos {
+  display: flex;
+  flex-direction: column;
+
+  flex: 1;
+  min-width: 0;
+}
+
+.imagen-datos strong {
+  overflow: hidden;
+
+  text-overflow: ellipsis;
+  white-space: nowrap;
+
+  font-size: 14px;
+}
+
+.imagen-datos span {
+  margin-top: 2px;
+
+  font-size: 12px;
+  opacity: 0.65;
+}
+
+.imagen-acciones {
+  display: flex;
+  flex-shrink: 0;
+}
+
+/* =========================================================
+   PREVIEW CLICABLE
+   ========================================================= */
+
+.imagen-preview {
+  position: relative;
+
+  cursor: pointer;
+}
+
+.imagen-preview img {
+  transition: transform 0.2s ease;
+}
+
+.imagen-preview:hover img {
+  transform: scale(1.03);
+}
+
+
+/* =========================================================
+   OVERLAY
+   ========================================================= */
+
+.imagen-overlay {
+  position: absolute;
+
+  inset: 0;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  gap: 4px;
+
+  background: rgba(0, 0, 0, 0.45);
+
+  color: white;
+
+  opacity: 0;
+
+  transition: opacity 0.2s ease;
+}
+
+.imagen-preview:hover .imagen-overlay {
+  opacity: 1;
+}
+
+.imagen-overlay mat-icon {
+  width: 30px;
+  height: 30px;
+
+  font-size: 30px;
+}
+
+.imagen-overlay span {
+  font-size: 13px;
+  font-weight: 500;
+}
+
+
+/* =========================================================
+   VISOR
+   ========================================================= */
+
+.visor-backdrop {
+  position: fixed;
+
+  inset: 0;
+
+  z-index: 2000;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 32px;
+
+  background: rgba(0, 0, 0, 0.75);
+}
+
+
+.visor-imagen {
+  display: flex;
+  flex-direction: column;
+
+  width: min(1100px, 95vw);
+  max-height: 92vh;
+
+  overflow: hidden;
+
+  border-radius: 12px;
+
+  background: var(--md-surface);
+
+  box-shadow:
+    0 20px 60px
+    rgba(0, 0, 0, 0.35);
+}
+
+
+/* =========================================================
+   CABECERA
+   ========================================================= */
+
+.visor-header {
+  display: flex;
+  align-items: center;
+
+  gap: 16px;
+
+  padding: 10px 12px 10px 20px;
+
+  border-bottom: 1px solid var(--md-border);
+}
+
+.visor-header span {
+  flex: 1;
+
+  min-width: 0;
+
+  overflow: hidden;
+
+  text-overflow: ellipsis;
+  white-space: nowrap;
+
+  font-weight: 500;
+}
+
+
+/* =========================================================
+   IMAGEN GRANDE
+   ========================================================= */
+
+.visor-contenido {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  min-height: 300px;
+
+  overflow: auto;
+
+  padding: 20px;
+
+  background: var(--md-bg);
+}
+
+.visor-contenido img {
+  display: block;
+
+  max-width: 100%;
+  max-height: calc(92vh - 90px);
+
+  object-fit: contain;
+}
+
+.subida-archivos {
+  margin-top: 20px;
+}
+
+.categoria-archivo {
+  width: 280px;
+}
+
+.file-input {
+  display: none;
+}
+
+
+/* DRAG & DROP */
+
+.drop-zone {
+  min-height: 190px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  gap: 7px;
+
+  padding: 28px;
+
+  border: 2px dashed var(--md-border);
+  border-radius: 12px;
+
+  background: var(--md-bg);
+
+  cursor: pointer;
+
+  transition:
+    border-color 0.2s ease,
+    background 0.2s ease,
+    transform 0.2s ease;
+}
+
+.drop-zone:hover {
+  border-color: var(--md-text-muted);
+
+  background: var(--md-surface);
+}
+
+.drop-zone.dragging {
+  border-color: var(--md-primary);
+
+  background: var(--md-primary-soft);
+
+  transform: scale(1.005);
+}
+
+.drop-icon {
+  width: 42px;
+  height: 42px;
+
+  margin-bottom: 4px;
+
+  font-size: 42px;
+
+  opacity: 0.65;
+}
+
+.drop-zone strong {
+  font-size: 16px;
+}
+
+.drop-zone span {
+  font-size: 14px;
+
+  opacity: 0.7;
+}
+
+.drop-zone small {
+  margin-top: 6px;
+
+  opacity: 0.55;
+}
+
+
+/* ARCHIVOS PENDIENTES */
+
+.archivos-pendientes {
+  margin-top: 18px;
+
+  padding: 16px;
+
+  border: 1px solid var(--md-border);
+  border-radius: 10px;
+}
+
+.pendientes-header {
+  display: flex;
+  align-items: center;
+
+  gap: 8px;
+
+  margin-bottom: 12px;
+}
+
+.pendientes-header span {
+  min-width: 24px;
+  height: 24px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 50%;
+
+  background: var(--md-bg);
+
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.archivo-pendiente {
+  display: flex;
+  align-items: center;
+
+  gap: 12px;
+
+  padding: 8px 0;
+
+  border-bottom: 1px solid var(--md-border);
+}
+
+.archivo-pendiente-info {
+  display: flex;
+  flex-direction: column;
+
+  flex: 1;
+  min-width: 0;
+}
+
+.archivo-pendiente-info strong {
+  overflow: hidden;
+
+  text-overflow: ellipsis;
+  white-space: nowrap;
+
+  font-size: 14px;
+}
+
+.archivo-pendiente-info span {
+  margin-top: 2px;
+
+  font-size: 12px;
+  opacity: 0.65;
+}
+
+.subir-seleccionados {
+  margin-top: 16px;
+}
+
+/* =========================================================
+   ESTADO DE SUBIDA
+   ========================================================= */
+
+.estado-subida {
+  margin-top: 22px;
+
+  padding-top: 18px;
+
+  border-top: 1px solid var(--md-border);
+}
+
+.progreso-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  margin-bottom: 10px;
+}
+
+.progreso-header span {
+  font-size: 13px;
+  font-weight: 500;
+
+  opacity: 0.7;
+}
+
+
+/* =========================================================
+   RESUMEN
+   ========================================================= */
+
+.resumen-subida {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+
+  margin-top: 12px;
+}
+
+.resumen-subida span {
+  display: inline-flex;
+  align-items: center;
+
+  gap: 5px;
+
+  font-size: 13px;
+}
+
+.resumen-subida mat-icon {
+  width: 18px;
+  height: 18px;
+
+  font-size: 18px;
+}
+
+.subida-ok {
+  color: #2e7d32;
+}
+
+.subida-error {
+  color: #c62828;
+}
+
+
+/* =========================================================
+   ESTADO DE CADA ARCHIVO
+   ========================================================= */
+
+.lista-estado-subida {
+  display: flex;
+  flex-direction: column;
+
+  gap: 8px;
+
+  margin-top: 16px;
+}
+
+.estado-subida-item {
+  display: flex;
+  align-items: center;
+
+  gap: 12px;
+
+  padding: 9px 12px;
+
+  border: 1px solid var(--md-border);
+  border-radius: 8px;
+
+  background: var(--md-bg);
+}
+
+.estado-subida-item > mat-icon {
+  flex-shrink: 0;
+}
+
+.estado-subida-info {
+  display: flex;
+  flex-direction: column;
+
+  min-width: 0;
+}
+
+.estado-subida-info strong {
+  overflow: hidden;
+
+  text-overflow: ellipsis;
+  white-space: nowrap;
+
+  font-size: 13px;
+}
+
+.estado-subida-info span {
+  margin-top: 2px;
+
+  font-size: 12px;
+
+  opacity: 0.65;
+}
+
+.estado-subida-info .texto-error {
+  color: #c62828;
+
+  opacity: 1;
+}

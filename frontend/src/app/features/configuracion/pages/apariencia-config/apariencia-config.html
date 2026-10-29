@@ -1,0 +1,32 @@
+<section class="apariencia-page">
+  <div class="page-header">
+    <div class="page-header-content">
+      <h1 class="page-title">Apariencia</h1>
+      <p class="page-subtitle">Elige cómo quieres visualizar MotorDesk.</p>
+    </div>
+  </div>
+
+  <mat-card class="appearance-card">
+    <mat-card-header>
+      <mat-icon mat-card-avatar>palette</mat-icon>
+      <mat-card-title>Tema de la aplicación</mat-card-title>
+      <mat-card-subtitle>La preferencia se guarda en este navegador.</mat-card-subtitle>
+    </mat-card-header>
+    <mat-card-content>
+      <div class="theme-options">
+        <button type="button" class="theme-option light" [class.selected]="themeService.temaActual === 'claro'" (click)="cambiarTema('claro')">
+          <span class="theme-preview"><span></span><span></span><span></span></span>
+          <strong>Claro</strong>
+          <small>Fondo luminoso y alto contraste.</small>
+          @if (themeService.temaActual === 'claro') { <mat-icon>check_circle</mat-icon> }
+        </button>
+        <button type="button" class="theme-option dark" [class.selected]="themeService.temaActual === 'oscuro'" (click)="cambiarTema('oscuro')">
+          <span class="theme-preview"><span></span><span></span><span></span></span>
+          <strong>Oscuro</strong>
+          <small>Más cómodo para trabajar con poca luz.</small>
+          @if (themeService.temaActual === 'oscuro') { <mat-icon>check_circle</mat-icon> }
+        </button>
+      </div>
+    </mat-card-content>
+  </mat-card>
+</section>

@@ -1,0 +1,633 @@
+<div class="page-container">
+  @if (loading) {
+    <div class="loading-container">
+      <mat-spinner diameter="40"></mat-spinner>
+      <p>Cargando factura...</p>
+    </div>
+  } @else if (modoCreacion) {
+    <div class="page-header">
+      <div>
+        <h1>Nueva factura</h1>
+        <p>Crea una factura manual en borrador.</p>
+      </div>
+    </div>
+
+    <mat-card class="lineas-card">
+      <mat-card-content>
+        <div class="manual-invoice-form">
+          <app-autocomplete-select
+            [(ngModel)]="nuevaFactura.cliente_id"
+            name="cliente"
+            etiqueta="Cliente"
+            placeholder="Nombre, DNI, teléfono o correo"
+            [items]="clientes"
+            [mostrar]="etiquetaCliente">
+          </app-autocomplete-select>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Tipo de factura</mat-label>
+            <mat-select [(ngModel)]="nuevaFactura.tipo_factura">
+              <mat-option value="REPARACION">Reparación</mat-option>
+              <mat-option value="PRESUPUESTO">Presupuesto</mat-option>
+              <mat-option value="GARANTIA">Garantía</mat-option>
+              <mat-option value="RECAMBIO">Recambio</mat-option>
+              <mat-option value="VENTAS_COMISIONES">Ventas y comisiones</mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Observaciones</mat-label>
+            <textarea matInput rows="4" [(ngModel)]="nuevaFactura.observaciones"></textarea>
+          </mat-form-field>
+        </div>
+
+        <div class="form-actions">
+          <button mat-stroked-button type="button" routerLink="/facturas">Cancelar</button>
+          <button mat-flat-button color="primary" type="button" (click)="crearFacturaManual()">
+            <mat-icon>add</mat-icon>
+            Crear borrador
+          </button>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  } @else if (factura) {
+    <div class="page-header">
+      <div>
+        <h1>{{ factura.numero }}</h1>
+        <p>{{ getTipoFacturaLabel(factura.tipo_factura) }}</p>
+      </div>
+      <mat-chip [style.background]="getEstadoColor(factura.estado)" class="estado-chip">
+        {{ factura.estado }}
+      </mat-chip>
+    </div>
+
+    @if (factura.orden) {
+      <div class="order-link">
+        <span>Orden origen</span>
+        <a mat-stroked-button color="primary" [routerLink]="['/ordenes', factura.orden.id]">
+          {{ factura.orden.numero }}
+        </a>
+      </div>
+    }
+
+    <div class="cards-grid">
+      <mat-card>
+        <mat-card-header>
+          <mat-card-title><mat-icon>person</mat-icon>Cliente</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="info-row"><span>Nombre</span><strong>{{ factura.cliente.apellidos ? (factura.cliente.apellidos + ', ') : '' }}{{ factura.cliente.nombre }}</strong></div>
+          <div class="info-row"><span>NIF / CIF</span><strong>{{ factura.cliente.dni }}</strong></div>
+          <div class="info-row"><span>Telefono</span><strong>{{ factura.cliente.telefono }}</strong></div>
+          <div class="info-row"><span>Email</span><strong>{{ factura.cliente.email }}</strong></div>
+        </mat-card-content>
+      </mat-card>
+
+      @if (factura.tipo_factura !== 'RECAMBIO' && factura.vehiculo) {
+        <mat-card>
+          <mat-card-header>
+            <mat-card-title><mat-icon>directions_car</mat-icon>Veh&iacute;culo</mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <div class="info-row"><span>Matr&iacute;cula</span><strong>{{ factura.vehiculo?.matricula || '&mdash;' }}</strong></div>
+            <div class="info-row"><span>Marca</span><strong>{{ factura.vehiculo?.marca || '&mdash;' }}</strong></div>
+            <div class="info-row"><span>Modelo</span><strong>{{ factura.vehiculo?.modelo || '&mdash;' }}</strong></div>
+            <div class="info-row"><span>Bastidor</span><strong>{{ factura.vehiculo?.bastidor || '&mdash;' }}</strong></div>
+          </mat-card-content>
+        </mat-card>
+      }
+    </div>
+
+    <mat-card class="lineas-card">
+      <mat-card-header>
+        <mat-card-title><mat-icon>receipt_long</mat-icon>Lineas de factura</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        @if (factura.estado === 'BORRADOR') {
+          <div class="lineas-toolbar">
+            <button mat-flat-button color="primary" (click)="nuevaLinea()">
+              <mat-icon>add</mat-icon>Anadir linea
+            </button>
+          </div>
+        }
+
+        <div class="table-wrapper">
+          <table mat-table [dataSource]="lineas" class="lineas-table">
+            <ng-container matColumnDef="categoria_fiscal">
+              <th mat-header-cell *matHeaderCellDef>Naturaleza</th>
+              <td mat-cell *matCellDef="let linea">
+                @if (lineaEditando === linea.id) {
+                  <mat-select
+                    [(ngModel)]="lineaTemporal.categoria_fiscal"
+                    (selectionChange)="actualizarCategoriaFiscal()"
+                    aria-label="Naturaleza fiscal">
+                    <mat-option value="VENTA_SERVICIO">Venta o servicio</mat-option>
+                    <mat-option value="COMISION_SUJETA">Comisi&oacute;n sujeta</mat-option>
+                    <mat-option value="COMISION_EXENTA">Comisi&oacute;n exenta</mat-option>
+                  </mat-select>
+
+                  @if (lineaTemporal.categoria_fiscal === 'COMISION_EXENTA') {
+                    <input
+                      matInput
+                      [(ngModel)]="lineaTemporal.motivo_exencion"
+                      placeholder="Motivo legal de exenci&oacute;n"
+                      aria-label="Motivo legal de exencion">
+                  }
+                } @else {
+                  <div>{{ getCategoriaFiscalLabel(linea.categoria_fiscal) }}</div>
+                  @if (linea.categoria_fiscal === 'COMISION_EXENTA' && linea.motivo_exencion) {
+                    <small>{{ linea.motivo_exencion }}</small>
+                  }
+                }
+              </td>
+            </ng-container>
+
+            <ng-container matColumnDef="descripcion">
+              <th mat-header-cell *matHeaderCellDef>Concepto</th>
+              <td mat-cell *matCellDef="let linea">
+                @if (lineaEditando === linea.id) {
+                  <input matInput [(ngModel)]="lineaTemporal.descripcion" aria-label="Concepto">
+                } @else {
+                  {{ linea.descripcion }}
+                }
+              </td>
+            </ng-container>
+
+            <ng-container matColumnDef="origen">
+              <th mat-header-cell *matHeaderCellDef>Origen</th>
+              <td mat-cell *matCellDef="let linea">{{ getOrigenLabel(linea.origen) }}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="cantidad">
+              <th mat-header-cell *matHeaderCellDef>Cant.</th>
+              <td mat-cell *matCellDef="let linea">
+                @if (lineaEditando === linea.id) {
+                  <input matInput type="number" min="0.01" step="0.01" [(ngModel)]="lineaTemporal.cantidad" aria-label="Cantidad">
+                } @else {
+                  {{ linea.cantidad }}
+                }
+              </td>
+            </ng-container>
+
+            <ng-container matColumnDef="precio">
+              <th mat-header-cell *matHeaderCellDef>Precio</th>
+              <td mat-cell *matCellDef="let linea">
+                @if (lineaEditando === linea.id) {
+                  <input matInput type="number" min="0" step="0.01" [(ngModel)]="lineaTemporal.precio_unitario" aria-label="Precio unitario">
+                } @else {
+                  {{ linea.precio_unitario | number:'1.2-2' }} &euro;
+                }
+              </td>
+            </ng-container>
+
+            <ng-container matColumnDef="descuento">
+              <th mat-header-cell *matHeaderCellDef>Dto.</th>
+              <td mat-cell *matCellDef="let linea">{{ linea.descuento_porcentaje | number:'1.0-2' }} %</td>
+            </ng-container>
+
+            <ng-container matColumnDef="iva">
+              <th mat-header-cell *matHeaderCellDef>IVA</th>
+              <td mat-cell *matCellDef="let linea">
+                @if (lineaEditando === linea.id) {
+                  <input matInput type="number" min="0" step="0.01" [(ngModel)]="lineaTemporal.iva" aria-label="IVA">
+                } @else {
+                  {{ linea.iva }} %
+                }
+              </td>
+            </ng-container>
+
+            <ng-container matColumnDef="total">
+              <th mat-header-cell *matHeaderCellDef>Importe sin IVA</th>
+              <td mat-cell *matCellDef="let linea">{{ linea.subtotal | number:'1.2-2' }} &euro;</td>
+            </ng-container>
+
+            <ng-container matColumnDef="acciones">
+              <th mat-header-cell *matHeaderCellDef>Acciones</th>
+              <td mat-cell *matCellDef="let linea">
+                @if (puedeModificarLinea(linea)) {
+                  @if (lineaEditando === linea.id) {
+                    <button mat-icon-button color="primary" (click)="guardarLinea(linea)" aria-label="Guardar linea"><mat-icon>save</mat-icon></button>
+                    <button mat-icon-button (click)="cancelarEdicion()" aria-label="Cancelar edicion"><mat-icon>close</mat-icon></button>
+                  } @else {
+                    <button mat-icon-button color="primary" (click)="editarLinea(linea)" aria-label="Editar linea"><mat-icon>edit</mat-icon></button>
+                    <button mat-icon-button color="warn" (click)="eliminarLinea(linea.id)" aria-label="Eliminar linea"><mat-icon>delete</mat-icon></button>
+                  }
+                }
+              </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+          </table>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="totales-card">
+      <mat-card-content>
+        <div class="totales">
+          <div class="total-row"><span>Subtotal</span><strong>{{ factura.subtotal | number:'1.2-2' }} &euro;</strong></div>
+          <div class="total-row"><span>Descuento</span><strong>{{ factura.descuento_porcentaje }} %</strong></div>
+          <div class="total-row"><span>Base imponible</span><strong>{{ factura.base_imponible | number:'1.2-2' }} &euro;</strong></div>
+          @if (esFacturaVentasComisiones()) {
+            @for (grupo of getDesgloseIva(); track grupo.etiqueta) {
+              <div class="total-row"><span>Base: {{ grupo.etiqueta }}</span><strong>{{ grupo.base | number:'1.2-2' }} &euro;</strong></div>
+              <div class="total-row"><span>{{ grupo.etiqueta }}</span><strong>{{ grupo.cuota | number:'1.2-2' }} &euro;</strong></div>
+            }
+          } @else {
+            <div class="total-row"><span>IVA ({{ factura.iva }}%)</span><strong>{{ factura.cuota_iva | number:'1.2-2' }} &euro;</strong></div>
+          }
+          <mat-divider></mat-divider>
+          <div class="total-final"><span>TOTAL</span><strong>{{ factura.total | number:'1.2-2' }} &euro;</strong></div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="verifactu-card facturae-card">
+      <mat-card-header>
+        <mat-card-title><mat-icon>account_balance</mat-icon>Factura electrónica (Facturae)</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        @if (factura.estado === 'BORRADOR') {
+          <p class="verifactu-hint">Selecciona un organismo guardado o indica sus datos. La copia de esta factura queda congelada al emitirla.</p>
+          <app-autocomplete-select
+            [(ngModel)]="organismoFacturaeId"
+            name="organismoFacturae"
+            etiqueta="Organismo Facturae guardado"
+            placeholder="Busca por nombre o NIF"
+            [items]="organismosFacturae"
+            [mostrar]="etiquetaOrganismoFacturae"
+            (seleccionado)="seleccionarOrganismoFacturae($event)">
+          </app-autocomplete-select>
+          <div class="facturae-grid">
+            <mat-form-field appearance="outline"><mat-label>Organismo destinatario</mat-label><input matInput [(ngModel)]="facturaeDestino.nombre"></mat-form-field>
+            <mat-form-field appearance="outline"><mat-label>NIF del organismo</mat-label><input matInput [(ngModel)]="facturaeDestino.nif"></mat-form-field>
+            <mat-form-field appearance="outline"><mat-label>Dirección</mat-label><input matInput [(ngModel)]="facturaeDestino.direccion"></mat-form-field>
+            <mat-form-field appearance="outline"><mat-label>Código postal</mat-label><input matInput [(ngModel)]="facturaeDestino.codigo_postal"></mat-form-field>
+            <mat-form-field appearance="outline"><mat-label>Población</mat-label><input matInput [(ngModel)]="facturaeDestino.ciudad"></mat-form-field>
+            <mat-form-field appearance="outline"><mat-label>Provincia</mat-label><input matInput [(ngModel)]="facturaeDestino.provincia"></mat-form-field>
+            <mat-form-field appearance="outline"><mat-label>Oficina contable (DIR3)</mat-label><input matInput [(ngModel)]="facturaeDestino.oficina_contable"></mat-form-field>
+            <mat-form-field appearance="outline"><mat-label>Órgano gestor (DIR3)</mat-label><input matInput [(ngModel)]="facturaeDestino.organo_gestor"></mat-form-field>
+            <mat-form-field appearance="outline"><mat-label>Unidad tramitadora (DIR3)</mat-label><input matInput [(ngModel)]="facturaeDestino.unidad_tramitadora"></mat-form-field>
+            <mat-form-field appearance="outline"><mat-label>Expediente (opcional)</mat-label><input matInput [(ngModel)]="facturaeDestino.expediente"></mat-form-field>
+          </div>
+          <button mat-stroked-button color="primary" [disabled]="guardandoFacturae" (click)="guardarDestinoFacturae()">
+            <mat-icon>{{ guardandoFacturae ? 'hourglass_top' : 'save' }}</mat-icon>{{ guardandoFacturae ? 'Guardando...' : 'Guardar datos Facturae' }}
+          </button>
+          <button mat-stroked-button [disabled]="guardandoOrganismoFacturae" (click)="guardarOrganismoFacturae()">
+            <mat-icon>{{ guardandoOrganismoFacturae ? 'hourglass_top' : 'bookmark_add' }}</mat-icon>{{ guardandoOrganismoFacturae ? 'Guardando...' : (organismoFacturaeId ? 'Actualizar organismo guardado' : 'Guardar como organismo') }}
+          </button>
+        } @else if (tieneDestinoFacturae) {
+          <p><strong>{{ facturaeDestino.nombre }}</strong> · {{ facturaeDestino.nif }}</p>
+          <div class="facturae-codes"><span>Oficina: {{ facturaeDestino.oficina_contable }}</span><span>Órgano: {{ facturaeDestino.organo_gestor }}</span><span>Unidad: {{ facturaeDestino.unidad_tramitadora }}</span></div>
+          <p class="verifactu-hint">El XML Facturae sin firmar se ha generado al emitir la factura. Ábrelo con AutoFirma desde la carpeta FE para firmarlo con el certificado digital.</p>
+        } @else {
+          <p class="verifactu-hint">Esta factura no contiene datos de destinatario para Facturae.</p>
+        }
+      </mat-card-content>
+    </mat-card>
+
+    @if (factura.estado === 'EMITIDA' || (factura.estado === 'ANULADA' && registrosVerifactu.length > 0)) {
+      <mat-card class="verifactu-card">
+        <mat-card-header>
+          <mat-card-title><mat-icon>verified</mat-icon>VERI*FACTU</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          @if (factura.estado === 'ANULADA') {
+            <p class="verifactu-hint">Factura anulada mediante su registro VERI*FACTU.</p>
+          } @else if (cargandoVerifactu) {
+            <div class="verifactu-loading">
+              <mat-spinner diameter="24"></mat-spinner>
+              <span>Comprobando registro...</span>
+            </div>
+          } @else if (!registroVerifactuId) {
+            <p>Todavía no se ha generado el registro VERI*FACTU.</p>
+            <button
+              mat-flat-button
+              color="primary"
+              [disabled]="generandoVerifactu"
+              (click)="generarVerifactu()">
+              <mat-icon>{{ generandoVerifactu ? 'hourglass_top' : 'add_circle' }}</mat-icon>
+              {{ generandoVerifactu ? 'Generando...' : 'Generar registro' }}
+            </button>
+          } @else {
+            <p>Estado: <strong>{{ estadoVerifactu }}</strong></p>
+            <button
+              mat-stroked-button
+              color="primary"
+              (click)="enviarVerifactuTest()">
+              <mat-icon>cloud_upload</mat-icon>
+              Enviar a AEAT TEST
+            </button>
+
+            @if (altaVerifactuAceptada && !registroVerifactuAnulacion) {
+              <p class="verifactu-hint">
+                Al anular la factura se generará un registro de anulación que deberá enviarse a AEAT.
+              </p>
+            }
+
+            @if (registroVerifactuAnulacion) {
+              <div class="verifactu-anulacion">
+                <div>
+                  <strong>Anulación VERI*FACTU</strong>
+                  <span>Estado: {{ registroVerifactuAnulacion.estado }}</span>
+                </div>
+                <button
+                  mat-stroked-button
+                  color="warn"
+                  [disabled]="registroVerifactuAnulacion.estado === 'ACEPTADO' || registroVerifactuAnulacion.estado === 'ACEPTADO_CON_ERRORES'"
+                  (click)="enviarAnulacionVerifactuTest()">
+                  <mat-icon>cloud_upload</mat-icon>
+                  Enviar anulación a AEAT TEST
+                </button>
+              </div>
+            }
+          }
+
+          @if (!cargandoVerifactu && registrosVerifactu.length > 0) {
+            <div class="verifactu-historial">
+              <strong>Historial de registros</strong>
+              @for (registro of registrosVerifactu; track registro.id) {
+                <div class="verifactu-registro">
+                  <span>{{ registro.tipo_registro === 'ANULACION' ? 'ANULACIÓN' : 'ALTA' }}</span>
+                  <span>{{ registro.estado }}</span>
+                  <small>Hash: {{ getHashCorto(registro.hash_registro) }}</small>
+                </div>
+              }
+            </div>
+          }
+        </mat-card-content>
+      </mat-card>
+    }
+
+    <mat-card class="cobros-card">
+
+    <mat-card-header>
+        <mat-card-title>
+            <mat-icon>payments</mat-icon>
+            Cobros
+        </mat-card-title>
+    </mat-card-header>
+
+    <mat-card-content>
+
+        @if (resumenPago) {
+
+            <div class="totales">
+
+                <div class="total-row">
+                    <span>Total factura</span>
+                    <strong>
+                        {{ resumenPago.total | number:'1.2-2' }} €
+                    </strong>
+                </div>
+
+                <div class="total-row">
+                    <span>Pagado</span>
+                    <strong>
+                        {{ resumenPago.importe_pagado | number:'1.2-2' }} €
+                    </strong>
+                </div>
+
+                <div class="total-row">
+                    <span>Pendiente</span>
+                    <strong>
+                        {{ resumenPago.importe_pendiente | number:'1.2-2' }} €
+                    </strong>
+                </div>
+
+                <div class="total-row estado-cobro-row">
+                    <span>Estado</span>
+                    <mat-chip [style.background]="getEstadoCobroColor()" class="estado-chip">
+                        {{ getEstadoCobro() }}
+                    </mat-chip>
+                </div>
+
+            </div>
+
+        }
+
+        @if (pagos.length === 0) {
+            <p>No hay cobros registrados.</p>
+        }
+
+        @if (factura) {
+
+            <div class="pagos-listado">
+
+                @for (pago of pagos; track pago.id) {
+
+                    <div class="pago-item">
+
+                        <div class="pago-detalle">
+                            <small>{{ pago.fecha_pago | date:'dd/MM/yyyy · HH:mm' }}</small>
+                            <div class="pago-importes">
+                                <strong>{{ pago.importe | number:'1.2-2' }} €</strong>
+                                <span>{{ getMetodoPagoLabel(pago.metodo_pago) }}</span>
+                            </div>
+                            @if (pago.referencia) {
+                                <small>Referencia: {{ pago.referencia }}</small>
+                            }
+                            @if (pago.observaciones) {
+                                <p>{{ pago.observaciones }}</p>
+                            }
+                        </div>
+
+                        @if (factura.estado === 'EMITIDA') {
+                            <button mat-icon-button color="warn" (click)="eliminarPago(pago)" aria-label="Eliminar cobro">
+                                <mat-icon>delete</mat-icon>
+                            </button>
+                        }
+
+                    </div>
+
+                }
+
+            </div>
+
+            @if (
+               factura.estado === 'EMITIDA'
+               && resumenPago
+               && resumenPago.importe_pendiente > 0
+               && !mostrarFormularioPago
+               ) {
+
+              <button
+                mat-flat-button
+                color="primary"
+                (click)="abrirFormularioPago()">
+
+                <mat-icon>add_card</mat-icon>
+
+                  Registrar cobro
+
+              </button>
+
+            }
+
+            @if (mostrarFormularioPago) {
+
+    <div class="pago-formulario">
+
+        <mat-form-field appearance="outline">
+            <mat-label>Importe</mat-label>
+
+            <input
+                matInput
+                type="number"
+                min="0.01"
+                step="0.01"
+                [(ngModel)]="nuevoPago.importe">
+
+            <span matTextSuffix>€</span>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+            <mat-label>Método de pago</mat-label>
+
+            <mat-select
+                [(ngModel)]="nuevoPago.metodo_pago"
+                (selectionChange)="alCambiarMetodoPago()">
+
+                <mat-option value="EFECTIVO">
+                    Efectivo
+                </mat-option>
+
+                <mat-option value="TARJETA">
+                    Tarjeta
+                </mat-option>
+
+                <mat-option value="TRANSFERENCIA">
+                    Transferencia
+                </mat-option>
+
+                <mat-option value="BIZUM">
+                    Bizum
+                </mat-option>
+
+                <mat-option value="OTRO">
+                    Otro
+                </mat-option>
+
+            </mat-select>
+        </mat-form-field>
+
+        @if (esTransferencia()) {
+            <div class="cuenta-transferencia" role="note">
+                <mat-icon>account_balance</mat-icon>
+                <div>
+                    <strong>Cuenta del taller para la transferencia</strong>
+                    @if (ibanCobros) {
+                        <span>{{ ibanCobros }}</span>
+                    } @else {
+                        <span class="cuenta-pendiente">No se ha configurado una cuenta bancaria.</span>
+                    }
+                </div>
+            </div>
+        }
+
+        <mat-form-field appearance="outline">
+            <mat-label>Referencia</mat-label>
+
+            <input
+                matInput
+                [(ngModel)]="nuevoPago.referencia"
+                placeholder="Opcional">
+        </mat-form-field>
+
+        <mat-form-field
+            appearance="outline"
+            class="full-width">
+
+            <mat-label>Observaciones</mat-label>
+
+            <textarea
+                matInput
+                rows="3"
+                [(ngModel)]="nuevoPago.observaciones"
+                placeholder="Opcional">
+            </textarea>
+
+        </mat-form-field>
+
+        <div class="pago-form-actions">
+
+            <button
+                mat-button
+                type="button"
+                (click)="cancelarPago()">
+
+                Cancelar
+
+            </button>
+
+            <button
+                mat-flat-button
+                color="primary"
+                type="button"
+                (click)="registrarPago()">
+
+                Registrar cobro
+
+            </button>
+
+              </div>
+
+          </div>
+
+        }
+
+        } @else {
+
+            <p>
+                No hay cobros registrados.
+            </p>
+
+        }
+
+    </mat-card-content>
+
+  </mat-card>
+
+    <mat-card class="observaciones-card">
+      <mat-card-header>
+        <mat-card-title><mat-icon>description</mat-icon>Observaciones</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <mat-form-field appearance="outline" class="full-width">
+          <textarea matInput rows="5" [(ngModel)]="observaciones" [disabled]="factura.estado !== 'BORRADOR'"></textarea>
+        </mat-form-field>
+      </mat-card-content>
+      @if (factura.estado === 'BORRADOR') {
+        <mat-card-actions align="end">
+          <button mat-flat-button color="primary" (click)="guardarObservaciones()"><mat-icon>save</mat-icon>Guardar cambios</button>
+        </mat-card-actions>
+      }
+    </mat-card>
+
+    <div class="factura-actions">
+      <button mat-button routerLink="/facturas">Volver</button>
+      <button mat-stroked-button color="primary" (click)="verFactura()"><mat-icon>picture_as_pdf</mat-icon>Ver factura</button>
+      @if (factura.estado === 'EMITIDA') {
+        <button mat-stroked-button color="primary" (click)="enviarEmail()"><mat-icon>email</mat-icon>Enviar por email</button>
+        <button mat-stroked-button color="accent" (click)="enviarWhatsapp()"><mat-icon>chat</mat-icon>Enviar WhatsApp</button>
+        <button mat-stroked-button color="primary" (click)="crearGarantia()"><mat-icon>verified_user</mat-icon>Crear garantía</button>
+      }
+      @if (factura.estado === 'BORRADOR' && factura.orden_id) {
+        <button mat-stroked-button color="primary" (click)="actualizarDesdeOrden()"><mat-icon>sync</mat-icon>Actualizar desde orden</button>
+      }
+      @if (
+        factura.estado === 'BORRADOR'
+        && authService.tienePermiso('facturas.emitir')
+      ) {
+        <button mat-flat-button color="primary" (click)="emitirFactura()"><mat-icon>task_alt</mat-icon>Emitir factura</button>
+      }
+      @if (
+        factura.estado !== 'ANULADA'
+        && authService.tienePermiso('facturas.anular')
+      ) {
+        <button mat-flat-button color="warn" (click)="anularFactura()"><mat-icon>cancel</mat-icon>Anular factura</button>
+      }
+    </div>
+  }
+</div>

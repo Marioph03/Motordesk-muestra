@@ -1,0 +1,64 @@
+<mat-card>
+  <mat-card-header>
+    <mat-card-title>Planificación semanal</mat-card-title>
+    <mat-card-subtitle>Citas y ausencias del equipo.</mat-card-subtitle>
+  </mat-card-header>
+
+  <mat-card-content>
+    <div class="controles-semana">
+      <button mat-icon-button type="button" (click)="semanaAnterior()" aria-label="Semana anterior">
+        <mat-icon>chevron_left</mat-icon>
+      </button>
+
+      <strong>
+        {{ inicioSemana | date:'dd/MM/yyyy' }} -
+        {{ finSemanaVisible | date:'dd/MM/yyyy' }}
+      </strong>
+
+      <button mat-icon-button type="button" (click)="semanaSiguiente()" aria-label="Semana siguiente">
+        <mat-icon>chevron_right</mat-icon>
+      </button>
+
+      <button mat-stroked-button type="button" (click)="irSemanaActual()">Hoy</button>
+    </div>
+
+    @if (cargando) {
+      <p class="estado-vacio">Cargando planificación…</p>
+    } @else if (planificacion.length === 0) {
+      <p class="estado-vacio">No hay personal activo para planificar.</p>
+    } @else {
+      <div class="planificacion-contenedor">
+        <div class="planificacion-grid">
+          <div class="cabecera-personal">Personal</div>
+
+          @for (dia of diasSemana; track dia.getTime()) {
+            <div class="cabecera-dia">
+              <span>{{ dia | date:'EEE' }}</span>
+              <strong>{{ dia | date:'dd/MM' }}</strong>
+            </div>
+          }
+
+          @for (usuario of planificacion; track usuario.usuario_id) {
+            <div class="usuario-info">
+              <strong>{{ usuario.apellidos ? (usuario.apellidos + ', ') : '' }}{{ usuario.nombre }}</strong>
+              <small>{{ usuario.rol }}</small>
+            </div>
+
+            @for (dia of diasSemana; track dia.getTime()) {
+              <div class="celda-dia">
+                @for (bloque of getBloquesDia(usuario, dia); track bloque.tipo + '-' + bloque.id) {
+                  <div class="bloque-planificacion" [class]="claseBloque(bloque.tipo)" [title]="bloque.referencia">
+                    <mat-icon>{{ iconoBloque(bloque.tipo) }}</mat-icon>
+                    <span>{{ bloque.referencia }}</span>
+                  </div>
+                } @empty {
+                  <span class="libre">Libre</span>
+                }
+              </div>
+            }
+          }
+        </div>
+      </div>
+    }
+  </mat-card-content>
+</mat-card>

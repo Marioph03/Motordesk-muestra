@@ -1,0 +1,87 @@
+<h2 mat-dialog-title>
+
+    Generar documento
+
+</h2>
+
+<mat-dialog-content>
+
+    <mat-radio-group
+        [(ngModel)]="tipoDocumento">
+
+        <mat-radio-button
+            value="FACTURA">
+
+            Factura
+
+        </mat-radio-button>
+
+        <br><br>
+
+        <mat-radio-button
+            value="PROFORMA">
+
+            Proforma
+
+        </mat-radio-button>
+
+    </mat-radio-group>
+
+    <mat-form-field
+        appearance="outline"
+        class="destinatario-field">
+
+        <mat-label>Destinatario de facturación</mat-label>
+
+        <mat-select
+            [(ngModel)]="clienteId"
+            [disabled]="cargandoClientes || !!errorClientes"
+            required>
+
+            @for (cliente of clientes; track cliente.id) {
+
+                <mat-option [value]="cliente.id">
+                    {{ nombreCliente(cliente) }}
+                    @if (cliente.dni) {
+                        · {{ cliente.dni }}
+                    }
+                </mat-option>
+
+            }
+
+        </mat-select>
+
+        @if (cargandoClientes) {
+            <mat-hint>Cargando destinatarios...</mat-hint>
+        } @else if (errorClientes) {
+            <mat-error>{{ errorClientes }}</mat-error>
+        } @else {
+            <mat-hint>Puede ser el particular, una empresa o una aseguradora.</mat-hint>
+        }
+
+    </mat-form-field>
+
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+
+    <button
+        mat-button
+        (click)="cancelar()">
+
+        Cancelar
+
+    </button>
+
+    <button
+        mat-raised-button
+        color="primary"
+        [disabled]="!clienteId || cargandoClientes || !!errorClientes"
+        (click)="crear()">
+
+        Crear
+
+    </button>
+
+</mat-dialog-actions>
+<!-- Confirmación previa a generar un borrador de factura desde una orden. -->

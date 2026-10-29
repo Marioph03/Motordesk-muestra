@@ -1,0 +1,72 @@
+<section class="taller-config-page">
+  <div class="page-header">
+    <div class="page-header-content">
+      <h1 class="page-title">Taller</h1>
+      <p class="page-subtitle">Configura los datos generales e identidad visual del taller.</p>
+    </div>
+  </div>
+
+  @if (cargando) {
+    <div class="loading-container"><mat-spinner diameter="40"></mat-spinner><span>Cargando configuración...</span></div>
+  } @else {
+    <div class="config-layout">
+      <mat-card class="config-card">
+        <mat-card-header>
+          <div class="section-icon blue"><mat-icon>business</mat-icon></div>
+          <div><mat-card-title>Información del taller</mat-card-title><mat-card-subtitle>Datos generales del negocio</mat-card-subtitle></div>
+        </mat-card-header>
+        <mat-card-content>
+          <form [formGroup]="form" class="config-form">
+            <div class="form-section">
+              <h3>Información general</h3>
+              <div class="form-grid">
+                <mat-form-field appearance="outline"><mat-label>Nombre comercial</mat-label><input matInput formControlName="nombre_comercial"></mat-form-field>
+                <mat-form-field appearance="outline"><mat-label>Razón social</mat-label><input matInput formControlName="razon_social"></mat-form-field>
+                <mat-form-field appearance="outline"><mat-label>NIF / CIF</mat-label><input matInput formControlName="nif_cif"></mat-form-field>
+              </div>
+            </div>
+            <mat-divider></mat-divider>
+            <div class="form-section">
+              <h3>Contacto</h3>
+              <div class="form-grid">
+                <mat-form-field appearance="outline"><mat-label>Teléfono</mat-label><input matInput formControlName="telefono"></mat-form-field>
+                <mat-form-field appearance="outline"><mat-label>Email</mat-label><input matInput type="email" formControlName="email"><mat-error>Introduce un email válido.</mat-error></mat-form-field>
+                <mat-form-field appearance="outline"><mat-label>Página web</mat-label><input matInput formControlName="web"></mat-form-field>
+              </div>
+            </div>
+            <mat-divider></mat-divider>
+            <div class="form-section">
+              <h3>Dirección</h3>
+              <div class="form-grid">
+                <mat-form-field appearance="outline" class="full-width"><mat-label>Dirección</mat-label><input matInput formControlName="direccion"></mat-form-field>
+                <mat-form-field appearance="outline"><mat-label>Código postal</mat-label><input matInput formControlName="codigo_postal"></mat-form-field>
+                <mat-form-field appearance="outline"><mat-label>Localidad</mat-label><input matInput formControlName="localidad"></mat-form-field>
+                <mat-form-field appearance="outline"><mat-label>Provincia</mat-label><input matInput formControlName="provincia"></mat-form-field>
+                <mat-form-field appearance="outline"><mat-label>País</mat-label><input matInput formControlName="pais"></mat-form-field>
+              </div>
+            </div>
+            <div class="form-actions"><button mat-flat-button color="primary" class="md-primary-button" type="button" [disabled]="form.invalid || guardando" (click)="guardar()"><mat-icon>save</mat-icon>{{ guardando ? 'Guardando...' : 'Guardar cambios' }}</button></div>
+          </form>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="config-card logo-card">
+        <mat-card-header>
+          <div class="section-icon purple"><mat-icon>palette</mat-icon></div>
+          <div><mat-card-title>Identidad visual</mat-card-title><mat-card-subtitle>Logo utilizado por MotorDesk</mat-card-subtitle></div>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="logo-section">
+            <div class="logo-preview">
+              @if (logoPreview) { <img [src]="logoPreview" alt="Logo del taller"> }
+              @else { <div class="logo-placeholder"><mat-icon>image</mat-icon><span>Sin logo</span></div> }
+            </div>
+            <p class="logo-help">Formatos permitidos: PNG, JPG, JPEG y WEBP. Máximo 5 MB.</p>
+            <input #logoInput type="file" hidden accept="image/jpeg,image/png,image/webp" (change)="seleccionarLogo($event)">
+            <button mat-stroked-button type="button" [disabled]="subiendoLogo" (click)="logoInput.click()"><mat-icon>upload</mat-icon>{{ subiendoLogo ? 'Subiendo...' : logoPreview ? 'Cambiar logo' : 'Subir logo' }}</button>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  }
+</section>

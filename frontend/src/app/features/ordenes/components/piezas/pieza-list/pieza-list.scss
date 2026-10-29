@@ -1,0 +1,109 @@
+.header {
+
+  display: flex;
+
+  justify-content: space-between;
+
+  align-items: center;
+
+  margin-bottom: 16px;
+
+}
+
+.title {
+
+  margin: 0;
+
+}
+
+.full-width {
+
+  width: 100%;
+
+}
+
+table {
+
+  width: 100%;
+
+}
+
+.mat-column-acciones {
+
+  width: 120px;
+
+  text-align: center;
+
+}
+
+.mat-column-cantidad,
+.mat-column-precioUnitario,
+.mat-column-total {
+
+  width: 140px;
+
+}
+
+.mat-column-origen {
+
+  width: 125px;
+
+}
+
+.pieza-referencia {
+
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 2px;
+
+}
+
+.pieza-referencia small {
+
+  font-size: 11px;
+
+  opacity: 0.65;
+
+}
+
+.chip-almacen {
+
+  --mdc-chip-elevated-container-color: #e8f5e9;
+
+}
+
+.chip-manual {
+
+  --mdc-chip-elevated-container-color: #f5f5f5;
+
+}
+
+:host-context(.md-dark-theme) .chip-almacen {
+  --mdc-chip-elevated-container-color: #123b2a;
+}
+
+:host-context(.md-dark-theme) .chip-manual {
+  --mdc-chip-elevated-container-color: #263248;
+}
+
+mat-chip mat-icon {
+
+  width: 16px;
+
+  height: 16px;
+
+  margin-right: 4px;
+
+  font-size: 16px;
+
+}
+
+:host {
+
+  display: block;
+
+  margin-top: 24px;
+
+}

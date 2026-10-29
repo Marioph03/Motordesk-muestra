@@ -1,0 +1,21 @@
+:host { display: block; padding: 24px; }
+
+.controles-semana { display: flex; align-items: center; gap: 8px; margin: 18px 0; }
+.controles-semana strong { min-width: 210px; text-align: center; }
+.planificacion-contenedor { overflow-x: auto; }
+.planificacion-grid { display: grid; grid-template-columns: minmax(180px, 1.2fr) repeat(7, minmax(150px, 1fr)); min-width: 1100px; border: 1px solid #e1e5eb; border-radius: 8px; overflow: hidden; }
+.cabecera-personal, .cabecera-dia { padding: 12px; background: #f5f7fa; border-bottom: 1px solid #e1e5eb; font-weight: 600; }
+.cabecera-dia { display: flex; flex-direction: column; align-items: center; gap: 2px; }
+.cabecera-dia span, .usuario-info small { color: #657184; font-size: 12px; text-transform: capitalize; }
+.usuario-info, .celda-dia { min-height: 96px; padding: 10px; border-bottom: 1px solid #e8ebf0; border-right: 1px solid #e8ebf0; }
+.usuario-info { display: flex; flex-direction: column; gap: 4px; justify-content: center; }
+.celda-dia { display: flex; flex-direction: column; gap: 6px; }
+.bloque-planificacion { display: flex; align-items: flex-start; gap: 5px; padding: 6px; border-radius: 6px; font-size: 12px; line-height: 1.25; }
+.bloque-planificacion mat-icon { width: 16px; height: 16px; font-size: 16px; flex: 0 0 auto; }
+.bloque-cita { color: #075caa; background: #e3f2fd; }
+.bloque-vacaciones { color: #9a5700; background: #fff3df; }
+.bloque-ausencia, .bloque-otro { color: #b42318; background: #feeceb; }
+.libre { align-self: center; color: #8993a4; font-size: 13px; }
+.estado-vacio { margin: 28px 0; color: #687386; text-align: center; }
+
+@media (max-width: 640px) { :host { padding: 12px; } .controles-semana strong { min-width: 0; flex: 1; } }

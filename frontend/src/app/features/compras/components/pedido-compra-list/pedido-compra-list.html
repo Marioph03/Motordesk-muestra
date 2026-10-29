@@ -1,0 +1,405 @@
+<mat-card>
+
+    <mat-card-header>
+
+        <mat-card-title>
+            Compras
+        </mat-card-title>
+
+    </mat-card-header>
+
+
+    <mat-card-content>
+
+        <div class="resumen-compras">
+
+            <div class="resumen-item">
+
+                <span>
+                    Borradores
+                </span>
+
+                <strong>
+                    {{ totalBorradores }}
+                </strong>
+
+            </div>
+
+            <div class="resumen-item pendiente">
+
+                <span>
+                    Pendientes de recibir
+                </span>
+
+                <strong>
+                    {{ totalPendientesRecepcion }}
+                </strong>
+
+            </div>
+
+            <div class="resumen-item">
+
+                <span>
+                    Recibidos
+                </span>
+
+                <strong>
+                    {{ totalRecibidos }}
+                </strong>
+
+            </div>
+
+        </div>
+
+
+        <div class="acciones-superiores">
+
+            <div class="filtros">
+
+                <mat-form-field
+                    appearance="outline"
+                    class="buscador">
+
+                    <mat-label>
+                        Buscar pedido
+                    </mat-label>
+
+                    <mat-icon matPrefix>
+                        search
+                    </mat-icon>
+
+                    <input
+                        matInput
+                        [formControl]="filtroTexto"
+                        placeholder="Número, proveedor, CIF...">
+
+                </mat-form-field>
+
+
+                <mat-form-field
+                    appearance="outline">
+
+                    <mat-label>
+                        Estado
+                    </mat-label>
+
+                    <mat-select
+                        [(value)]="filtroEstado">
+
+                        @for (
+                            estado of estados;
+                            track estado
+                        ) {
+
+                            <mat-option
+                                [value]="estado">
+
+                                {{
+                                    estado === 'TODOS'
+                                        ? 'Todos'
+                                        : getEstadoTexto(estado)
+                                }}
+
+                            </mat-option>
+
+                        }
+
+                    </mat-select>
+
+                </mat-form-field>
+
+            </div>
+
+
+            <button
+                mat-flat-button
+                color="primary"
+                routerLink="/compras/pedidos/nuevo">
+
+                <mat-icon>
+                    add
+                </mat-icon>
+
+                Nuevo pedido
+
+            </button>
+
+        </div>
+
+
+        @if (
+            pedidosFiltrados.length === 0
+        ) {
+
+            <div class="sin-pedidos">
+
+                <mat-icon>
+                    shopping_cart
+                </mat-icon>
+
+                <p>
+                    No hay pedidos para mostrar.
+                </p>
+
+            </div>
+
+        } @else {
+
+            <table
+                mat-table
+                [dataSource]="pedidosFiltrados"
+                class="pedidos-table">
+
+
+                <ng-container matColumnDef="numero">
+
+                    <th
+                        mat-header-cell
+                        *matHeaderCellDef>
+
+                        Pedido
+
+                    </th>
+
+                    <td
+                        mat-cell
+                        *matCellDef="let pedido">
+
+                        <strong>
+                            {{ pedido.numero }}
+                        </strong>
+
+                    </td>
+
+                </ng-container>
+
+
+                <ng-container matColumnDef="fecha">
+
+                    <th
+                        mat-header-cell
+                        *matHeaderCellDef>
+
+                        Fecha
+
+                    </th>
+
+                    <td
+                        mat-cell
+                        *matCellDef="let pedido">
+
+                        {{
+                            pedido.fecha
+                            | date:'dd/MM/yyyy'
+                        }}
+
+                    </td>
+
+                </ng-container>
+
+
+                <ng-container matColumnDef="proveedor">
+
+                    <th
+                        mat-header-cell
+                        *matHeaderCellDef>
+
+                        Proveedor
+
+                    </th>
+
+                    <td
+                        mat-cell
+                        *matCellDef="let pedido">
+
+                        <div class="proveedor-cell">
+
+                            <strong>
+                                {{ pedido.proveedor.nombre }}
+                            </strong>
+
+                            <small>
+                                {{ pedido.proveedor.cif }}
+                            </small>
+
+                        </div>
+
+                    </td>
+
+                </ng-container>
+
+
+                <ng-container matColumnDef="estado">
+
+                    <th
+                        mat-header-cell
+                        *matHeaderCellDef>
+
+                        Estado
+
+                    </th>
+
+                    <td
+                        mat-cell
+                        *matCellDef="let pedido">
+
+                        <mat-chip
+                            [class.chip-borrador]="
+                                pedido.estado === 'BORRADOR'
+                            "
+                            [class.chip-enviado]="
+                                pedido.estado === 'ENVIADO'
+                            "
+                            [class.chip-parcial]="
+                                pedido.estado === 'RECIBIDO_PARCIAL'
+                            "
+                            [class.chip-recibido]="
+                                pedido.estado === 'RECIBIDO'
+                            "
+                            [class.chip-cancelado]="
+                                pedido.estado === 'CANCELADO'
+                            ">
+
+                            {{
+                                getEstadoTexto(
+                                    pedido.estado
+                                )
+                            }}
+
+                        </mat-chip>
+
+                    </td>
+
+                </ng-container>
+
+
+                <ng-container matColumnDef="recepcion">
+
+                    <th
+                        mat-header-cell
+                        *matHeaderCellDef>
+
+                        Recepción
+
+                    </th>
+
+                    <td
+                        mat-cell
+                        *matCellDef="let pedido">
+
+                        @if (
+                            pedido.estado === 'ENVIADO'
+                            ||
+                            pedido.estado === 'RECIBIDO_PARCIAL'
+                            ||
+                            pedido.estado === 'RECIBIDO'
+                        ) {
+
+                            <div class="recepcion-cell">
+
+                                <strong>
+                                    {{
+                                        porcentajeRecibido(
+                                            pedido
+                                        )
+                                    }} %
+                                </strong>
+
+                                <small>
+                                    mercancía recibida
+                                </small>
+
+                            </div>
+
+                        } @else {
+
+                            -
+
+                        }
+
+                    </td>
+
+                </ng-container>
+
+
+                <ng-container matColumnDef="total">
+
+                    <th
+                        mat-header-cell
+                        *matHeaderCellDef>
+
+                        Total
+
+                    </th>
+
+                    <td
+                        mat-cell
+                        *matCellDef="let pedido">
+
+                        <strong>
+                            {{
+                                pedido.total
+                                | number:'1.2-2'
+                            }} €
+                        </strong>
+
+                    </td>
+
+                </ng-container>
+
+
+                <ng-container matColumnDef="acciones">
+
+                    <th
+                        mat-header-cell
+                        *matHeaderCellDef>
+
+                        Acciones
+
+                    </th>
+
+                    <td
+                        mat-cell
+                        *matCellDef="let pedido">
+
+                        <a
+                            mat-icon-button
+                            [routerLink]="[
+                                '/compras/pedidos',
+                                pedido.id
+                            ]">
+
+                            <mat-icon>
+                                visibility
+                            </mat-icon>
+
+                        </a>
+
+                    </td>
+
+                </ng-container>
+
+
+                <tr
+                    mat-header-row
+                    *matHeaderRowDef="
+                        displayedColumns
+                    ">
+                </tr>
+
+                <tr
+                    mat-row
+                    *matRowDef="
+                        let row;
+                        columns:
+                            displayedColumns
+                    ">
+                </tr>
+
+            </table>
+
+        }
+
+    </mat-card-content>
+
+</mat-card>

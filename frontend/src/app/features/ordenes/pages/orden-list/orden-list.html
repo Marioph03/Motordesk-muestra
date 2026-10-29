@@ -1,0 +1,308 @@
+<div class="page-container">
+
+    <div class="page-header">
+
+        <h1>{{ titulo }}</h1>
+
+        <div class="tipo-selector" aria-label="Tipo de documento">
+            <button mat-button [class.tipo-activo]="esTodos" (click)="seleccionarTipo('TODOS')">
+                <mat-icon>apps</mat-icon>
+                Todos
+            </button>
+            <button mat-button [class.tipo-activo]="tipoSeleccionado === 'OR'" (click)="seleccionarTipo('OR')">
+                <mat-icon>build</mat-icon>
+                Órdenes de reparación
+            </button>
+            <button mat-button [class.tipo-activo]="esPresupuestos" (click)="seleccionarTipo('PR')">
+                <mat-icon>request_quote</mat-icon>
+                Presupuestos
+            </button>
+        </div>
+
+    </div>
+    @if (ordenesSeleccionadas.size > 0) { <button mat-flat-button color="accent" [disabled]="ordenesSeleccionadas.size < 2" (click)="generarFacturaConjunta()"><mat-icon>receipt_long</mat-icon>Facturar seleccionadas ({{ ordenesSeleccionadas.size }})</button> }
+
+    <div class="toolbar">
+
+        <button
+            mat-flat-button
+            color="primary"
+            routerLink="/ordenes/nuevo">
+
+            <mat-icon>add</mat-icon>
+
+            Nueva orden
+
+        </button>
+
+        <button
+            mat-stroked-button
+            color="primary"
+            routerLink="/ordenes/nuevo"
+            [queryParams]="{ tipo: 'PR' }">
+
+            <mat-icon>request_quote</mat-icon>
+
+            Nuevo presupuesto
+
+        </button>
+
+        <mat-form-field appearance="outline" class="estado-filter">
+            <mat-label>Estado</mat-label>
+            <mat-select [(value)]="estadoSeleccionado" (selectionChange)="filtrarPorEstado()">
+                <mat-option value="">Todos los estados</mat-option>
+                @for (estado of estadosDisponibles; track estado) {
+                    <mat-option [value]="estado">{{ estado }}</mat-option>
+                }
+            </mat-select>
+        </mat-form-field>
+
+        <mat-form-field
+            appearance="outline"
+            class="search-field">
+
+            <mat-label>Buscar documento</mat-label>
+
+            <input
+                matInput
+                [(ngModel)]="busqueda"
+                (keyup.enter)="buscar()">
+
+        </mat-form-field>
+
+        <button
+            mat-flat-button
+            color="primary"
+            (click)="buscar()">
+
+            <mat-icon>search</mat-icon>
+
+            Buscar
+
+        </button>
+
+    </div>
+
+    @if (loading) {
+
+        <div class="loading-container">
+
+            <mat-spinner diameter="40"></mat-spinner>
+
+            <p>Cargando órdenes...</p>
+
+        </div>
+
+    }
+
+    @if (!loading) {
+
+        <div class="table-container">
+
+            <table
+                mat-table
+                [dataSource]="dataSource">
+
+                <ng-container matColumnDef="seleccion"><th mat-header-cell *matHeaderCellDef></th><td mat-cell *matCellDef="let orden"><mat-checkbox [disabled]="!puedeSeleccionar(orden)" [checked]="ordenesSeleccionadas.has(orden.id)" (change)="cambiarSeleccion(orden, $event.checked)"></mat-checkbox></td></ng-container>
+
+                <ng-container matColumnDef="tipo">
+                    <th mat-header-cell *matHeaderCellDef>Tipo</th>
+                    <td mat-cell *matCellDef="let orden">
+                        <mat-chip [class]="getTipoClass(orden.tipo)">
+                            {{ orden.tipo }}
+                        </mat-chip>
+                    </td>
+                </ng-container>
+
+                <ng-container matColumnDef="numero">
+
+                    <th mat-header-cell *matHeaderCellDef>
+                        Nº Orden
+                    </th>
+
+                    <td mat-cell *matCellDef="let orden">
+                        {{ orden.numero }}
+                    </td>
+
+                </ng-container>
+
+                <ng-container matColumnDef="vehiculo">
+
+                    <th mat-header-cell *matHeaderCellDef>
+                        Vehículo
+                    </th>
+
+                    <td mat-cell *matCellDef="let orden">
+
+                        <div class="vehiculo-info">
+
+                            <strong>
+                                {{ orden.vehiculo?.matricula }}
+                            </strong>
+
+                            <span>
+                                {{ orden.vehiculo?.marca }}
+                                {{ orden.vehiculo?.modelo }}
+                            </span>
+
+                        </div>
+
+                    </td>
+
+                </ng-container>
+
+                <ng-container matColumnDef="fechaEntrada">
+
+                    <th mat-header-cell *matHeaderCellDef>
+                        Fecha entrada
+                    </th>
+
+                    <td mat-cell *matCellDef="let orden">
+                        {{ orden.fecha_entrada | date:'dd/MM/yyyy' }}
+                    </td>
+
+                </ng-container>
+
+                <ng-container matColumnDef="estado">
+
+                    <th mat-header-cell *matHeaderCellDef>
+                        Estado
+                    </th>
+
+                    <td mat-cell *matCellDef="let orden">
+
+                <mat-chip
+                  [class]="getEstadoClass(orden.estado)">
+
+                    {{ orden.estado }}
+
+                </mat-chip>
+
+              </td>
+
+                </ng-container>
+
+                <ng-container matColumnDef="importe">
+
+                    <th mat-header-cell *matHeaderCellDef>
+                        Total
+                    </th>
+
+                    <td mat-cell *matCellDef="let orden">
+                        {{ orden.importe_total | number:'1.2-2' }} €
+                    </td>
+
+                </ng-container>
+
+                <ng-container matColumnDef="acciones">
+
+                    <th
+                        mat-header-cell
+                        *matHeaderCellDef
+                        class="acciones-header">
+
+                        Acciones
+
+                    </th>
+
+                    <td mat-cell *matCellDef="let orden">
+
+                        <div class="acciones">
+
+                            <button
+                                mat-icon-button
+                                color="primary"
+                                (click)="editar(orden.id)">
+
+                                <mat-icon>edit</mat-icon>
+
+                            </button>
+
+                            <button
+                                mat-icon-button
+                                color="warn"
+                                [disabled]="orden.estado === 'Facturada'"
+                                (click)="eliminar(orden.id)">
+
+                                <mat-icon>delete</mat-icon>
+
+                            </button>
+
+                            @if (orden.tipo !== 'PR') {
+                            <button
+                              mat-icon-button
+                              color="accent"
+                              [disabled]="orden.estado !== 'Facturada' && orden.estado !== 'Cerrada'"
+                              (click)="generarFactura(orden.id)">
+
+                              <mat-icon>
+
+                                receipt_long
+
+                              </mat-icon>
+
+                            </button>
+                            } @else if (orden.tipo === 'PR' && orden.estado === 'Aceptado') {
+                            <button
+                              mat-icon-button
+                              color="primary"
+                              matTooltip="Convertir en orden de reparación"
+                              (click)="convertirEnOrden(orden)">
+                              <mat-icon>build_circle</mat-icon>
+                            </button>
+                            }
+
+                        </div>
+
+                    </td>
+
+                </ng-container>
+
+                <tr
+                    mat-header-row
+                    *matHeaderRowDef="displayedColumns">
+                </tr>
+
+                <tr
+                    mat-row
+                    *matRowDef="let row; columns: displayedColumns;">
+                </tr>
+
+            </table>
+
+        </div>
+
+        <mat-paginator
+            [length]="ordenes?.total ?? 0"
+            [pageIndex]="page - 1"
+            [pageSize]="size"
+            [pageSizeOptions]="[5,10,20,50]"
+            (page)="cambiarPagina($event)">
+        </mat-paginator>
+
+    }
+
+    @if (!loading && dataSource.data.length === 0) {
+
+        <div class="empty-state">
+
+            <mat-icon>search_off</mat-icon>
+
+            <h2>No se encontraron órdenes</h2>
+
+            <p>Prueba con otro término de búsqueda.</p>
+
+            <button
+                mat-flat-button
+                color="primary"
+                (click)="limpiarBusqueda()">
+
+                Limpiar búsqueda
+
+            </button>
+
+        </div>
+
+    }
+
+</div>

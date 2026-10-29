@@ -1,0 +1,201 @@
+<h2 mat-dialog-title>
+
+  {{ isEditMode ? 'Editar pieza' : 'Nueva pieza' }}
+
+</h2>
+
+<mat-dialog-content>
+
+  <form
+    [formGroup]="form"
+    class="form">
+
+    <div class="origen-pieza">
+
+      <button
+        mat-stroked-button
+        type="button"
+        [class.activo]="origenPieza === 'MANUAL'"
+        (click)="cambiarOrigen('MANUAL')">
+
+        <mat-icon>edit</mat-icon>
+        Manual
+
+      </button>
+
+      <button
+        mat-stroked-button
+        type="button"
+        [class.activo]="origenPieza === 'ALMACEN'"
+        (click)="cambiarOrigen('ALMACEN')">
+
+        <mat-icon>inventory_2</mat-icon>
+        Almacén
+
+      </button>
+
+    </div>
+
+    @if (origenPieza === 'ALMACEN') {
+
+      <app-autocomplete-select
+        class="full-width"
+        formControlName="articulo_stock_id"
+        etiqueta="Artículo de almacén"
+        [items]="articulosStock"
+        [mostrar]="etiquetaArticulo"
+        (seleccionado)="seleccionarArticuloStock($event)">
+      </app-autocomplete-select>
+
+    }
+
+    <mat-form-field appearance="outline" class="full-width">
+
+      <mat-label>Descripción</mat-label>
+
+      <input
+        matInput
+        formControlName="descripcion"
+        [readonly]="origenPieza === 'ALMACEN'">
+
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+
+      <mat-label>Cantidad</mat-label>
+
+      <input
+        matInput
+        type="number"
+        formControlName="cantidad">
+
+    </mat-form-field>
+
+    @if (
+      origenPieza === 'ALMACEN'
+      && articuloStockSeleccionado
+    ) {
+
+      <div class="info-stock">
+
+        <mat-icon>inventory_2</mat-icon>
+
+        <span>
+          Stock disponible:
+          <strong>{{ stockDisponible | number:'1.0-2' }}</strong>
+        </span>
+
+      </div>
+
+    }
+
+    @if (cantidadSuperaStock) {
+
+      <div class="stock-error">
+
+        <mat-icon>warning</mat-icon>
+
+        <span>
+          No hay suficiente stock. Disponibles:
+          {{ stockDisponible | number:'1.0-2' }}
+        </span>
+
+      </div>
+
+    }
+
+    <mat-form-field appearance="outline">
+
+      <mat-label>Precio unitario (sin IVA)</mat-label>
+
+      <input
+        matInput
+        type="number"
+        formControlName="precio_unitario">
+
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+
+      <mat-label>Descuento (%)</mat-label>
+
+      <input
+        matInput
+        type="number"
+        min="0"
+        max="100"
+        step="1"
+        formControlName="descuento_porcentaje">
+
+      <span matTextSuffix>%</span>
+
+      @if (
+        form.controls.descuento_porcentaje.invalid &&
+        form.controls.descuento_porcentaje.touched
+      ) {
+
+        <mat-error>
+
+          Introduce un porcentaje entre 0 y 100.
+
+        </mat-error>
+
+      }
+
+    </mat-form-field>
+
+    <div class="importe-sin-iva">
+      Importe tras descuento, sin IVA:
+      <strong>{{ importeSinIva | number:'1.2-2' }} €</strong>
+    </div>
+
+    <app-autocomplete-select
+      formControlName="proveedor_id"
+      etiqueta="Proveedor"
+      placeholder="Sin proveedor; escribe para buscar"
+      [items]="proveedores"
+      [mostrar]="etiquetaProveedor">
+    </app-autocomplete-select>
+
+    <mat-form-field appearance="outline">
+
+      <mat-label>Referencia</mat-label>
+
+      <input
+        matInput
+        formControlName="referencia"
+        [readonly]="origenPieza === 'ALMACEN'">
+
+    </mat-form-field>
+
+  @if (data.esGarantia) {
+    <mat-checkbox formControlName="cubierto_garantia">Cubierto por garantía</mat-checkbox>
+  }
+
+  </form>
+
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+
+  <button
+    mat-button
+    type="button"
+    (click)="cancelar()">
+
+    Cancelar
+
+  </button>
+
+  <button
+    mat-raised-button
+    color="primary"
+    type="button"
+    [disabled]="form.invalid || cantidadSuperaStock"
+    (click)="guardar()">
+
+    {{ isEditMode ? 'Guardar cambios' : 'Crear pieza' }}
+
+  </button>
+
+</mat-dialog-actions>

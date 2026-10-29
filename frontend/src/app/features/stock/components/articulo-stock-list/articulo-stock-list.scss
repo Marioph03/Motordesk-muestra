@@ -1,0 +1,262 @@
+mat-card {
+    margin: 24px;
+}
+
+.nav-stock {
+    display: flex;
+    gap: 8px;
+    margin: 8px 0 16px;
+}
+
+.stock-resumen {
+    display: grid;
+    grid-template-columns:
+        repeat(
+            3,
+            minmax(0, 1fr)
+        );
+
+    gap: 16px;
+
+    margin: 20px 0;
+}
+
+.valor-inventario {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+    margin: 0 0 24px;
+}
+
+.valor-item {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    padding: 16px;
+    border: 1px solid rgba(0, 0, 0, 0.10);
+    border-radius: 8px;
+}
+
+.valor-item span,
+.valor-item strong {
+    font-size: 13px;
+}
+
+.valor-item strong {
+    color: #075fbc;
+    font-size: 22px;
+}
+
+.resumen-item {
+    padding: 16px;
+
+    border: 1px solid
+        rgba(0, 0, 0, 0.10);
+
+    border-radius: 8px;
+
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.resumen-item span {
+    font-size: 13px;
+    opacity: 0.7;
+}
+
+.resumen-item strong {
+    font-size: 25px;
+}
+
+.resumen-item.alerta strong {
+    color: #ef6c00;
+}
+
+.resumen-item.peligro strong {
+    color: #c62828;
+}
+
+.acciones-superiores {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 16px;
+
+    margin-bottom: 20px;
+}
+
+.buscador {
+    width: min(
+        450px,
+        100%
+    );
+}
+
+.filtros-catalogo {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(150px, 1fr));
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.stock-table {
+    width: 100%;
+}
+
+.stock-bajo {
+    color: #c62828;
+}
+
+.fila-stock-bajo {
+    background:
+        rgba(
+            255,
+            152,
+            0,
+            0.035
+        );
+}
+
+.chip-stock-ok {
+    --mdc-chip-elevated-container-color:
+        #e8f5e9;
+}
+
+.chip-stock-bajo {
+    --mdc-chip-elevated-container-color:
+        #fff3e0;
+}
+
+.chip-sin-stock {
+    --mdc-chip-elevated-container-color:
+        #ffebee;
+}
+
+.chip-inactivo {
+    --mdc-chip-elevated-container-color: #eceff1;
+}
+
+.sin-articulos {
+    padding: 50px;
+
+    text-align: center;
+
+    opacity: 0.65;
+}
+
+.sin-articulos mat-icon {
+    width: 48px;
+    height: 48px;
+    font-size: 48px;
+}
+
+.actividad-stock {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 20px;
+    margin-top: 28px;
+}
+
+.actividad-card {
+    padding: 20px;
+    border: 1px solid rgba(0, 0, 0, 0.10);
+    border-radius: 10px;
+}
+
+.actividad-titulo {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 14px;
+}
+
+.actividad-titulo h2 {
+    margin: 0;
+    font-size: 18px;
+}
+
+.lista-consumidos {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin: 0;
+    padding-left: 28px;
+}
+
+.lista-consumidos li {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.lista-consumidos li > div,
+.movimiento-reciente > div {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.lista-consumidos small,
+.movimiento-reciente small,
+.sin-actividad {
+    opacity: 0.68;
+}
+
+.lista-movimientos {
+    display: flex;
+    flex-direction: column;
+}
+
+.movimiento-reciente {
+    display: grid;
+    grid-template-columns: 44px 56px minmax(0, 1fr);
+    gap: 8px;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.movimiento-reciente:last-child {
+    border-bottom: 0;
+}
+
+.movimiento-reciente time {
+    font-size: 13px;
+    opacity: 0.7;
+}
+
+.movimiento-reciente > strong {
+    color: #2e7d32;
+}
+
+.movimiento-reciente > strong.salida {
+    color: #b3261e;
+}
+
+@media (max-width: 800px) {
+
+    .stock-resumen {
+        grid-template-columns: 1fr;
+    }
+
+    .valor-inventario,
+    .actividad-stock {
+        grid-template-columns: 1fr;
+    }
+
+    .acciones-superiores {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .buscador {
+        width: 100%;
+    }
+
+    .filtros-catalogo {
+        grid-template-columns: 1fr;
+    }
+
+}

@@ -1,0 +1,16 @@
+:host { display: block; }
+.apariencia-page { max-width: 900px; }
+.appearance-card { padding: 8px; }
+.theme-options { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; margin-top: 22px; }
+.theme-option { position: relative; display: flex; flex-direction: column; align-items: flex-start; gap: 7px; padding: 18px; border: 2px solid var(--md-border); border-radius: var(--md-radius-md); background: var(--md-surface); color: var(--md-text); cursor: pointer; text-align: left; transition: border-color .15s ease, transform .15s ease; }
+.theme-option:hover { transform: translateY(-2px); border-color: var(--md-primary); }
+.theme-option.selected { border-color: var(--md-primary); box-shadow: 0 0 0 3px var(--md-primary-soft); }
+.theme-option > mat-icon { position: absolute; top: 14px; right: 14px; color: var(--md-primary); }
+.theme-option small { color: var(--md-text-secondary); }
+.theme-preview { display: grid; grid-template-columns: 30% 1fr; gap: 5px; width: 100%; height: 116px; padding: 7px; border-radius: 7px; background: #f4f7fb; }
+.theme-preview span:first-child { grid-row: 1 / span 2; border-radius: 4px; background: #08203f; }
+.theme-preview span:not(:first-child) { border-radius: 4px; background: #fff; }
+.theme-option.dark .theme-preview { background: #111827; }
+.theme-option.dark .theme-preview span:first-child { background: #020d20; }
+.theme-option.dark .theme-preview span:not(:first-child) { background: #263248; }
+@media (max-width: 620px) { .theme-options { grid-template-columns: 1fr; } }

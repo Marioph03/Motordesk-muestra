@@ -1,0 +1,187 @@
+<mat-card>
+
+  <mat-card-content>
+
+    <div class="header">
+
+      <h2 class="title">
+
+        Mano de obra
+
+      </h2>
+
+      @if (!soloLectura) {
+      <button
+        mat-raised-button
+        color="primary"
+        type="button"
+        (click)="abrirDialogoNuevaOperacion()">
+
+        <mat-icon>add</mat-icon>
+
+        Nueva operación
+
+      </button>
+      }
+
+    </div>
+
+    <table
+      mat-table
+      [dataSource]="manoObra"
+      class="full-width mat-elevation-z1">
+
+      <ng-container matColumnDef="concepto">
+
+        <th mat-header-cell *matHeaderCellDef>
+
+          Concepto
+
+        </th>
+
+        <td mat-cell *matCellDef="let linea">
+
+          {{ linea.concepto }}
+
+        </td>
+
+      </ng-container>
+
+      <ng-container matColumnDef="codigoManoObra">
+
+        <th mat-header-cell *matHeaderCellDef>
+
+          Código M. O.
+
+        </th>
+
+        <td mat-cell *matCellDef="let linea">
+
+          {{ linea.codigo_mano_obra || '—' }}
+
+        </td>
+
+      </ng-container>
+
+      <ng-container matColumnDef="horas">
+
+        <th mat-header-cell *matHeaderCellDef>
+
+          Horas
+
+        </th>
+
+        <td mat-cell *matCellDef="let linea">
+
+          {{ linea.horas }}
+
+        </td>
+
+      </ng-container>
+
+      <ng-container matColumnDef="precioHora">
+
+        <th mat-header-cell *matHeaderCellDef>
+
+          Precio/h sin IVA
+
+        </th>
+
+        <td mat-cell *matCellDef="let linea">
+
+          {{ linea.precio_hora | number:'1.2-2' }} €
+
+        </td>
+
+      </ng-container>
+
+      <ng-container matColumnDef="descuento">
+
+        <th mat-header-cell *matHeaderCellDef>
+
+          Desc.
+
+        </th>
+
+        <td mat-cell *matCellDef="let linea">
+
+          {{ linea.descuento_porcentaje }} %
+
+        </td>
+
+      </ng-container>
+
+      <ng-container matColumnDef="total">
+
+        <th mat-header-cell *matHeaderCellDef>
+
+          Importe sin IVA
+
+        </th>
+
+        <td mat-cell *matCellDef="let linea">
+
+          {{ linea.total | number:'1.2-2' }} €
+
+        </td>
+
+      </ng-container>
+
+      <ng-container matColumnDef="cobertura">
+        <th mat-header-cell *matHeaderCellDef>Cobertura</th>
+        <td mat-cell *matCellDef="let linea">
+          {{ linea.cubierto_garantia ? 'CUBIERTO' : 'NO CUBIERTO' }}
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="acciones">
+
+        <th mat-header-cell *matHeaderCellDef>
+
+          Acciones
+
+        </th>
+
+        <td mat-cell *matCellDef="let linea">
+
+          @if (!soloLectura) {
+          <button
+            mat-icon-button
+            color="primary"
+            type="button"
+            (click)="editar(linea)">
+
+            <mat-icon>edit</mat-icon>
+
+          </button>
+
+          <button
+            mat-icon-button
+            color="warn"
+            type="button"
+            (click)="eliminar(linea)">
+
+            <mat-icon>delete</mat-icon>
+
+          </button>
+          }
+
+        </td>
+
+      </ng-container>
+
+      <tr
+        mat-header-row
+        *matHeaderRowDef="displayedColumns">
+      </tr>
+
+      <tr
+        mat-row
+        *matRowDef="let row; columns: displayedColumns;">
+      </tr>
+
+    </table>
+
+  </mat-card-content>
+
+</mat-card>

@@ -1,0 +1,1447 @@
+<mat-card>
+
+    <mat-card-header>
+
+        <mat-card-title>
+            {{ tituloDocumento }}
+        </mat-card-title>
+
+    </mat-card-header>
+
+    <mat-card-content>
+
+        <mat-tab-group (selectedIndexChange)="onTabChange($event)">
+
+            <!-- ===================================================== -->
+            <!-- ORDEN -->
+            <!-- ===================================================== -->
+
+            <mat-tab label="Orden">
+
+                <div class="orden-form-content">
+
+                    <form
+                        [formGroup]="form"
+                        class="form">
+
+                        @if (esPresupuesto || esGarantia) {
+                            <mat-form-field appearance="outline">
+                                <mat-label>Tipo de documento</mat-label>
+                                <input matInput [value]="esGarantia ? 'Garantía' : 'Presupuesto'" readonly>
+                            </mat-form-field>
+                            <mat-form-field appearance="outline">
+                                <mat-label>{{ esGarantia ? 'Estado de la garantía' : 'Estado del presupuesto' }}</mat-label>
+                                <input matInput [value]="orden?.estado ?? 'Borrador'" readonly>
+                            </mat-form-field>
+                        } @else {
+                        <mat-form-field appearance="outline">
+
+                            <mat-label>Tipo de orden</mat-label>
+
+                            <mat-select formControlName="tipo">
+
+                                <mat-option value="OR">
+                                    Orden de Reparación
+                                </mat-option>
+
+                            </mat-select>
+
+                        </mat-form-field>
+                        <mat-form-field appearance="outline">
+
+                            <mat-label>Estado</mat-label>
+
+                            <mat-select formControlName="estado">
+
+                                @for (estado of estadosDisponibles; track estado) {
+                                    <mat-option [value]="estado">
+                                        {{ estado }}
+                                    </mat-option>
+                                }
+
+                            </mat-select>
+
+                        </mat-form-field>
+                        }
+
+
+                        <app-autocomplete-select
+                            formControlName="vehiculo_id"
+                            etiqueta="Vehículo"
+                            [items]="vehiculos"
+                            [mostrar]="etiquetaVehiculo">
+                        </app-autocomplete-select>
+
+                        <mat-form-field appearance="outline">
+
+                            <mat-label>Kilómetros de entrada</mat-label>
+
+                            <input
+                                matInput
+                                type="number"
+                                min="0"
+                                formControlName="kilometros_entrada">
+
+                            <mat-hint>
+                                Lectura del cuentakilómetros al recibir el vehículo.
+                            </mat-hint>
+
+                            @if (form.get('kilometros_entrada')?.hasError('min')) {
+                                <mat-error>Los kilómetros no pueden ser negativos.</mat-error>
+                            }
+
+                        </mat-form-field>
+
+
+                        <mat-form-field
+                            appearance="outline"
+                            class="full-width">
+
+                            <mat-label>
+                                Personal asignado
+                            </mat-label>
+
+                            <mat-select
+                                formControlName="usuarios_ids"
+                                multiple>
+
+                                @for (
+                                    usuario of usuarios;
+                                    track usuario.usuario_id
+                                ) {
+
+                                    <mat-option
+                                        [value]="usuario.usuario_id"
+                                        [disabled]="!usuario.disponible">
+                                        {{ usuario.nombre }}
+                                        {{ usuario.apellidos }}
+                                        ·
+                                        {{ usuario.rol }}
+
+                                        @if (!usuario.disponible) {
+                                            ·
+                                            @switch (usuario.motivo) {
+                                                @case ('VACACIONES') {
+                                                    Vacaciones
+                                                }
+                                                @case ('AUSENCIA') {
+                                                    Ausente
+                                                }
+                                                @case ('CITA_ASIGNADA') {
+                                                    Otra cita asignada
+                                                }
+                                                @case ('ORDEN_ASIGNADA') {
+                                                    {{ usuario.conflicto_referencia }}
+                                                }
+                                                @default {
+                                                    No disponible
+                                                }
+                                            }
+                                        }
+                                    </mat-option>
+
+                                }
+
+                            </mat-select>
+
+                            <mat-hint>
+                                Selecciona el personal responsable de la orden.
+                            </mat-hint>
+
+                        </mat-form-field>
+
+
+                        <mat-form-field appearance="outline">
+
+                            <mat-label>
+                                Descripción de la avería
+                            </mat-label>
+
+                            <textarea
+                                matInput
+                                rows="6"
+                                formControlName="descripcion_averia">
+                            </textarea>
+
+                        </mat-form-field>
+
+
+                        <mat-form-field
+                            appearance="outline"
+                            class="full-width">
+
+                            <mat-label>
+                                Diagnóstico
+                            </mat-label>
+
+                            <textarea
+                                matInput
+                                rows="4"
+                                formControlName="diagnostico">
+                            </textarea>
+
+                        </mat-form-field>
+
+
+                        <mat-form-field
+                            appearance="outline"
+                            class="full-width">
+
+                            <mat-label>
+                                Observaciones
+                            </mat-label>
+
+                            <textarea
+                                matInput
+                                rows="4"
+                                formControlName="observaciones">
+                            </textarea>
+
+                        </mat-form-field>
+
+
+                        <mat-form-field
+                            appearance="outline"
+                            class="full-width">
+
+                            <mat-label>
+                                Observaciones internas
+                            </mat-label>
+
+                            <textarea
+                                matInput
+                                rows="4"
+                                formControlName="observaciones_internas">
+                            </textarea>
+
+                        </mat-form-field>
+
+
+                        @if (isEditMode) {
+
+                            @if (!esPresupuesto && orden?.presupuesto_origen_id) {
+                                <mat-card class="summary-card">
+                                    <mat-card-content>
+                                        <div class="summary-row">
+                                            <span>Presupuesto de origen</span>
+                                            <a mat-stroked-button color="primary" [routerLink]="['/ordenes', orden?.presupuesto_origen_id]">
+                                                Abrir presupuesto
+                                            </a>
+                                        </div>
+                                    </mat-card-content>
+                                </mat-card>
+                            }
+
+                            @if (facturaAsociada) {
+
+                                <mat-card class="summary-card">
+
+                                    <mat-card-content>
+
+                                        <div class="summary-row">
+
+                                            <span>Factura asociada</span>
+
+                                            <a
+                                                mat-stroked-button
+                                                color="primary"
+                                                [routerLink]="['/facturas', facturaAsociada.id]">
+
+                                                {{ facturaAsociada.numero }}
+
+                                            </a>
+
+                                        </div>
+
+                                    </mat-card-content>
+
+                                </mat-card>
+
+                            }
+
+                            <mat-card class="summary-card">
+
+                                <mat-card-header>
+
+                                    <mat-card-title>
+                                        Resumen económico
+                                    </mat-card-title>
+
+                                </mat-card-header>
+
+                                <mat-card-content>
+
+                                    <div class="summary-row">
+
+                                        <span>
+                                            Mano de obra
+                                        </span>
+
+                                        <strong>
+                                            {{
+                                                orden?.total_mano_obra ?? 0
+                                                | number:'1.2-2'
+                                            }} €
+                                        </strong>
+
+                                    </div>
+
+
+                                    <div class="summary-row">
+
+                                        <span>
+                                            Piezas
+                                        </span>
+
+                                        <strong>
+                                            {{
+                                                orden?.total_piezas ?? 0
+                                                | number:'1.2-2'
+                                            }} €
+                                        </strong>
+
+                                    </div>
+
+
+                                    <div class="summary-row">
+
+                                        <span>
+                                            Subtotal
+                                        </span>
+
+                                        <strong>
+                                            {{
+                                                orden?.subtotal ?? 0
+                                                | number:'1.2-2'
+                                            }} €
+                                        </strong>
+
+                                    </div>
+
+
+                                    <div class="summary-row">
+
+                                        <span>
+                                            Base imponible
+                                        </span>
+
+                                        <strong>
+                                            {{
+                                                orden?.base_imponible ?? 0
+                                                | number:'1.2-2'
+                                            }} €
+                                        </strong>
+
+                                    </div>
+
+
+                                    <div class="summary-row">
+
+                                        <span>
+                                            IVA (21%)
+                                        </span>
+
+                                        <strong>
+                                            {{
+                                                orden?.iva ?? 0
+                                                | number:'1.2-2'
+                                            }} €
+                                        </strong>
+
+                                    </div>
+
+
+                                    <mat-divider>
+                                    </mat-divider>
+
+
+                                    <div class="summary-row total">
+
+                                        <span>
+                                            TOTAL
+                                        </span>
+
+                                        <strong>
+                                            {{
+                                                orden?.importe_total ?? 0
+                                                | number:'1.2-2'
+                                            }} €
+                                        </strong>
+
+                                    </div>
+
+                                </mat-card-content>
+
+                            </mat-card>
+
+                        }
+
+                    </form>
+
+                    @if (orden?.usuarios_asignados?.length) {
+
+                        <div class="personal-asignado">
+
+                            <h3>
+                                Personal asignado
+                            </h3>
+
+                            <div class="personal-chips">
+
+                                @for (
+                                    usuario of orden!.usuarios_asignados;
+                                    track usuario.id
+                                ) {
+
+                                    <mat-chip>
+
+                                        <mat-icon>
+                                            person
+                                        </mat-icon>
+
+                                        {{ usuario.nombre }}
+                                        {{ usuario.apellidos }}
+
+                                        ·
+
+                                        {{ usuario.rol }}
+
+                                    </mat-chip>
+
+                                }
+
+                            </div>
+
+                        </div>
+
+                    }
+
+                    @if (esPresupuesto && isEditMode && orden) {
+                        <mat-card class="seguimiento-presupuesto">
+                            <mat-card-header>
+                                <mat-card-title>
+                                    <mat-icon>timeline</mat-icon>
+                                    Seguimiento del presupuesto
+                                </mat-card-title>
+                            </mat-card-header>
+
+                            <mat-card-content>
+                                <div class="seguimiento-fila">
+                                    <span>Estado</span>
+                                    <strong>{{ orden.estado }}</strong>
+                                </div>
+                                <div class="seguimiento-fila">
+                                    <span>Fecha de envío</span>
+                                    <strong>{{ orden.fecha_envio_presupuesto ? (orden.fecha_envio_presupuesto | date:'dd/MM/yyyy HH:mm') : '—' }}</strong>
+                                </div>
+                                <div class="seguimiento-fila">
+                                    <span>Canal</span>
+                                    <strong>{{ orden.canal_envio_presupuesto === 'WHATSAPP' ? 'WhatsApp' : orden.canal_envio_presupuesto === 'EMAIL' ? 'Email' : '—' }}</strong>
+                                </div>
+                                <div class="seguimiento-fila">
+                                    <span>Respuesta del cliente</span>
+                                    <strong>{{ orden.fecha_respuesta_presupuesto ? (orden.fecha_respuesta_presupuesto | date:'dd/MM/yyyy HH:mm') : '—' }}</strong>
+                                </div>
+                                @if (ordenGenerada) {
+                                    <div class="seguimiento-fila seguimiento-orden">
+                                        <span>Orden generada</span>
+                                        <a mat-stroked-button color="primary" [routerLink]="['/ordenes', ordenGenerada.id]">
+                                            {{ ordenGenerada.numero }}
+                                            <mat-icon>open_in_new</mat-icon>
+                                            Abrir
+                                        </a>
+                                    </div>
+                                }
+                            </mat-card-content>
+                        </mat-card>
+                    }
+
+                    @if (esGarantia && isEditMode && orden) {
+                        <mat-card class="seguimiento-presupuesto garantia-card">
+                            <mat-card-header>
+                                <mat-card-title><mat-icon>verified_user</mat-icon> Seguimiento de garantía</mat-card-title>
+                            </mat-card-header>
+                            <mat-card-content>
+                                <div class="seguimiento-fila"><span>Estado</span><strong>{{ orden.estado }}</strong></div>
+                                <div class="seguimiento-fila"><span>Orden original</span><strong>{{ orden.orden_origen_garantia_id ? ('#' + orden.orden_origen_garantia_id) : '—' }}</strong></div>
+                                <div class="seguimiento-fila"><span>Factura original</span><strong>{{ orden.factura_origen_garantia_id ? ('#' + orden.factura_origen_garantia_id) : '—' }}</strong></div>
+                                @if (orden.resolucion_garantia) {
+                                    <div class="seguimiento-fila resolucion-garantia"><span>Resolución</span><strong>{{ orden.resolucion_garantia }}</strong></div>
+                                }
+                                <div class="seguimiento-fila"><span>Coste asumido por el taller</span><strong>{{ (orden.coste_asumido_taller ?? 0) | number:'1.2-2' }} €</strong></div>
+                                <div class="seguimiento-fila"><span>Trabajos no cubiertos</span><strong>{{ (orden.trabajos_no_cubiertos ?? 0) | number:'1.2-2' }} €</strong></div>
+                                <div class="seguimiento-fila"><span>IVA cliente</span><strong>{{ (orden.iva_cliente_garantia ?? 0) | number:'1.2-2' }} €</strong></div>
+                                <div class="seguimiento-fila seguimiento-total"><span>Total a pagar por cliente</span><strong>{{ (orden.total_cliente_garantia ?? 0) | number:'1.2-2' }} €</strong></div>
+                                @if (orden.estado === 'Resuelta' && !garantiaTieneConceptosFacturables) {
+                                    <p class="garantia-sin-factura">
+                                        Todos los conceptos están cubiertos: el cliente no debe abonar ningún importe.
+                                    </p>
+                                }
+                            </mat-card-content>
+                        </mat-card>
+                    }
+
+                </div>
+
+            </mat-tab>
+
+
+            <!-- ===================================================== -->
+            <!-- MANO DE OBRA -->
+            <!-- ===================================================== -->
+
+            <mat-tab label="Mano de obra">
+
+                @if (isEditMode && orden) {
+
+                    <app-mano-obra-list
+                        [ordenId]="orden.id"
+                        [soloLectura]="esPresupuestoBloqueado"
+                        [esGarantia]="esGarantia"
+                        (actualizado)="cargarOrden()">
+                    </app-mano-obra-list>
+
+                } @else {
+
+                    <p>
+                        Guarda la orden para añadir mano de obra.
+                    </p>
+
+                }
+
+            </mat-tab>
+
+
+            <!-- ===================================================== -->
+            <!-- PIEZAS -->
+            <!-- ===================================================== -->
+
+            <mat-tab label="Piezas">
+
+                @if (isEditMode && orden) {
+
+                    <app-pieza-list
+                        [ordenId]="orden.id"
+                        [soloLectura]="esPresupuestoBloqueado"
+                        [esGarantia]="esGarantia"
+                        (actualizado)="cargarOrden()">
+                    </app-pieza-list>
+
+                } @else {
+
+                    <p>
+                        Guarda la orden para añadir piezas.
+                    </p>
+
+                }
+
+            </mat-tab>
+
+
+            <!-- ===================================================== -->
+            <!-- ESTADO DEL VEHÍCULO -->
+            <!-- ===================================================== -->
+
+            <mat-tab label="Estado del vehículo">
+
+                @if (isEditMode && orden && !esPresupuestoBloqueado) {
+
+                    <app-estado-vehiculo
+                        [orden_input]="orden">
+                    </app-estado-vehiculo>
+
+                } @else if (esPresupuestoBloqueado) {
+                    <p>El presupuesto ya no se puede modificar fuera del estado Borrador.</p>
+                } @else {
+
+                    <p>
+                        Guarda la orden para registrar el estado
+                        del vehículo.
+                    </p>
+
+                }
+
+            </mat-tab>
+
+
+            <!-- ===================================================== -->
+            <!-- ARCHIVOS -->
+            <!-- ===================================================== -->
+
+            <mat-tab label="Archivos">
+
+                <div class="archivos-container">
+
+                    <h3>
+                        Archivos de la orden
+                    </h3>
+
+
+                    <!-- ============================================= -->
+                    <!-- CATEGORÍA -->
+                    <!-- ============================================= -->
+
+                    @if (!esPresupuestoBloqueado) {
+                    <div class="subida-archivos">
+
+                        <mat-form-field
+                            appearance="outline"
+                            class="categoria-archivo">
+
+                            <mat-label>
+                                Categoría
+                            </mat-label>
+
+                            <mat-select
+                                [(value)]="categoriaArchivo">
+
+                                @for (
+                                    categoria of categoriasArchivo;
+                                    track categoria
+                                ) {
+
+                                    <mat-option
+                                        [value]="categoria">
+
+                                        {{ categoria }}
+
+                                    </mat-option>
+
+                                }
+
+                            </mat-select>
+
+                        </mat-form-field>
+
+
+                        <!-- ========================================= -->
+                        <!-- INPUT OCULTO -->
+                        <!-- ========================================= -->
+
+                        <input
+                            #fileInput
+                            type="file"
+                            class="file-input"
+                            multiple
+                            accept=".pdf,.jpg,.jpeg,.png,.webp"
+                            (change)="seleccionarArchivos($event)"
+                        >
+
+
+                        <!-- ========================================= -->
+                        <!-- DRAG & DROP -->
+                        <!-- ========================================= -->
+
+                        <div
+                            class="drop-zone"
+                            [class.dragging]="arrastrandoArchivos"
+                            (click)="fileInput.click()"
+                            (dragover)="onDragOver($event)"
+                            (dragleave)="onDragLeave($event)"
+                            (drop)="onDrop($event)">
+
+                            <mat-icon class="drop-icon">
+                                cloud_upload
+                            </mat-icon>
+
+                            <strong>
+                                Arrastra archivos aquí
+                            </strong>
+
+                            <span>
+                                o pulsa para seleccionarlos
+                            </span>
+
+                            <small>
+                                PDF · JPG · JPEG · PNG · WEBP
+                                · Máximo 10 MB por archivo
+                            </small>
+
+                        </div>
+
+                    </div>
+                    } @else {
+                        <p>Los archivos del presupuesto se conservan en modo solo lectura.</p>
+                    }
+
+
+                    <!-- ============================================= -->
+                    <!-- ARCHIVOS PENDIENTES DE SUBIR -->
+                    <!-- ============================================= -->
+
+                    @if (archivosSeleccionados.length > 0) {
+
+                        <div class="archivos-pendientes">
+
+                            <div class="pendientes-header">
+
+                                <strong>
+                                    Archivos seleccionados
+                                </strong>
+
+                                <span>
+                                    {{ archivosSeleccionados.length }}
+                                </span>
+
+                            </div>
+
+
+                            @for (
+                                archivo of archivosSeleccionados;
+                                track $index;
+                                let i = $index
+                            ) {
+
+                                <div class="archivo-pendiente">
+
+                                    <mat-icon>
+
+                                        {{
+                                            archivo.type.startsWith('image/')
+                                                ? 'image'
+                                                : 'description'
+                                        }}
+
+                                    </mat-icon>
+
+
+                                    <div class="archivo-pendiente-info">
+
+                                        <strong>
+                                            {{ archivo.name }}
+                                        </strong>
+
+                                        <span>
+                                            {{
+                                                formatearTamano(
+                                                    archivo.size
+                                                )
+                                            }}
+                                        </span>
+
+                                    </div>
+
+
+                                    <button
+                                        mat-icon-button
+                                        type="button"
+                                        matTooltip="Quitar"
+                                        [disabled]="subiendoArchivo"
+                                        (click)="
+                                            quitarArchivoSeleccionado(i)
+                                        ">
+
+                                        <mat-icon>
+                                            close
+                                        </mat-icon>
+
+                                    </button>
+
+                                </div>
+
+                            }
+
+
+                            <button
+                                mat-flat-button
+                                type="button"
+                                class="subir-seleccionados"
+                                [disabled]="subiendoArchivo"
+                                (click)="subirArchivos()">
+
+                                <mat-icon>
+                                    cloud_upload
+                                </mat-icon>
+
+                                @if (subiendoArchivo) {
+
+                                    Subiendo...
+
+                                } @else {
+
+                                    Subir
+                                    {{ archivosSeleccionados.length }}
+                                    archivo(s)
+
+                                }
+
+                            </button>
+
+                            @if (estadoSubidas.length > 0) {
+
+    <div class="estado-subida">
+
+
+        <!-- PROGRESO GENERAL -->
+
+        <div class="progreso-header">
+
+            <strong>
+                Progreso
+            </strong>
+
+            <span>
+                {{
+                    archivosSubidos +
+                    archivosFallidos
+                }}
+                /
+                {{ totalArchivosSubida }}
+            </span>
+
+        </div>
+
+
+        <mat-progress-bar
+            mode="determinate"
+            [value]="progresoSubida">
+        </mat-progress-bar>
+
+
+        <!-- RESULTADO -->
+
+        <div class="resumen-subida">
+
+            @if (archivosSubidos > 0) {
+
+                <span class="subida-ok">
+
+                    <mat-icon>
+                        check_circle
+                    </mat-icon>
+
+                    {{ archivosSubidos }}
+                    subido(s)
+
+                </span>
+
+            }
+
+
+            @if (archivosFallidos > 0) {
+
+                <span class="subida-error">
+
+                    <mat-icon>
+                        error
+                    </mat-icon>
+
+                    {{ archivosFallidos }}
+                    fallido(s)
+
+                </span>
+
+            }
+
+        </div>
+
+
+        <!-- ESTADO INDIVIDUAL -->
+
+        <div class="lista-estado-subida">
+
+            @for (
+                item of estadoSubidas;
+                track item.archivo.name
+            ) {
+
+                <div class="estado-subida-item">
+
+
+                    @switch (item.estado) {
+
+                        @case ('pendiente') {
+
+                            <mat-icon>
+                                schedule
+                            </mat-icon>
+
+                        }
+
+                        @case ('subiendo') {
+
+                            <mat-icon>
+                                cloud_upload
+                            </mat-icon>
+
+                        }
+
+                        @case ('completado') {
+
+                            <mat-icon>
+                                check_circle
+                            </mat-icon>
+
+                        }
+
+                        @case ('error') {
+
+                            <mat-icon>
+                                error
+                            </mat-icon>
+
+                        }
+
+                    }
+
+
+                    <div class="estado-subida-info">
+
+                        <strong>
+                            {{ item.archivo.name }}
+                        </strong>
+
+
+                        @switch (item.estado) {
+
+                            @case ('pendiente') {
+
+                                <span>
+                                    Pendiente
+                                </span>
+
+                            }
+
+                            @case ('subiendo') {
+
+                                <span>
+                                    Subiendo...
+                                </span>
+
+                            }
+
+                            @case ('completado') {
+
+                                <span>
+                                    Subido correctamente
+                                </span>
+
+                            }
+
+                            @case ('error') {
+
+                                <span class="texto-error">
+                                    {{ item.error }}
+                                </span>
+
+                            }
+
+                        }
+
+                    </div>
+
+                </div>
+
+            }
+
+        </div>
+
+    </div>
+
+}
+
+                        </div>
+
+                    }
+
+
+                    <!-- ============================================= -->
+                    <!-- SIN ARCHIVOS GUARDADOS -->
+                    <!-- ============================================= -->
+
+                    @if (archivos.length === 0) {
+
+                        <div class="sin-archivos">
+
+                            <mat-icon>
+                                folder_open
+                            </mat-icon>
+
+                            <p>
+                                Esta orden todavía no tiene archivos.
+                            </p>
+
+                        </div>
+
+                    } @else {
+
+
+                        <!-- ========================================= -->
+                        <!-- FOTOS -->
+                        <!-- ========================================= -->
+
+                        @if (imagenes.length > 0) {
+
+                            <div class="seccion-archivos">
+
+                                <h4>
+                                    Fotos
+                                </h4>
+
+                                <div class="galeria-imagenes">
+
+                                    @for (
+                                        archivo of imagenes;
+                                        track archivo.id
+                                    ) {
+
+                                        <div class="imagen-card">
+
+
+                                            <!-- PREVISUALIZACIÓN -->
+
+                                            <div
+                                                class="imagen-preview"
+                                                (click)="verArchivo(archivo)"
+                                                matTooltip="Ver imagen">
+
+                                                @if (
+                                                    imagenesPreview[
+                                                        archivo.id
+                                                    ]
+                                                ) {
+
+                                                    <img
+                                                        [src]="
+                                                            imagenesPreview[
+                                                                archivo.id
+                                                            ]
+                                                        "
+                                                        [alt]="
+                                                            archivo.nombre_original
+                                                        "
+                                                    >
+
+                                                    <div
+                                                        class="imagen-overlay">
+
+                                                        <mat-icon>
+                                                            visibility
+                                                        </mat-icon>
+
+                                                        <span>
+                                                            Ver
+                                                        </span>
+
+                                                    </div>
+
+                                                } @else {
+
+                                                    <div
+                                                        class="imagen-cargando">
+
+                                                        <mat-icon>
+                                                            image
+                                                        </mat-icon>
+
+                                                    </div>
+
+                                                }
+
+                                            </div>
+
+
+                                            <!-- DATOS Y ACCIONES -->
+
+                                            <div class="imagen-info">
+
+                                                <div class="imagen-datos">
+
+                                                    <strong>
+                                                        {{
+                                                            archivo.nombre_original
+                                                        }}
+                                                    </strong>
+
+                                                    <span>
+
+                                                        {{
+                                                            archivo.categoria
+                                                        }}
+
+                                                        ·
+
+                                                        {{
+                                                            formatearTamano(
+                                                                archivo.tamano
+                                                            )
+                                                        }}
+
+                                                    </span>
+
+                                                </div>
+
+
+                                                <div class="imagen-acciones">
+
+                                                    <button
+                                                        mat-icon-button
+                                                        type="button"
+                                                        matTooltip="Ver"
+                                                        (click)="
+                                                            verArchivo(
+                                                                archivo
+                                                            )
+                                                        ">
+
+                                                        <mat-icon>
+                                                            visibility
+                                                        </mat-icon>
+
+                                                    </button>
+
+
+                                                    <button
+                                                        mat-icon-button
+                                                        type="button"
+                                                        matTooltip="Descargar"
+                                                        (click)="
+                                                            descargarArchivo(
+                                                                archivo
+                                                            )
+                                                        ">
+
+                                                        <mat-icon>
+                                                            download
+                                                        </mat-icon>
+
+                                                    </button>
+
+
+                                                    <button
+                                                        mat-icon-button
+                                                        type="button"
+                                                        matTooltip="Eliminar"
+                                                        [disabled]="esPresupuestoBloqueado"
+                                                        (click)="
+                                                            eliminarArchivo(
+                                                                archivo
+                                                            )
+                                                        ">
+
+                                                        <mat-icon>
+                                                            delete
+                                                        </mat-icon>
+
+                                                    </button>
+
+                                                </div>
+
+                                            </div>
+
+                                        </div>
+
+                                    }
+
+                                </div>
+
+                            </div>
+
+                        }
+
+
+                        <!-- ========================================= -->
+                        <!-- DOCUMENTOS -->
+                        <!-- ========================================= -->
+
+                        @if (documentos.length > 0) {
+
+                            <div class="seccion-archivos">
+
+                                <h4>
+                                    Documentos
+                                </h4>
+
+                                <div class="lista-archivos">
+
+                                    @for (
+                                        archivo of documentos;
+                                        track archivo.id
+                                    ) {
+
+                                        <div class="archivo-item">
+
+                                            <mat-icon>
+                                                description
+                                            </mat-icon>
+
+
+                                            <div class="archivo-info">
+
+                                                <strong>
+                                                    {{
+                                                        archivo.nombre_original
+                                                    }}
+                                                </strong>
+
+                                                <span>
+
+                                                    {{
+                                                        archivo.categoria
+                                                    }}
+
+                                                    ·
+
+                                                    {{
+                                                        formatearTamano(
+                                                            archivo.tamano
+                                                        )
+                                                    }}
+
+                                                </span>
+
+                                            </div>
+
+
+                                            <!-- VER -->
+
+                                            <button
+                                                mat-icon-button
+                                                type="button"
+                                                matTooltip="Ver"
+                                                (click)="
+                                                    verArchivo(
+                                                        archivo
+                                                    )
+                                                ">
+
+                                                <mat-icon>
+                                                    visibility
+                                                </mat-icon>
+
+                                            </button>
+
+
+                                            <!-- DESCARGAR -->
+
+                                            <button
+                                                mat-icon-button
+                                                type="button"
+                                                matTooltip="Descargar"
+                                                (click)="
+                                                    descargarArchivo(
+                                                        archivo
+                                                    )
+                                                ">
+
+                                                <mat-icon>
+                                                    download
+                                                </mat-icon>
+
+                                            </button>
+
+
+                                            <!-- ELIMINAR -->
+
+                                            <button
+                                                mat-icon-button
+                                                type="button"
+                                                matTooltip="Eliminar"
+                                                [disabled]="esPresupuestoBloqueado"
+                                                (click)="
+                                                    eliminarArchivo(
+                                                        archivo
+                                                    )
+                                                ">
+
+                                                <mat-icon>
+                                                    delete
+                                                </mat-icon>
+
+                                            </button>
+
+                                        </div>
+
+                                    }
+
+                                </div>
+
+                            </div>
+
+                        }
+
+                    }
+
+                </div>
+
+            </mat-tab>
+
+        </mat-tab-group>
+
+    </mat-card-content>
+
+</mat-card>
+
+
+<!-- ========================================================= -->
+<!-- ACCIONES -->
+<!-- ========================================================= -->
+
+<mat-card-actions class="orden-form-actions" align="end">
+
+    <button
+        mat-button
+        type="button"
+        (click)="cancelar()">
+
+        Cancelar
+
+    </button>
+
+
+    @if (isEditMode) {
+
+        <button
+            mat-stroked-button
+            type="button"
+            (click)="generarPdf()">
+
+            Ver {{ nombreDocumento.toLowerCase() }}
+
+        </button>
+
+
+        <button
+            mat-stroked-button
+            type="button"
+            (click)="enviarEmail()">
+
+            Enviar {{ nombreDocumento.toLowerCase() }} por email
+
+        </button>
+
+
+        <button
+            mat-stroked-button
+            type="button"
+            (click)="enviarWhatsApp()">
+
+            Enviar {{ nombreDocumento.toLowerCase() }} por WhatsApp
+
+        </button>
+
+        @if (esPresupuesto && (orden?.estado === 'Borrador' || orden?.estado === 'Enviado')) {
+            <button mat-stroked-button color="primary" type="button" (click)="aceptarPresupuesto()">
+                <mat-icon>task_alt</mat-icon>
+                Aceptar
+            </button>
+            <button mat-stroked-button color="warn" type="button" (click)="rechazarPresupuesto()">
+                <mat-icon>cancel</mat-icon>
+                Rechazar
+            </button>
+        }
+
+        @if (esPresupuesto && orden?.estado === 'Aceptado') {
+            @if (ordenGenerada) {
+            <button mat-flat-button color="primary" type="button" [routerLink]="['/ordenes', ordenGenerada.id]">
+                <mat-icon>open_in_new</mat-icon>
+                Abrir orden {{ ordenGenerada.numero }}
+            </button>
+            } @else {
+            <button mat-flat-button color="primary" type="button" (click)="convertirEnOrden()">
+                <mat-icon>build_circle</mat-icon>
+                Crear orden de reparación
+            </button>
+            }
+        }
+
+        @if (esGarantia && orden?.estado === 'Garantía abierta') {
+            <button mat-flat-button color="primary" type="button" (click)="iniciarRevisionGarantia()"><mat-icon>search</mat-icon>Poner en revisión</button>
+        }
+        @if (esGarantia && orden?.estado === 'En revisión') {
+            <button mat-flat-button color="primary" type="button" (click)="aprobarGarantia()"><mat-icon>task_alt</mat-icon>Aprobar garantía</button>
+            <button mat-stroked-button color="warn" type="button" (click)="rechazarGarantia()"><mat-icon>cancel</mat-icon>Rechazar garantía</button>
+        }
+        @if (esGarantia && orden?.estado === 'Garantía aprobada') {
+            <button mat-flat-button color="primary" type="button" (click)="iniciarReparacionGarantia()"><mat-icon>build</mat-icon>Iniciar reparación</button>
+        }
+        @if (esGarantia && orden?.estado === 'En reparación') {
+            <button mat-flat-button color="primary" type="button" (click)="resolverGarantia()"><mat-icon>check_circle</mat-icon>Resolver garantía</button>
+        }
+        @if (esGarantia && orden?.estado === 'Resuelta' && garantiaTieneConceptosFacturables && !facturaAsociada) {
+            <button mat-flat-button color="primary" type="button" (click)="generarFacturaGarantia()">
+                <mat-icon>receipt_long</mat-icon>
+                Generar factura de conceptos no cubiertos
+            </button>
+        }
+
+        @if (!esPresupuesto && !esGarantia && (orden?.estado === 'Cerrada' || orden?.estado === 'Facturada')) {
+            <button mat-stroked-button color="primary" type="button" (click)="crearGarantia()"><mat-icon>verified_user</mat-icon>Crear garantía</button>
+        }
+
+    }
+
+
+        @if (!esPresupuesto && !esGarantia && orden && orden.estado !== 'Facturada' && orden.estado !== 'Anulada') {
+            <button mat-stroked-button color="warn" type="button" [disabled]="anulando" (click)="anularOrden()"><mat-icon>cancel</mat-icon>{{ anulando ? 'Anulando...' : 'Anular orden' }}</button>
+        }
+
+    @if (!esPresupuestoBloqueado && orden?.estado !== 'Anulada') {
+    <button
+        mat-raised-button
+        color="primary"
+        type="button"
+        (click)="guardar()">
+
+        {{ esPresupuesto ? 'Guardar presupuesto' : 'Guardar orden' }}
+
+    </button>
+    }
+
+</mat-card-actions>
+
+
+<!-- ========================================================= -->
+<!-- VISOR DE IMÁGENES -->
+<!-- ========================================================= -->
+
+@if (imagenVisor) {
+
+    <div
+        class="visor-backdrop"
+        (click)="cerrarVisorImagen()">
+
+        <div
+            class="visor-imagen"
+            (click)="$event.stopPropagation()">
+
+
+            <!-- CABECERA -->
+
+            <div class="visor-header">
+
+                <span>
+                    {{ nombreImagenVisor }}
+                </span>
+
+                <button
+                    mat-icon-button
+                    type="button"
+                    matTooltip="Cerrar"
+                    (click)="cerrarVisorImagen()">
+
+                    <mat-icon>
+                        close
+                    </mat-icon>
+
+                </button>
+
+            </div>
+
+
+            <!-- IMAGEN -->
+
+            <div class="visor-contenido">
+
+                <img
+                    [src]="imagenVisor"
+                    [alt]="nombreImagenVisor"
+                >
+
+            </div>
+
+        </div>
+
+    </div>
+
+}

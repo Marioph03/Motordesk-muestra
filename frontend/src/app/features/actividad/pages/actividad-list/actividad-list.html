@@ -1,0 +1,104 @@
+<section class="page-container">
+  <div class="page-header">
+    <div>
+      <h1>Auditoría</h1>
+      <p>Consulta el historial de acciones realizadas por los usuarios del sistema</p>
+    </div>
+  </div>
+
+  <div class="search-bar">
+    <mat-form-field appearance="outline">
+      <mat-label>Módulo</mat-label>
+      <mat-select [(ngModel)]="filtro.modulo">
+        <mat-option value="">Todos</mat-option>
+        @for (modulo of modulos; track modulo) {
+          <mat-option [value]="modulo">{{ modulo }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Acción</mat-label>
+      <mat-select [(ngModel)]="filtro.accion">
+        <mat-option value="">Todas</mat-option>
+        @for (accion of acciones; track accion) {
+          <mat-option [value]="accion">{{ accion }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+
+    <button mat-flat-button color="primary" (click)="buscar()">
+      <mat-icon>search</mat-icon>Filtrar
+    </button>
+
+    <button mat-stroked-button (click)="limpiarFiltros()">
+      <mat-icon>clear</mat-icon>Limpiar
+    </button>
+  </div>
+
+  @if (loading) {
+    <div class="loading-container">
+      <mat-spinner diameter="40"></mat-spinner>
+      <p>Cargando auditoría...</p>
+    </div>
+  } @else {
+    <div class="panel">
+      <div class="data-table">
+        <table mat-table [dataSource]="dataSource">
+          <ng-container matColumnDef="fecha">
+            <th mat-header-cell *matHeaderCellDef>Fecha</th>
+            <td mat-cell *matCellDef="let actividad">
+              {{ actividad.created_at | date: 'dd/MM/yyyy HH:mm' }}
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="modulo">
+            <th mat-header-cell *matHeaderCellDef>Módulo</th>
+            <td mat-cell *matCellDef="let actividad">
+              <div class="actions-cell" style="gap: 4px;">
+                <mat-icon style="font-size: 18px; width: 18px; height: 18px;">
+                  {{ getModuleIcon(actividad.modulo) }}
+                </mat-icon>
+                {{ actividad.modulo }}
+              </div>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="accion">
+            <th mat-header-cell *matHeaderCellDef>Acción</th>
+            <td mat-cell *matCellDef="let actividad">
+              <span class="badge" [class.badge-success]="actividad.accion === 'Crear'"
+                    [class.badge-info]="actividad.accion === 'Actualizar'"
+                    [class.badge-danger]="actividad.accion === 'Eliminar'">
+                {{ actividad.accion }}
+              </span>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="descripcion">
+            <th mat-header-cell *matHeaderCellDef>Descripción</th>
+            <td mat-cell *matCellDef="let actividad">{{ actividad.descripcion }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="usuario">
+            <th mat-header-cell *matHeaderCellDef>Usuario</th>
+            <td mat-cell *matCellDef="let actividad">
+              {{ actividad.usuario?.apellidos ? (actividad.usuario?.apellidos + ', ') : '' }}{{ actividad.usuario?.nombre }}
+            </td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+        </table>
+      </div>
+    </div>
+
+    <mat-paginator
+      [length]="actividades?.total ?? 0"
+      [pageIndex]="page - 1"
+      [pageSize]="size"
+      [pageSizeOptions]="[10, 20, 50]"
+      (page)="cambiarPagina($event)">
+    </mat-paginator>
+  }
+</section>

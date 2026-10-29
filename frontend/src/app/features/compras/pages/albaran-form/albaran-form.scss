@@ -1,0 +1,15 @@
+.panel { margin-bottom: 20px; border: 1px solid var(--md-border); border-radius: var(--md-radius-md); box-shadow: var(--md-shadow-sm); }
+.form-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 3px 16px; padding-top: 12px; }
+.full-width { grid-column: 1 / -1; }
+.receipt-table { margin-top: 15px; overflow-x: auto; }
+.receipt-head, .receipt-row { display: grid; grid-template-columns: minmax(190px, 1.8fr) 80px 100px 90px 130px 130px 42px; align-items: center; gap: 12px; min-width: 870px; }
+.receipt-head { min-height: 42px; padding: 0 12px; background: var(--md-bg); border-bottom: 1px solid var(--md-border); font-size: 11px; font-weight: 600; color: var(--md-text-secondary); }
+.receipt-row { min-height: 74px; padding: 8px 12px; border-bottom: 1px solid var(--md-border); }
+.article-cell { display: flex; flex-direction: column; gap: 2px; }
+.article-cell strong { font-size: 13px; }
+.article-cell small { color: var(--md-text-secondary); }
+.article-cell mat-form-field, .compact-field { width: 100%; }
+.form-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px; }
+.loading-container, .empty-state { min-height: 160px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; text-align: center; color: var(--md-text-secondary); }
+.empty-state mat-icon { width: 40px; height: 40px; font-size: 40px; }
+@media (max-width: 700px) { .form-grid { grid-template-columns: 1fr; } .full-width { grid-column: auto; } }

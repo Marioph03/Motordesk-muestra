@@ -1,0 +1,19 @@
+<section class="page-container">
+  <div class="page-header"><div class="page-header-content"><h1 class="page-title">Facturas de proveedor</h1><p class="page-subtitle">Controla las facturas recibidas, sus albaranes y el estado de pago.</p></div><div class="page-actions"><a mat-flat-button class="md-primary-button" routerLink="/compras/facturas-proveedor/nueva"><mat-icon>add</mat-icon>Nueva factura</a></div></div>
+  <mat-card class="panel"><mat-card-content>
+    @if (loading) { <div class="empty-state">Cargando facturas de proveedor...</div> }
+    @else if (!facturas.length) { <div class="empty-state"><mat-icon>request_quote</mat-icon><h3>No hay facturas de proveedor</h3><p>Registra la factura recibida y relaciónala con sus albaranes confirmados.</p></div> }
+    @else { <div class="table-scroll"><table mat-table [dataSource]="facturas">
+      <ng-container matColumnDef="numero"><th mat-header-cell *matHeaderCellDef>Factura</th><td mat-cell *matCellDef="let factura"><strong>{{ factura.numero_factura }}</strong></td></ng-container>
+      <ng-container matColumnDef="tipo"><th mat-header-cell *matHeaderCellDef>Tipo</th><td mat-cell *matCellDef="let factura">{{ etiquetaTipo(factura.tipo_gasto) }}</td></ng-container>
+      <ng-container matColumnDef="proveedor"><th mat-header-cell *matHeaderCellDef>Proveedor</th><td mat-cell *matCellDef="let factura">{{ nombreProveedor(factura.proveedor_id) }}</td></ng-container>
+      <ng-container matColumnDef="fecha"><th mat-header-cell *matHeaderCellDef>Fecha</th><td mat-cell *matCellDef="let factura">{{ factura.fecha_factura | date:'dd/MM/yyyy' }}</td></ng-container>
+      <ng-container matColumnDef="vencimiento"><th mat-header-cell *matHeaderCellDef>Vencimiento</th><td mat-cell *matCellDef="let factura">{{ factura.fecha_vencimiento ? (factura.fecha_vencimiento | date:'dd/MM/yyyy') : '-' }}</td></ng-container>
+      <ng-container matColumnDef="total"><th mat-header-cell *matHeaderCellDef>Total</th><td mat-cell *matCellDef="let factura"><strong>{{ factura.total | number:'1.2-2' }} €</strong></td></ng-container>
+      <ng-container matColumnDef="estado"><th mat-header-cell *matHeaderCellDef>Pago</th><td mat-cell *matCellDef="let factura"><span class="status-chip" [class]="'status-chip ' + claseEstado(factura.estado_pago)">{{ factura.estado_pago === 'PAGADA' ? 'Pagada' : 'Pendiente' }}</span></td></ng-container>
+      <ng-container matColumnDef="pdf"><th mat-header-cell *matHeaderCellDef>PDF</th><td mat-cell *matCellDef="let factura"><mat-icon [class.has-pdf]="factura.archivo_pdf">{{ factura.archivo_pdf ? 'picture_as_pdf' : 'remove' }}</mat-icon></td></ng-container>
+      <ng-container matColumnDef="acciones"><th mat-header-cell *matHeaderCellDef>Acciones</th><td mat-cell *matCellDef="let factura"><a mat-icon-button [routerLink]="['/compras/facturas-proveedor', factura.id]" matTooltip="Ver factura"><mat-icon>visibility</mat-icon></a></td></ng-container>
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr><tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+    </table></div> }
+  </mat-card-content></mat-card>
+</section>

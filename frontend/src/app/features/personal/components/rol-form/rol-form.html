@@ -1,0 +1,67 @@
+<mat-card>
+  <mat-card-header>
+    <mat-card-title>
+      {{ isEditMode ? form.controls.nombre.value || 'Rol' : 'Nuevo rol' }}
+    </mat-card-title>
+    <mat-card-subtitle>
+      Asigna los permisos que podrá utilizar este perfil.
+    </mat-card-subtitle>
+  </mat-card-header>
+
+  <mat-card-content>
+    @if (cargando) {
+      <p class="estado-vacio">Cargando información del rol…</p>
+    } @else {
+      <form [formGroup]="form" (ngSubmit)="guardar()">
+        <section class="datos-rol">
+          <mat-form-field appearance="outline">
+            <mat-label>Nombre del rol</mat-label>
+            <input matInput formControlName="nombre" [readonly]="!puedeGestionar">
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Descripción</mat-label>
+            <input matInput formControlName="descripcion" [readonly]="!puedeGestionar">
+          </mat-form-field>
+
+          <mat-checkbox formControlName="activo" [disabled]="!puedeGestionar">
+            Rol activo
+          </mat-checkbox>
+        </section>
+
+        <mat-divider></mat-divider>
+
+        <section class="permisos">
+          <h2>Permisos por módulo</h2>
+
+          @for (grupo of permisosPorModulo | keyvalue; track grupo.key) {
+            <div class="modulo-permisos">
+              <h3>{{ grupo.key }}</h3>
+              <div class="permisos-grid">
+                @for (permiso of grupo.value; track permiso.id) {
+                  <mat-checkbox
+                    [checked]="tienePermiso(permiso.id)"
+                    [disabled]="!puedeGestionar || esAdmin"
+                    (change)="togglePermiso(permiso.id)">
+                    <span>{{ permiso.nombre }}</span>
+                    <small>{{ permiso.codigo }}</small>
+                  </mat-checkbox>
+                }
+              </div>
+            </div>
+          }
+        </section>
+
+        <div class="acciones">
+          <a mat-button routerLink="/personal/roles">Volver</a>
+          @if (puedeGestionar) {
+            <button mat-flat-button color="primary" type="submit" [disabled]="form.invalid || guardando">
+              <mat-icon>save</mat-icon>
+              Guardar rol
+            </button>
+          }
+        </div>
+      </form>
+    }
+  </mat-card-content>
+</mat-card>

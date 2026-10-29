@@ -1,0 +1,428 @@
+<button
+  type="button"
+  class="ai-floating-button"
+  [class.open]="abierto"
+  (click)="toggle()"
+  aria-label="Abrir MotorDesk AI">
+
+  @if (abierto) {
+
+    <mat-icon>
+      close
+    </mat-icon>
+
+  } @else {
+
+    <mat-icon>
+      auto_awesome
+    </mat-icon>
+
+  }
+
+</button>
+
+
+@if (abierto) {
+
+  <section class="ai-panel">
+
+    <!-- ================================================
+         HEADER
+         ================================================ -->
+
+    <header class="ai-header">
+
+      <div class="ai-brand">
+
+        <div class="ai-logo">
+
+          <mat-icon>
+            auto_awesome
+          </mat-icon>
+
+        </div>
+
+
+        <div>
+
+          <strong>
+            MotorDesk AI
+          </strong>
+
+          <span>
+
+            <i></i>
+
+            Asistente disponible
+
+          </span>
+
+        </div>
+
+      </div>
+
+
+      <div class="ai-header-actions">
+
+        <button
+          mat-icon-button
+          type="button"
+          title="Nueva conversación"
+          (click)="limpiarConversacion()">
+
+          <mat-icon>
+            refresh
+          </mat-icon>
+
+        </button>
+
+
+        <button
+          mat-icon-button
+          type="button"
+          title="Cerrar"
+          (click)="cerrar()">
+
+          <mat-icon>
+            close
+          </mat-icon>
+
+        </button>
+
+      </div>
+
+    </header>
+
+
+    <!-- ================================================
+         MENSAJES
+         ================================================ -->
+
+    <div
+      #messagesContainer
+      class="ai-messages">
+
+      @for (
+        mensaje of mensajes;
+        track mensaje.id
+      ) {
+
+        <div
+          class="message-wrapper"
+          [class.user]="
+            mensaje.rol
+            === 'usuario'
+          "
+          [class.assistant]="
+            mensaje.rol
+            === 'asistente'
+          ">
+
+
+          @if (
+            mensaje.rol
+            === 'asistente'
+          ) {
+
+            <div
+              class="message-avatar"
+              [class.error]="
+                mensaje.error
+              ">
+
+              <mat-icon>
+
+                {{
+                  mensaje.error
+                    ? 'error_outline'
+                    : 'auto_awesome'
+                }}
+
+              </mat-icon>
+
+            </div>
+
+          }
+
+
+          <div
+            class="message-bubble"
+            [class.error]="
+              mensaje.error
+            ">
+
+            <div class="message-content">
+
+              {{ mensaje.contenido }}
+
+            </div>
+
+
+            @if (mensaje.accion) {
+
+              <div class="ai-action-card">
+
+                <div class="ai-action-title">
+
+                  <mat-icon>
+                    {{ getIconoAccion(mensaje.accion.tipo) }}
+                  </mat-icon>
+
+                  <strong>
+                    {{ getTituloAccion(mensaje.accion.tipo) }}
+                  </strong>
+
+                </div>
+
+                <p>{{ mensaje.accion.resumen }}</p>
+
+                <div class="ai-action-buttons">
+
+                  <button
+                    mat-flat-button
+                    type="button"
+                    [disabled]="enviando"
+                    (click)="confirmarAccion(mensaje)">
+
+                    Confirmar
+
+                  </button>
+
+                  <button
+                    mat-button
+                    type="button"
+                    [disabled]="enviando"
+                    (click)="cancelarAccion(mensaje)">
+
+                    Cancelar
+
+                  </button>
+
+                </div>
+
+              </div>
+
+            }
+
+
+            @if (mensaje.workflow) {
+
+              <div class="ai-action-card workflow-card">
+
+                <div class="ai-action-title">
+
+                  <mat-icon>
+                    account_tree
+                  </mat-icon>
+
+                  <strong>
+                    Operación múltiple
+                  </strong>
+
+                </div>
+
+                <p>{{ mensaje.workflow.resumen }}</p>
+
+                <div class="workflow-steps">
+
+                  @for (
+                    paso of mensaje.workflow.pasos;
+                    track paso.orden
+                  ) {
+
+                    <div class="workflow-step">
+
+                      <span class="step-number">
+                        {{ paso.orden }}
+                      </span>
+
+                      <span>{{ paso.resumen }}</span>
+
+                    </div>
+
+                  }
+
+                </div>
+
+                <div class="ai-action-buttons">
+
+                  <button
+                    type="button"
+                    class="cancel-action"
+                    [disabled]="enviando"
+                    (click)="cancelarWorkflow(mensaje)">
+
+                    Cancelar
+
+                  </button>
+
+                  <button
+                    type="button"
+                    class="confirm-action"
+                    [disabled]="enviando"
+                    (click)="confirmarWorkflow(mensaje)">
+
+                    <mat-icon>
+                      done_all
+                    </mat-icon>
+
+                    Confirmar todo
+
+                  </button>
+
+                </div>
+
+              </div>
+
+            }
+
+
+            <small>
+
+              {{
+                mensaje.fecha
+                | date:'HH:mm'
+              }}
+
+            </small>
+
+          </div>
+
+        </div>
+
+      }
+
+
+      @if (enviando) {
+
+        <div
+          class="
+            message-wrapper
+            assistant
+          ">
+
+          <div class="message-avatar">
+
+            <mat-icon>
+              auto_awesome
+            </mat-icon>
+
+          </div>
+
+
+          <div
+            class="
+              message-bubble
+              thinking
+            ">
+
+            <span></span>
+            <span></span>
+            <span></span>
+
+          </div>
+
+        </div>
+
+      }
+
+    </div>
+
+
+    <!-- ================================================
+         SUGERENCIAS
+         ================================================ -->
+
+    @if (
+      mensajes.length <= 1
+    ) {
+
+      <div class="ai-suggestions">
+
+        @for (
+          sugerencia of sugerencias;
+          track sugerencia
+        ) {
+
+          <button
+            type="button"
+            [disabled]="enviando"
+            (click)="
+              usarSugerencia(
+                sugerencia
+              )
+            ">
+
+            {{ sugerencia }}
+
+          </button>
+
+        }
+
+      </div>
+
+    }
+
+
+    <!-- ================================================
+         INPUT
+         ================================================ -->
+
+    <footer class="ai-input-area">
+
+      <div class="ai-input-wrapper">
+
+        <textarea
+          [(ngModel)]="mensaje"
+          rows="1"
+          maxlength="4000"
+          placeholder="Pregunta algo sobre tu taller..."
+          [disabled]="enviando"
+          (keydown)="
+            onKeydown($event)
+          ">
+        </textarea>
+
+
+        <button
+          type="button"
+          class="send-button"
+          [disabled]="
+            enviando
+            ||
+            !mensaje.trim()
+          "
+          (click)="enviar()">
+
+          @if (enviando) {
+
+            <mat-spinner
+              diameter="18">
+            </mat-spinner>
+
+          } @else {
+
+            <mat-icon>
+              arrow_upward
+            </mat-icon>
+
+          }
+
+        </button>
+
+      </div>
+
+
+      <small class="ai-disclaimer">
+
+        MotorDesk AI puede cometer errores.
+        Comprueba la información importante.
+
+      </small>
+
+    </footer>
+
+  </section>
+
+}
+<!-- Chat global con tarjetas de confirmación para acciones y workflows de IA. -->

@@ -1,0 +1,121 @@
+<mat-card>
+
+  <mat-card-header>
+    <mat-card-title>Necesidades de reposición</mat-card-title>
+  </mat-card-header>
+
+  <mat-card-content>
+
+    <nav class="nav-stock" aria-label="Secciones de almacén">
+      <a mat-button routerLink="/stock">
+        <mat-icon>inventory_2</mat-icon>
+        Artículos
+      </a>
+
+      <a mat-button color="primary" routerLink="/stock/reposicion">
+        <mat-icon>assignment_late</mat-icon>
+        Reposición
+      </a>
+    </nav>
+
+    <div class="cabecera-reposicion">
+      <div>
+        <p>Artículos activos que están por debajo de su stock mínimo.</p>
+        <strong>{{ articulos.length }} necesidades detectadas</strong>
+      </div>
+
+      <button
+        mat-stroked-button
+        type="button"
+        (click)="cargarNecesidades()"
+        [disabled]="loading">
+        <mat-icon>refresh</mat-icon>
+        Actualizar
+      </button>
+
+      <button
+        mat-flat-button
+        color="primary"
+        type="button"
+        (click)="generarPedidosReposicion()"
+        [disabled]="loading || generando || articulos.length === 0">
+        <mat-icon>shopping_cart</mat-icon>
+        {{ generando ? 'Generando...' : 'Generar pedidos' }}
+      </button>
+    </div>
+
+    @if (!loading && articulos.length === 0) {
+      <div class="sin-necesidades">
+        <mat-icon>check_circle</mat-icon>
+        <h3>Sin necesidades de reposición</h3>
+        <p>Todos los artículos activos están por encima de su stock mínimo.</p>
+      </div>
+    } @else {
+      <table mat-table [dataSource]="articulos" class="reposicion-table">
+
+        <ng-container matColumnDef="referencia">
+          <th mat-header-cell *matHeaderCellDef>Referencia</th>
+          <td mat-cell *matCellDef="let articulo"><strong>{{ articulo.referencia }}</strong></td>
+        </ng-container>
+
+        <ng-container matColumnDef="articulo">
+          <th mat-header-cell *matHeaderCellDef>Artículo</th>
+          <td mat-cell *matCellDef="let articulo">
+            <div class="nombre-articulo">
+              <strong>{{ articulo.nombre }}</strong>
+              @if (articulo.marca || articulo.categoria) {
+                <small>{{ articulo.marca || 'Sin marca' }} · {{ articulo.categoria || 'Sin categoría' }}</small>
+              }
+            </div>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="stock">
+          <th mat-header-cell *matHeaderCellDef>Stock</th>
+          <td mat-cell *matCellDef="let articulo" [class.sin-stock]="estaSinStock(articulo)">
+            {{ articulo.stock_actual | number:'1.0-2' }}
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="minimo">
+          <th mat-header-cell *matHeaderCellDef>Mínimo</th>
+          <td mat-cell *matCellDef="let articulo">{{ articulo.stock_minimo | number:'1.0-2' }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="faltan">
+          <th mat-header-cell *matHeaderCellDef>Faltan aprox.</th>
+          <td mat-cell *matCellDef="let articulo"><strong>{{ getCantidadReposicion(articulo) | number:'1.0-2' }}</strong></td>
+        </ng-container>
+
+        <ng-container matColumnDef="estado">
+          <th mat-header-cell *matHeaderCellDef>Estado</th>
+          <td mat-cell *matCellDef="let articulo">
+            @if (estaSinStock(articulo)) {
+              <mat-chip class="chip-sin-stock">Sin stock</mat-chip>
+            } @else {
+              <mat-chip class="chip-stock-bajo">Stock bajo</mat-chip>
+            }
+            @if (!articulo.proveedor_habitual_id) {
+              <mat-chip>Falta proveedor</mat-chip>
+            }
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="acciones">
+          <th mat-header-cell *matHeaderCellDef>Acciones</th>
+          <td mat-cell *matCellDef="let articulo">
+            <button mat-stroked-button type="button" (click)="prepararReposicion(articulo)">
+              <mat-icon>shopping_cart</mat-icon>
+              {{ articulo.proveedor_habitual_id ? 'Ver artículo' : 'Configurar proveedor' }}
+            </button>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+      </table>
+    }
+
+  </mat-card-content>
+
+</mat-card>

@@ -1,0 +1,65 @@
+<section class="page-container">
+  <div class="page-header"><div><h1>Documentos</h1><p>Configura la información y textos utilizados en los documentos de MotorDesk.</p></div></div>
+  @if (cargando) {
+    <div class="loading-container"><mat-spinner diameter="40"></mat-spinner><span>Cargando configuración...</span></div>
+  } @else {
+    <div class="documents-layout">
+      <mat-card class="config-card">
+        <mat-card-header><mat-card-title>Configuración de documentos</mat-card-title></mat-card-header>
+        <mat-card-content><form [formGroup]="form" class="documents-form">
+          <div class="config-section">
+            <div class="section-title"><div class="section-icon blue"><mat-icon>visibility</mat-icon></div><div><h3>Datos visibles</h3><p>Selecciona qué información del taller aparecerá en los documentos.</p></div></div>
+            <div class="switch-grid">
+              <mat-slide-toggle formControlName="mostrar_telefono">Mostrar teléfono</mat-slide-toggle>
+              <mat-slide-toggle formControlName="mostrar_email">Mostrar email</mat-slide-toggle>
+              <mat-slide-toggle formControlName="mostrar_direccion">Mostrar dirección</mat-slide-toggle>
+              <mat-slide-toggle formControlName="mostrar_nif_cif">Mostrar NIF / CIF</mat-slide-toggle>
+              <mat-slide-toggle formControlName="mostrar_web">Mostrar página web</mat-slide-toggle>
+            </div>
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Cuenta bancaria para cobros por transferencia</mat-label>
+              <input matInput formControlName="iban_cobros" maxlength="34" placeholder="ES00 0000 0000 0000 0000 0000">
+              <mat-hint>Solo se mostrará al registrar un cobro por transferencia.</mat-hint>
+            </mat-form-field>
+          </div>
+          <mat-divider></mat-divider>
+          <div class="config-section">
+            <div class="section-title"><div class="section-icon orange"><mat-icon>request_quote</mat-icon></div><div><h3>Presupuestos</h3><p>Valores predeterminados utilizados al generar presupuestos.</p></div></div>
+            <mat-form-field appearance="outline" class="small-field"><mat-label>Validez predeterminada</mat-label><input matInput type="number" min="1" max="365" formControlName="validez_presupuesto_dias"><span matTextSuffix>días</span></mat-form-field>
+            <mat-form-field appearance="outline" class="full-width"><mat-label>Observaciones predeterminadas de presupuesto</mat-label><textarea matInput rows="4" formControlName="observaciones_presupuesto"></textarea></mat-form-field>
+          </div>
+          <mat-divider></mat-divider>
+          <div class="config-section">
+            <div class="section-title"><div class="section-icon purple"><mat-icon>notes</mat-icon></div><div><h3>Textos predeterminados</h3><p>Estos textos se utilizarán como base al generar documentos.</p></div></div>
+            <mat-form-field appearance="outline" class="full-width"><mat-label>Pie de documentos</mat-label><textarea matInput rows="3" formControlName="pie_documentos"></textarea><mat-hint>Por ejemplo: Gracias por confiar en nuestro taller.</mat-hint></mat-form-field>
+            <mat-form-field appearance="outline" class="full-width"><mat-label>Observaciones predeterminadas de orden</mat-label><textarea matInput rows="3" formControlName="observaciones_orden"></textarea></mat-form-field>
+            <mat-form-field appearance="outline" class="full-width"><mat-label>Observaciones predeterminadas de pedido de compra</mat-label><textarea matInput rows="3" formControlName="observaciones_pedido_compra"></textarea></mat-form-field>
+          </div>
+          <div class="form-actions"><button mat-flat-button color="primary" type="button" [disabled]="form.invalid || guardando" (click)="guardar()"><mat-icon>save</mat-icon>{{ guardando ? 'Guardando...' : 'Guardar cambios' }}</button></div>
+        </form></mat-card-content>
+      </mat-card>
+      <mat-card class="preview-card">
+        <mat-card-header><mat-card-title>Previsualización</mat-card-title></mat-card-header>
+        <mat-card-content><div class="document-preview">
+          <div class="preview-header">
+            <div class="preview-logo">@if (logoUrl) { <img [src]="logoUrl" alt="Logo del taller"> } @else { <mat-icon>directions_car</mat-icon> }</div>
+            <div class="preview-company">
+              <strong>{{ taller?.nombre_comercial || 'Nombre del taller' }}</strong>
+              @if (form.value.mostrar_nif_cif && taller?.nif_cif) { <span>NIF/CIF: {{ taller?.nif_cif }}</span> }
+              @if (form.value.mostrar_direccion && taller?.direccion) { <span>{{ taller?.direccion }} @if (taller?.localidad) { · {{ taller?.localidad }} }</span> }
+              @if (form.value.mostrar_telefono && taller?.telefono) { <span>Tel: {{ taller?.telefono }}</span> }
+              @if (form.value.mostrar_email && taller?.email) { <span>{{ taller?.email }}</span> }
+              @if (form.value.mostrar_web && taller?.web) { <span>{{ taller?.web }}</span> }
+            </div>
+          </div>
+          <div class="preview-divider"></div>
+          <div class="preview-document-title"><div><span>DOCUMENTO</span><strong>Presupuesto</strong></div><div><span>Nº</span><strong>PR-2026-000001</strong></div></div>
+          <div class="preview-lines"><div><span>Cambio de aceite</span><strong>75,00 €</strong></div><div><span>Filtro de aceite</span><strong>18,50 €</strong></div></div>
+          <div class="preview-total"><span>TOTAL</span><strong>93,50 €</strong></div>
+          @if (form.value.observaciones_presupuesto) { <div class="preview-observations"><strong>Observaciones</strong><span>{{ form.value.observaciones_presupuesto }}</span></div> }
+          @if (form.value.pie_documentos) { <div class="preview-footer">{{ form.value.pie_documentos }}</div> }
+        </div></mat-card-content>
+      </mat-card>
+    </div>
+  }
+</section>

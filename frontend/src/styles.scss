@@ -1,0 +1,548 @@
+// Include theming for Angular Material with `mat.theme()`.
+// This Sass mixin will define CSS variables that are used for styling Angular Material
+// components according to the Material 3 design spec.
+// Learn more about theming and how to use it for your application's
+// custom components at https://material.angular.dev/guide/theming
+@use '@angular/material' as mat;
+@use './styles/variables';
+@use './styles/components';
+
+html {
+  height: 100%;
+  @include mat.theme(
+    (
+      color: (
+        primary: mat.$azure-palette,
+        tertiary: mat.$blue-palette,
+      ),
+      typography: Roboto,
+      density: 0,
+    )
+  );
+}
+
+body {
+  // Default the application to a light color theme. This can be changed to
+  // `dark` to enable the dark color theme, or to `light dark` to defer to the
+  // user's system settings.
+  color-scheme: light;
+
+  // Set a default background, font and text colors for the application using
+  // Angular Material's system-level CSS variables. Learn more about these
+  // variables at https://material.angular.dev/guide/system-variables
+  background: var(--md-bg);
+  color: var(--md-text);
+  font-family: Inter, Roboto, "Helvetica Neue", Arial, sans-serif;
+
+  // Reset the user agent margin.
+  margin: 0;
+  height: 100%;
+}
+
+:root.md-dark-theme,
+:root.md-dark-theme body {
+  background: var(--md-bg);
+  color: var(--md-text);
+  color-scheme: dark;
+}
+:root.md-dark-theme .mat-mdc-card,
+:root.md-dark-theme .mat-mdc-dialog-surface,
+:root.md-dark-theme .mat-mdc-menu-panel,
+:root.md-dark-theme .mat-mdc-select-panel { background: var(--md-surface) !important; color: var(--md-text) !important; }
+:root.md-dark-theme .mat-mdc-header-row { background: #202c3f !important; }
+:root.md-dark-theme .mat-mdc-row:hover { background: #202c3f !important; }
+:root.md-dark-theme .mat-mdc-cell { border-bottom-color: var(--md-border); }
+:root.md-dark-theme .mat-mdc-text-field-wrapper { background: #202c3f; }
+
+/* =========================================================
+   TEMA OSCURO GLOBAL
+   Una única capa para que todos los módulos (incluidos los
+   creados antes del design system) compartan las superficies.
+   ========================================================= */
+:root.md-dark-theme {
+  --mat-sys-surface: #182235;
+  --mat-sys-surface-container: #182235;
+  --mat-sys-surface-container-low: #141e30;
+  --mat-sys-surface-container-high: #202c3f;
+  --mat-sys-surface-variant: #202c3f;
+  --mat-sys-on-surface: #f1f5f9;
+  --mat-sys-on-surface-variant: #b4c0d2;
+  --mat-sys-outline: #516078;
+  --mat-sys-outline-variant: #2c3a50;
+  --mat-sys-primary: #60a5fa;
+  --mat-sys-on-primary: #06162a;
+}
+
+:root.md-dark-theme .page-content,
+:root.md-dark-theme .page-content > *,
+:root.md-dark-theme .cdk-overlay-container {
+  color: var(--md-text);
+}
+
+:root.md-dark-theme .mat-mdc-card,
+:root.md-dark-theme mat-card,
+:root.md-dark-theme .page-card,
+:root.md-dark-theme .md-table-container,
+:root.md-dark-theme .metric-card,
+:root.md-dark-theme .kpi-card,
+:root.md-dark-theme .integration-card,
+:root.md-dark-theme .document-preview,
+:root.md-dark-theme .calendar-card,
+:root.md-dark-theme .agenda-card {
+  background: var(--md-surface) !important;
+  border-color: var(--md-border) !important;
+  color: var(--md-text) !important;
+}
+
+:root.md-dark-theme .page-content h1,
+:root.md-dark-theme .page-content h2,
+:root.md-dark-theme .page-content h3,
+:root.md-dark-theme .page-content h4,
+:root.md-dark-theme .page-content strong,
+:root.md-dark-theme .page-content th,
+:root.md-dark-theme .page-content td,
+:root.md-dark-theme .page-content label,
+:root.md-dark-theme .mat-mdc-card-title,
+:root.md-dark-theme .mat-mdc-card-subtitle {
+  color: var(--md-text) !important;
+}
+
+:root.md-dark-theme .page-content p,
+:root.md-dark-theme .page-content small,
+:root.md-dark-theme .page-content .mat-mdc-card-subtitle,
+:root.md-dark-theme .page-content .mat-mdc-form-field-hint,
+:root.md-dark-theme .page-content .mat-mdc-form-field-error,
+:root.md-dark-theme .mat-mdc-dialog-content,
+:root.md-dark-theme .mat-mdc-menu-content {
+  color: var(--md-text-secondary) !important;
+}
+
+:root.md-dark-theme .mat-mdc-table,
+:root.md-dark-theme .mat-mdc-table tbody,
+:root.md-dark-theme .mat-mdc-row,
+:root.md-dark-theme .ranking-table,
+:root.md-dark-theme .ranking-table tbody,
+:root.md-dark-theme .ranking-table tr {
+  background: transparent !important;
+  color: var(--md-text) !important;
+}
+
+:root.md-dark-theme .mat-mdc-header-row,
+:root.md-dark-theme .ranking-table thead,
+:root.md-dark-theme .ranking-table th {
+  background: #202c3f !important;
+  color: var(--md-text-secondary) !important;
+}
+
+:root.md-dark-theme .mat-mdc-cell,
+:root.md-dark-theme .mat-mdc-header-cell,
+:root.md-dark-theme .ranking-table th,
+:root.md-dark-theme .ranking-table td,
+:root.md-dark-theme .mat-mdc-paginator {
+  border-color: var(--md-border) !important;
+  color: var(--md-text) !important;
+}
+
+:root.md-dark-theme .mat-mdc-form-field,
+:root.md-dark-theme .mat-mdc-select-value,
+:root.md-dark-theme .mat-mdc-input-element,
+:root.md-dark-theme input,
+:root.md-dark-theme textarea,
+:root.md-dark-theme .mat-mdc-floating-label {
+  color: var(--md-text) !important;
+  caret-color: var(--md-primary);
+}
+
+:root.md-dark-theme .mat-mdc-text-field-wrapper,
+:root.md-dark-theme .mdc-text-field--outlined,
+:root.md-dark-theme .mat-mdc-select-panel,
+:root.md-dark-theme .mat-mdc-autocomplete-panel,
+:root.md-dark-theme .mat-mdc-menu-panel,
+:root.md-dark-theme .mat-mdc-dialog-surface,
+:root.md-dark-theme .mat-datepicker-content {
+  background: #202c3f !important;
+  color: var(--md-text) !important;
+}
+
+:root.md-dark-theme .mat-mdc-select-arrow,
+:root.md-dark-theme .mat-mdc-form-field-icon-suffix,
+:root.md-dark-theme .mat-mdc-form-field-icon-prefix,
+:root.md-dark-theme .mat-mdc-paginator-icon,
+:root.md-dark-theme .mat-mdc-tab .mdc-tab__text-label {
+  color: var(--md-text-secondary) !important;
+}
+
+:root.md-dark-theme .mat-mdc-tab.mdc-tab--active .mdc-tab__text-label,
+:root.md-dark-theme .mat-mdc-tab:hover .mdc-tab__text-label {
+  color: var(--md-primary) !important;
+}
+
+:root.md-dark-theme .mat-mdc-outlined-button:not(:disabled),
+:root.md-dark-theme .mat-mdc-icon-button:not(:disabled) {
+  color: var(--md-text) !important;
+  border-color: var(--md-border);
+}
+
+:root.md-dark-theme .mat-mdc-chip,
+:root.md-dark-theme .mat-mdc-standard-chip {
+  background: #263248 !important;
+  color: var(--md-text) !important;
+}
+
+:root.md-dark-theme .mat-mdc-dialog-container,
+:root.md-dark-theme .mat-mdc-menu-panel,
+:root.md-dark-theme .mat-mdc-select-panel,
+:root.md-dark-theme .mat-mdc-autocomplete-panel {
+  border: 1px solid var(--md-border);
+}
+
+:root.md-dark-theme .mat-mdc-option:hover,
+:root.md-dark-theme .mat-mdc-option.mdc-list-item--selected,
+:root.md-dark-theme .mat-mdc-menu-item:hover {
+  background: #2a3950 !important;
+}
+
+/* Agenda: la rejilla semanal usa elementos HTML propios, no superficies Material. */
+:root.md-dark-theme .agenda-semanal,
+:root.md-dark-theme .calendario-semanal,
+:root.md-dark-theme .dia-columna,
+:root.md-dark-theme .dia-agenda,
+:root.md-dark-theme .columna-horas,
+:root.md-dark-theme .hora-label,
+:root.md-dark-theme .linea-hora,
+:root.md-dark-theme .proxima-cita {
+  border-color: var(--md-border) !important;
+}
+:root.md-dark-theme .dia-columna,
+:root.md-dark-theme .dia-agenda-body { background: var(--md-surface); }
+:root.md-dark-theme .cabecera-horas,
+:root.md-dark-theme .dia-header,
+:root.md-dark-theme .dia-agenda-header {
+  background: #202c3f !important;
+  border-color: var(--md-border) !important;
+  color: var(--md-text);
+}
+:root.md-dark-theme .dia-header:hover,
+:root.md-dark-theme .dia-agenda-header:hover,
+:root.md-dark-theme .linea-hora:hover { background: #2a3950 !important; }
+:root.md-dark-theme .dia-agenda-header span,
+:root.md-dark-theme .dia-header span,
+:root.md-dark-theme .hora-label,
+:root.md-dark-theme .sin-citas-dia,
+:root.md-dark-theme .calendario-placeholder,
+:root.md-dark-theme .cita-bloque small,
+:root.md-dark-theme .cita-hora { color: var(--md-text-secondary) !important; }
+:root.md-dark-theme .cita-bloque,
+:root.md-dark-theme .cita-calendario {
+  background: #263248 !important;
+  color: var(--md-text) !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, .28);
+}
+:root.md-dark-theme .cita-bloque:hover,
+:root.md-dark-theme .cita-calendario:hover { background: #30415b !important; }
+
+/* Órdenes: archivos, fotografías y zona de arrastre usan HTML propio. */
+:root.md-dark-theme .archivo-item,
+:root.md-dark-theme .archivo-seleccionado,
+:root.md-dark-theme .archivos-pendientes,
+:root.md-dark-theme .estado-subida-item,
+:root.md-dark-theme .imagen-card,
+:root.md-dark-theme .visor-imagen {
+  background: var(--md-surface) !important;
+  border-color: var(--md-border) !important;
+}
+:root.md-dark-theme .drop-zone,
+:root.md-dark-theme .imagen-preview,
+:root.md-dark-theme .visor-contenido,
+:root.md-dark-theme .pendientes-header span { background: #202c3f !important; }
+:root.md-dark-theme .drop-zone:hover { background: #2a3950 !important; }
+:root.md-dark-theme .drop-zone.dragging { background: var(--md-primary-soft) !important; }
+
+/* Estados y avisos propios de Compras, Personal y Configuración. */
+:root.md-dark-theme .estado-borrador,
+:root.md-dark-theme .chip-no-disponible {
+  color: #d6deeb !important;
+  background: #263248 !important;
+}
+:root.md-dark-theme .estado-confirmado,
+:root.md-dark-theme .estado-confirmada,
+:root.md-dark-theme .resolucion-abono,
+:root.md-dark-theme .chip-disponible,
+:root.md-dark-theme .success-box,
+:root.md-dark-theme .all-good {
+  color: #86efac !important;
+  background: var(--md-success-soft) !important;
+  border-color: color-mix(in srgb, var(--md-success) 48%, var(--md-border)) !important;
+}
+:root.md-dark-theme .estado-anulado,
+:root.md-dark-theme .estado-anulada,
+:root.md-dark-theme .resolucion-rechazada,
+:root.md-dark-theme .cancelled-box {
+  color: #fda4af !important;
+  background: var(--md-danger-soft) !important;
+  border-color: color-mix(in srgb, var(--md-danger) 48%, var(--md-border)) !important;
+}
+:root.md-dark-theme .resolucion-pendiente,
+:root.md-dark-theme .warning-box,
+:root.md-dark-theme .chip-ausente {
+  color: #fcd34d !important;
+  background: var(--md-warning-soft) !important;
+  border-color: color-mix(in srgb, var(--md-warning) 48%, var(--md-border)) !important;
+}
+:root.md-dark-theme .resolucion-sustitucion,
+:root.md-dark-theme .info-box,
+:root.md-dark-theme .password-help {
+  color: #bfdbfe !important;
+  background: var(--md-info-soft) !important;
+  border-color: color-mix(in srgb, var(--md-info) 48%, var(--md-border)) !important;
+}
+
+/* Planificación de personal y gráfica: no son superficies Material. */
+:root.md-dark-theme .planificacion-grid,
+:root.md-dark-theme .cabecera-personal,
+:root.md-dark-theme .cabecera-dia,
+:root.md-dark-theme .usuario-info,
+:root.md-dark-theme .celda-dia,
+:root.md-dark-theme .actividad-bloque,
+:root.md-dark-theme .actividad-item {
+  border-color: var(--md-border) !important;
+  color: var(--md-text) !important;
+}
+:root.md-dark-theme .cabecera-personal,
+:root.md-dark-theme .cabecera-dia,
+:root.md-dark-theme .actividad-bloque { background: #202c3f !important; }
+:root.md-dark-theme .cabecera-dia span,
+:root.md-dark-theme .usuario-info small { color: var(--md-text-secondary) !important; }
+:root.md-dark-theme .bloque-cita { color: #93c5fd !important; background: #17345f !important; }
+:root.md-dark-theme .bloque-vacaciones { color: #fcd34d !important; background: #4a3510 !important; }
+:root.md-dark-theme .bloque-ausencia,
+:root.md-dark-theme .bloque-otro { color: #fda4af !important; background: #4b2028 !important; }
+:root.md-dark-theme .chart-grid-line { stroke: #40506a; }
+
+:root.md-dark-theme .table-container { background: var(--md-surface) !important; border-color: var(--md-border) !important; }
+
+/* Facturación e informes conservan varios paneles HTML fuera de Material. */
+:root.md-dark-theme .info-row,
+:root.md-dark-theme .total-final,
+:root.md-dark-theme .pago-item,
+:root.md-dark-theme .verifactu-historial,
+:root.md-dark-theme .verifactu-details,
+:root.md-dark-theme .fila,
+:root.md-dark-theme .persona-fila,
+:root.md-dark-theme .ranking-table th,
+:root.md-dark-theme .ranking-table td,
+:root.md-dark-theme .estado-garantias > div {
+  border-color: var(--md-border) !important;
+}
+
+:root.md-dark-theme .verifactu-hint,
+:root.md-dark-theme .verifactu-anulacion span,
+:root.md-dark-theme .verifactu-status span,
+:root.md-dark-theme .verifactu-empty p,
+:root.md-dark-theme .verifactu-details > span,
+:root.md-dark-theme .pago-detalle p,
+:root.md-dark-theme .informes-page .page-header p,
+:root.md-dark-theme .periodo-general,
+:root.md-dark-theme .metrica span,
+:root.md-dark-theme .metrica small,
+:root.md-dark-theme .fila small,
+:root.md-dark-theme .persona-fila small,
+:root.md-dark-theme .estado-vacio {
+  color: var(--md-text-secondary) !important;
+}
+
+:root.md-dark-theme .verifactu-anulacion,
+:root.md-dark-theme .verifactu-registro {
+  background: #263248 !important;
+  border-color: var(--md-border) !important;
+  color: var(--md-text) !important;
+}
+
+:root.md-dark-theme .verifactu-details code {
+  color: #bfdbfe !important;
+}
+
+:root.md-dark-theme .metric-card strong,
+:root.md-dark-theme .metrica strong {
+  color: var(--md-text) !important;
+}
+
+:root.md-dark-theme .barra-wrapper,
+:root.md-dark-theme .estado-garantias > div {
+  border-color: var(--md-border) !important;
+}
+
+:root.md-dark-theme .alert-stock .alert-icon { background: #4b2028; color: #fda4af; }
+:root.md-dark-theme .alert-pedido .alert-icon { background: #4a3510; color: #fcd34d; }
+:root.md-dark-theme .alert-garantia .alert-icon { background: #332450; color: #c4b5fd; }
+:root.md-dark-theme .alert-presupuesto .alert-icon { background: #173c4a; color: #67e8f9; }
+:root.md-dark-theme .alert-cita .alert-icon { background: #17345f; color: #93c5fd; }
+:root.md-dark-theme .alert-personal .alert-icon { background: #193b2b; color: #86efac; }
+
+* { box-sizing: border-box; }
+button, input, textarea, select { font: inherit; }
+
+// Superficie común para que los módulos compartan una estética consistente.
+.page-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 20px; margin-bottom: 22px; }
+.page-header-content { display: flex; flex-direction: column; gap: 4px; }
+.page-title { margin: 0; color: var(--md-text); font-size: 24px; font-weight: 700; }
+.page-subtitle { margin: 0; color: var(--md-text-secondary); font-size: 13px; }
+.page-actions { display: flex; align-items: center; gap: 10px; }
+
+.md-primary-button {
+  min-height: 42px !important;
+  padding: 0 18px !important;
+  border-radius: var(--md-radius-sm) !important;
+  background: var(--md-primary) !important;
+  color: #fff !important;
+  box-shadow: 0 4px 12px rgba(37, 99, 235, .18);
+  transition: background .15s ease, transform .15s ease;
+}
+.md-primary-button:hover { background: var(--md-primary-hover) !important; }
+.md-primary-button:active { transform: translateY(1px); }
+
+/* =========================================================
+   ADAPTACIÓN RESPONSIVE GLOBAL
+   Los módulos conservan sus reglas propias; esta capa evita que cualquier
+   formulario, tarjeta o tabla quede inutilizable en pantallas pequeñas.
+   ========================================================= */
+@media (max-width: 900px) {
+  .page-container { padding-right: 14px; padding-left: 14px; }
+
+  .grid-2-1,
+  .config-layout,
+  .detail-grid,
+  .documents-layout,
+  .security-grid,
+  .dashboard-bottom-grid { grid-template-columns: 1fr !important; }
+}
+
+@media (max-width: 700px) {
+  .page-container { padding-right: 0; padding-left: 0; }
+
+  .page-header,
+  .chart-heading,
+  .title-line,
+  .toolbar,
+  .filtros-informe {
+    align-items: stretch !important;
+    flex-direction: column;
+    gap: 12px !important;
+  }
+
+  .page-header .page-actions,
+  .page-actions,
+  .form-actions,
+  .backup-actions {
+    width: 100%;
+    flex-wrap: wrap;
+  }
+
+  .page-actions > button,
+  .page-actions > a,
+  .form-actions > button,
+  .form-actions > a,
+  .backup-actions > button {
+    flex: 1 1 160px;
+  }
+
+  .form-section { padding: 18px 14px; }
+
+  .form-row,
+  .form-grid,
+  .data-grid,
+  .details-grid,
+  .cards-grid,
+  .summary-grid,
+  .switch-grid,
+  .metricas-grid,
+  .resumen-general,
+  .resumen-secundario,
+  .services-grid,
+  .backup-info { grid-template-columns: 1fr !important; }
+
+  .full-width { grid-column: auto; }
+
+  .mat-mdc-form-field { width: 100%; }
+
+  .mat-mdc-card-header { padding-right: 14px; padding-left: 14px; }
+  .mat-mdc-card-content { max-width: 100%; overflow-x: auto; padding-right: 14px; padding-left: 14px; }
+
+  .table-wrapper,
+  .table-scroll,
+  .table-container,
+  .data-table,
+  .md-table-container,
+  .recent-table,
+  .ranking-table,
+  .return-table {
+    max-width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .table-wrapper > table,
+  .table-scroll > table,
+  .data-table > table,
+  .md-table-container > table,
+  .recent-table > table,
+  table.mat-mdc-table { min-width: 620px; }
+
+  .mat-mdc-paginator-container {
+    min-height: auto !important;
+    justify-content: center !important;
+    flex-wrap: wrap;
+    padding: 8px !important;
+  }
+
+  .loading-container,
+  .empty-state { min-height: 220px; padding: 38px 16px; }
+}
+
+@media (max-width: 480px) {
+  .page-title,
+  .page-header h1 { font-size: 23px; }
+
+  .page-actions > button,
+  .page-actions > a,
+  .form-actions > button,
+  .form-actions > a,
+  .backup-actions > button { flex-basis: 100%; }
+
+  .mat-mdc-card-content { padding-right: 12px; padding-left: 12px; }
+  .mat-mdc-card-header { padding-right: 12px; padding-left: 12px; }
+}
+
+.mat-mdc-card, .page-card {
+  border: 1px solid var(--md-border);
+  border-radius: var(--md-radius-md);
+  box-shadow: var(--md-shadow-sm);
+}
+
+.mat-mdc-table { background: transparent; }
+.mat-mdc-header-row { background: #fafbfd; }
+.mat-mdc-header-cell { color: var(--md-text-secondary); font-size: 11px; font-weight: 600; border-bottom: 1px solid var(--md-border); }
+.mat-mdc-cell { color: var(--md-text); border-bottom: 1px solid #eef2f6; }
+.mat-mdc-row { transition: background .15s ease; }
+.mat-mdc-row:hover { background: #fafcff; }
+
+.mat-mdc-form-field { --mdc-outlined-text-field-container-shape: 8px; }
+.mat-mdc-text-field-wrapper { background: var(--md-surface); }
+.mat-mdc-form-field-subscript-wrapper { font-size: 11px; }
+
+.kpi-card { display: flex; align-items: center; gap: 15px; padding: 18px; border: 1px solid var(--md-border); border-radius: var(--md-radius-lg); background: var(--md-surface); box-shadow: var(--md-shadow-sm); }
+.kpi-icon { display: flex; width: 56px; height: 56px; flex: 0 0 56px; align-items: center; justify-content: center; border-radius: 50%; }
+.kpi-icon mat-icon { width: 26px; height: 26px; font-size: 26px; }
+.kpi-icon.blue { color: var(--md-primary); background: var(--md-primary-soft); }
+.kpi-icon.green { color: var(--md-success); background: var(--md-success-soft); }
+.kpi-icon.orange { color: #f97316; background: #fff7ed; }
+.kpi-icon.purple { color: var(--md-purple); background: var(--md-purple-soft); }
+.kpi-icon.yellow { color: var(--md-warning); background: var(--md-warning-soft); }
+.kpi-content { min-width: 0; }.kpi-label, .kpi-value, .kpi-footer { display: block; }.kpi-label { margin-bottom: 4px; color: var(--md-text-secondary); font-size: 12px; }.kpi-value { color: var(--md-text); font-size: 22px; font-weight: 700; }.kpi-footer { margin-top: 5px; color: var(--md-text-secondary); font-size: 11px; }
+
+.md-table-container { overflow: hidden; border: 1px solid var(--md-border); border-radius: var(--md-radius-md); background: var(--md-surface); box-shadow: var(--md-shadow-sm); }
+.md-table-container table { width: 100%; }
+
+.md-chip { display: inline-flex; min-height: 24px; align-items: center; padding: 0 9px; border-radius: 6px; font-size: 11px; font-weight: 500; }
+.md-chip.blue { color: #2563eb; background: #eff6ff; }.md-chip.green { color: #15803d; background: #ecfdf3; }.md-chip.orange { color: #c2410c; background: #fff7ed; }.md-chip.purple { color: #7c3aed; background: #f5f3ff; }.md-chip.red { color: #dc2626; background: #fff1f2; }.md-chip.gray { color: #475569; background: #f1f5f9; }
+/* You can add global styles to this file, and also import other style files */

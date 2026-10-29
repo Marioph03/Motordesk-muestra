@@ -1,0 +1,36 @@
+<mat-form-field appearance="outline" class="autocomplete-select">
+
+  <mat-label>{{ etiqueta }}</mat-label>
+
+  <input
+    matInput
+    type="text"
+    [placeholder]="placeholder"
+    [value]="texto"
+    [disabled]="disabled"
+    [matAutocomplete]="opciones"
+    (input)="escribir($any($event.target).value)"
+    (blur)="marcarTocado()">
+
+  <mat-autocomplete
+    #opciones="matAutocomplete"
+    (optionSelected)="seleccionar($event.option.value)">
+
+    @for (item of resultados; track item.id) {
+
+      <mat-option [value]="item.id">
+        {{ mostrar(item) }}
+      </mat-option>
+
+    } @empty {
+
+      <mat-option disabled>
+        No hay resultados
+      </mat-option>
+
+    }
+
+  </mat-autocomplete>
+
+</mat-form-field>
+<!-- Campo accesible que filtra opciones sin obligar a recorrer listas largas. -->

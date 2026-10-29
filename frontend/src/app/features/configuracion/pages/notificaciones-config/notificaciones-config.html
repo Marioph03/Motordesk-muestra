@@ -1,0 +1,69 @@
+<section class="notifications-config-page">
+  <div class="page-header">
+    <div class="page-header-content">
+      <h1 class="page-title">Notificaciones</h1>
+      <p class="page-subtitle">Decide qué avisos y recordatorios debe mostrar MotorDesk.</p>
+    </div>
+  </div>
+
+  @if (cargando) {
+    <div class="loading-container">
+      <mat-spinner diameter="40"></mat-spinner>
+      <span>Cargando configuración...</span>
+    </div>
+  } @else {
+    <mat-card class="config-card">
+      <mat-card-header>
+        <mat-card-title>Avisos del sistema</mat-card-title>
+        <mat-card-subtitle>Estas opciones controlan las alertas visibles en el Dashboard.</mat-card-subtitle>
+      </mat-card-header>
+
+      <mat-card-content>
+        <form [formGroup]="form" class="notifications-form">
+          <div class="notification-row">
+            <div class="notification-icon stock"><mat-icon>inventory_2</mat-icon></div>
+            <div class="notification-content"><strong>Stock bajo</strong><span>Avisa cuando un artículo llegue o baje de su stock mínimo.</span></div>
+            <mat-slide-toggle formControlName="stock_bajo" aria-label="Activar avisos de stock bajo"></mat-slide-toggle>
+          </div>
+
+          <div class="notification-row">
+            <div class="notification-icon pedidos"><mat-icon>local_shipping</mat-icon></div>
+            <div class="notification-content"><strong>Pedidos pendientes</strong><span>Muestra pedidos enviados que todavía no se han recibido.</span></div>
+            <mat-slide-toggle formControlName="pedidos_pendientes" aria-label="Activar avisos de pedidos pendientes"></mat-slide-toggle>
+          </div>
+
+          <div class="notification-row">
+            <div class="notification-icon garantia"><mat-icon>verified_user</mat-icon></div>
+            <div class="notification-content"><strong>Garantías pendientes</strong><span>Avisa de garantías abiertas, en revisión o pendientes de resolver.</span></div>
+            <mat-slide-toggle formControlName="garantias_pendientes" aria-label="Activar avisos de garantías pendientes"></mat-slide-toggle>
+          </div>
+
+          <div class="notification-row">
+            <div class="notification-icon presupuesto"><mat-icon>request_quote</mat-icon></div>
+            <div class="notification-content"><strong>Presupuestos pendientes</strong><span>Muestra presupuestos que continúan pendientes de decisión.</span></div>
+            <mat-slide-toggle formControlName="presupuestos_pendientes" aria-label="Activar avisos de presupuestos pendientes"></mat-slide-toggle>
+          </div>
+
+          <div class="notification-row">
+            <div class="notification-icon citas"><mat-icon>event</mat-icon></div>
+            <div class="notification-content"><strong>Citas próximas</strong><span>Muestra recordatorios de las próximas citas del taller.</span></div>
+            <mat-slide-toggle formControlName="citas_proximas" aria-label="Activar recordatorios de citas"></mat-slide-toggle>
+          </div>
+
+          <div class="notification-row">
+            <div class="notification-icon personal"><mat-icon>person_off</mat-icon></div>
+            <div class="notification-content"><strong>Ausencias del personal</strong><span>Avisa cuando haya personal de vacaciones o ausente.</span></div>
+            <mat-slide-toggle formControlName="ausencias_personal" aria-label="Activar avisos de ausencias"></mat-slide-toggle>
+          </div>
+
+          <div class="form-actions">
+            <button mat-flat-button color="primary" class="md-primary-button" type="button" [disabled]="guardando" (click)="guardar()">
+              <mat-icon>save</mat-icon>
+              {{ guardando ? 'Guardando...' : 'Guardar cambios' }}
+            </button>
+          </div>
+        </form>
+      </mat-card-content>
+    </mat-card>
+  }
+</section>

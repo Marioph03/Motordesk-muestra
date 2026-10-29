@@ -1,0 +1,60 @@
+<mat-card>
+  <mat-card-header>
+    <mat-card-title>Personal</mat-card-title>
+    <mat-card-subtitle>Equipo y disponibilidad del taller.</mat-card-subtitle>
+  </mat-card-header>
+
+  <mat-card-content>
+    @if (authService.tienePermiso('personal.editar')) {
+      <div class="acciones-superiores">
+        <a mat-flat-button color="primary" routerLink="/personal/nuevo">
+          <mat-icon>person_add</mat-icon>
+          Nuevo usuario
+        </a>
+      </div>
+    }
+
+    @if (cargando) {
+      <p class="estado-vacio">Cargando personal…</p>
+    } @else if (personal.length === 0) {
+      <p class="estado-vacio">No hay usuarios registrados.</p>
+    } @else {
+      <div class="tabla-contenedor">
+        <table mat-table [dataSource]="personal">
+          <ng-container matColumnDef="nombre">
+            <th mat-header-cell *matHeaderCellDef>Persona</th>
+            <td mat-cell *matCellDef="let usuario"><strong>{{ usuario.apellidos ? (usuario.apellidos + ', ') : '' }}{{ usuario.nombre }}</strong></td>
+          </ng-container>
+          <ng-container matColumnDef="rol">
+            <th mat-header-cell *matHeaderCellDef>Rol</th>
+            <td mat-cell *matCellDef="let usuario">{{ usuario.rol }}</td>
+          </ng-container>
+          <ng-container matColumnDef="estado">
+            <th mat-header-cell *matHeaderCellDef>Estado</th>
+            <td mat-cell *matCellDef="let usuario"><mat-chip [class.inactivo]="!usuario.activo">{{ usuario.activo ? 'Activo' : 'Inactivo' }}</mat-chip></td>
+          </ng-container>
+          <ng-container matColumnDef="disponibilidad">
+            <th mat-header-cell *matHeaderCellDef>Disponibilidad</th>
+            <td mat-cell *matCellDef="let usuario">
+              @if (!usuario.activo) {
+                <mat-chip class="chip-no-disponible">No disponible</mat-chip>
+              } @else if (estaAusenteHoy(usuario.id)) {
+                <mat-chip class="chip-ausente">
+                  {{ getAusenciaActual(usuario.id)?.tipo }}
+                </mat-chip>
+              } @else {
+                <mat-chip class="chip-disponible">Disponible</mat-chip>
+              }
+            </td>
+          </ng-container>
+          <ng-container matColumnDef="acciones">
+            <th mat-header-cell *matHeaderCellDef></th>
+            <td mat-cell *matCellDef="let usuario"><a mat-icon-button [routerLink]="['/personal', usuario.id]" title="Ver ficha"><mat-icon>visibility</mat-icon></a></td>
+          </ng-container>
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+        </table>
+      </div>
+    }
+  </mat-card-content>
+</mat-card>

@@ -1,0 +1,22 @@
+:host {
+  display: block;
+  margin-top: 24px;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.title {
+  margin: 0;
+  font-size: 28px;
+  font-weight: 500;
+}
+
+.full-width,
+table {
+  width: 100%;
+}

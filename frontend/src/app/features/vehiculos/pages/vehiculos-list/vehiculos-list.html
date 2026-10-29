@@ -1,0 +1,305 @@
+<section class="page-container">
+
+  <div class="page-header">
+
+    <div>
+
+      <h1>
+        Vehículos
+      </h1>
+
+      <p>
+        Gestiona todos los vehículos de tu taller
+      </p>
+
+    </div>
+
+    <div class="page-actions">
+
+      <button
+        mat-flat-button
+        color="primary"
+        routerLink="/vehiculos/nuevo">
+
+        <mat-icon>
+          add
+        </mat-icon>
+
+        Nuevo vehículo
+
+      </button>
+
+    </div>
+
+  </div>
+
+
+  <div class="search-bar">
+
+    <mat-form-field appearance="outline">
+
+      <mat-label>
+        Buscar vehículo
+      </mat-label>
+
+      <input
+        matInput
+        [(ngModel)]="busqueda"
+        (keyup.enter)="buscar()" />
+
+      <mat-icon matSuffix>
+        search
+      </mat-icon>
+
+    </mat-form-field>
+
+
+    <button
+      mat-flat-button
+      color="primary"
+      (click)="buscar()">
+
+      <mat-icon>
+        search
+      </mat-icon>
+
+      Buscar
+
+    </button>
+
+  </div>
+
+
+  @if (loading) {
+
+    <div class="loading-container">
+
+      <mat-spinner
+        diameter="40">
+      </mat-spinner>
+
+      <p>
+        Cargando vehículos...
+      </p>
+
+    </div>
+
+  } @else {
+
+    <div class="panel">
+
+      <div class="data-table">
+
+        <table
+          mat-table
+          [dataSource]="dataSource">
+
+          <ng-container matColumnDef="codigo">
+            <th mat-header-cell *matHeaderCellDef>Código</th>
+            <td mat-cell *matCellDef="let vehiculo">
+              <strong>{{ vehiculo.codigo || ('VEH-' + vehiculo.id) }}</strong>
+            </td>
+          </ng-container>
+
+
+          <!-- MATRÍCULA -->
+
+          <ng-container
+            matColumnDef="matricula">
+
+            <th
+              mat-header-cell
+              *matHeaderCellDef>
+
+              Matrícula
+
+            </th>
+
+            <td
+              mat-cell
+              *matCellDef="let vehiculo">
+
+              <strong>
+                {{ vehiculo.matricula }}
+              </strong>
+
+            </td>
+
+          </ng-container>
+
+
+          <!-- MARCA -->
+
+          <ng-container
+            matColumnDef="marca">
+
+            <th
+              mat-header-cell
+              *matHeaderCellDef>
+
+              Marca
+
+            </th>
+
+            <td
+              mat-cell
+              *matCellDef="let vehiculo">
+
+              {{ vehiculo.marca }}
+
+            </td>
+
+          </ng-container>
+
+
+          <!-- MODELO -->
+
+          <ng-container
+            matColumnDef="modelo">
+
+            <th
+              mat-header-cell
+              *matHeaderCellDef>
+
+              Modelo
+
+            </th>
+
+            <td
+              mat-cell
+              *matCellDef="let vehiculo">
+
+              {{ vehiculo.modelo }}
+
+            </td>
+
+          </ng-container>
+
+
+          <!-- CLIENTE -->
+
+          <ng-container
+            matColumnDef="cliente">
+
+            <th
+              mat-header-cell
+              *matHeaderCellDef>
+
+              Propietario
+
+            </th>
+
+            <td
+              mat-cell
+              *matCellDef="let vehiculo">
+
+              {{
+                vehiculo.cliente?.apellidos
+                ? (vehiculo.cliente?.apellidos + ', ' + vehiculo.cliente?.nombre)
+                : (vehiculo.cliente?.nombre || '-')
+              }}
+
+            </td>
+
+          </ng-container>
+
+
+          <!-- ACCIONES -->
+
+          <ng-container
+            matColumnDef="acciones">
+
+            <th
+              mat-header-cell
+              *matHeaderCellDef>
+
+              Acciones
+
+            </th>
+
+            <td
+              mat-cell
+              *matCellDef="let vehiculo">
+
+              <div class="actions-cell">
+
+                <button
+                  mat-icon-button
+                  [routerLink]="[
+                    '/vehiculos',
+                    vehiculo.id
+                  ]"
+                  matTooltip="Ver">
+
+                  <mat-icon>
+                    visibility
+                  </mat-icon>
+
+                </button>
+
+
+                <button
+                  mat-icon-button
+                  [routerLink]="[
+                    '/vehiculos',
+                    vehiculo.id,
+                    'editar'
+                  ]"
+                  matTooltip="Editar">
+
+                  <mat-icon>
+                    edit
+                  </mat-icon>
+
+                </button>
+
+
+                <button
+                  mat-icon-button
+                  (click)="eliminar(vehiculo.id)"
+                  matTooltip="Eliminar">
+
+                  <mat-icon>
+                    delete
+                  </mat-icon>
+
+                </button>
+
+              </div>
+
+            </td>
+
+          </ng-container>
+
+
+          <tr
+            mat-header-row
+            *matHeaderRowDef="displayedColumns">
+          </tr>
+
+          <tr
+            mat-row
+            *matRowDef="
+              let row;
+              columns: displayedColumns;
+            ">
+          </tr>
+
+        </table>
+
+      </div>
+
+    </div>
+
+
+    <mat-paginator
+      [length]="vehiculos?.total ?? 0"
+      [pageIndex]="page - 1"
+      [pageSize]="size"
+      [pageSizeOptions]="[5, 10, 20]"
+      (page)="cambiarPagina($event)">
+    </mat-paginator>
+
+  }
+
+</section>

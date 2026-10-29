@@ -1,0 +1,91 @@
+.notifications-config-page {
+  max-width: 960px;
+}
+
+.config-card {
+  border: 1px solid var(--md-border);
+  border-radius: var(--md-radius-md);
+  box-shadow: var(--md-shadow-sm);
+}
+
+.notifications-form {
+  display: flex;
+  flex-direction: column;
+  margin-top: 10px;
+}
+
+.notification-row {
+  display: grid;
+  grid-template-columns: 48px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 14px;
+  min-height: 82px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--md-border);
+}
+
+.notification-row:last-of-type {
+  border-bottom: 0;
+}
+
+.notification-icon {
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+}
+
+.notification-icon.stock { color: #c2410c; background: #fff7ed; }
+.notification-icon.pedidos { color: var(--md-primary); background: var(--md-primary-soft); }
+.notification-icon.garantia { color: #7c3aed; background: var(--md-purple-soft); }
+.notification-icon.presupuesto { color: #0891b2; background: #ecfeff; }
+.notification-icon.citas { color: #15803d; background: var(--md-success-soft); }
+.notification-icon.personal { color: #be123c; background: var(--md-danger-soft); }
+
+.notification-content {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.notification-content strong {
+  font-size: 14px;
+  color: var(--md-text);
+}
+
+.notification-content span {
+  font-size: 12px;
+  line-height: 1.45;
+  color: var(--md-text-secondary);
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 24px;
+}
+
+.loading-container {
+  min-height: 300px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  color: var(--md-text-secondary);
+}
+
+@media (max-width: 650px) {
+  .notification-row {
+    grid-template-columns: 44px minmax(0, 1fr);
+    align-items: start;
+  }
+
+  .notification-row mat-slide-toggle {
+    grid-column: 2;
+    justify-self: start;
+  }
+}

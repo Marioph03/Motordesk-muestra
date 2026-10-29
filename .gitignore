@@ -1,0 +1,40 @@
+# Secretos y configuraciones locales
+.env
+.env.*
+!.env.example
+!.env.template
+
+# Copias de seguridad locales generadas por MotorDesk.
+backups/
+
+# Paquetes de PostgreSQL usados por el instalador. Se distribuyen fuera de
+# GitHub Releases/instalador; GitHub no admite estos binarios de cientos de MB.
+installer/dependencies/*.zip
+installer/dependencies/*.exe
+
+# Registros de diagnostico y pruebas de la instalacion local.
+installer/logs/
+
+# Salidas reproducibles de PyInstaller y cachÃ©s de Python.
+backend/build/
+backend/dist/
+backend/*.spec
+# La especificacion del backend es codigo de empaquetado, no un artefacto:
+# define dependencias dinamicas y recursos PDF que debe llevar cada instalador.
+!backend/MotorDeskBackend.spec
+__pycache__/
+*.py[cod]
+
+# Empaquetados locales del lanzador e instalador de Windows.
+/build/
+/dist/
+# La especificacion del lanzador tambien es codigo fuente del empaquetado.
+!/MotorDesk.spec
+/installer/output/
+/installer/generated/
+/installer/winsw/
+
+
+certificado_taller.p12
+certificado_taller.pfx
+backend/storage/certificados/

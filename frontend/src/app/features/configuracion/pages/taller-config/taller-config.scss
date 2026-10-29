@@ -1,0 +1,13 @@
+.taller-config-page { max-width: 1280px; margin: 0 auto; }
+.config-layout { display: grid; grid-template-columns: minmax(0, 2fr) minmax(280px, 1fr); gap: 20px; align-items: start; }
+.config-card { border: 1px solid var(--md-border); border-radius: var(--md-radius-md); box-shadow: var(--md-shadow-sm); }
+.config-card mat-card-header { display: flex; align-items: center; gap: 12px; padding-bottom: 16px; }
+.section-icon { display: flex; width: 42px; height: 42px; flex: 0 0 42px; align-items: center; justify-content: center; border-radius: 10px; }
+.section-icon.blue { background: var(--md-primary-soft); color: var(--md-primary); }
+.section-icon.purple { background: var(--md-purple-soft); color: var(--md-purple); }
+.config-form { display: flex; flex-direction: column; }.form-section { padding: 22px 0; }.form-section:first-child { padding-top: 5px; }.form-section h3 { margin: 0 0 16px; color: var(--md-text); font-size: 14px; font-weight: 600; }
+.form-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 2px 16px; }.full-width { grid-column: 1 / -1; }.form-actions { display: flex; justify-content: flex-end; padding-top: 22px; }
+.logo-section { display: flex; flex-direction: column; align-items: center; padding: 20px 5px; text-align: center; }.logo-preview { display: flex; width: 100%; min-height: 180px; align-items: center; justify-content: center; padding: 20px; border: 1px dashed var(--md-border); border-radius: var(--md-radius-md); background: #fafcff; }.logo-preview img { max-width: 100%; max-height: 150px; object-fit: contain; }.logo-placeholder { display: flex; flex-direction: column; align-items: center; gap: 8px; color: var(--md-text-muted); }.logo-placeholder mat-icon { width: 50px; height: 50px; font-size: 50px; }.logo-help { max-width: 260px; margin: 16px 0; color: var(--md-text-secondary); font-size: 12px; line-height: 1.5; }
+.loading-container { display: flex; min-height: 300px; flex-direction: column; align-items: center; justify-content: center; gap: 15px; color: var(--md-text-secondary); }
+@media (max-width: 1000px) { .config-layout { grid-template-columns: 1fr; } }
+@media (max-width: 700px) { .form-grid { grid-template-columns: 1fr; }.full-width { grid-column: auto; }.form-actions button { width: 100%; } }

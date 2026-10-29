@@ -1,0 +1,22 @@
+.acciones-superiores {
+  display: flex;
+  justify-content: flex-end;
+  margin: 16px 0;
+}
+
+.tabla-contenedor {
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+}
+
+.inactivo {
+  opacity: .6;
+}
+
+.estado-vacio {
+  margin: 24px 0;
+  opacity: .7;
+}

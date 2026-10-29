@@ -1,0 +1,35 @@
+<section class="page-container">
+  <div class="page-header">
+    <div class="page-header-content">
+      <h1 class="page-title">Albaranes de proveedor</h1>
+      <p class="page-subtitle">Registra la mercancía recibida y controla su entrada en almacén.</p>
+    </div>
+    <div class="page-actions">
+      <a mat-flat-button class="md-primary-button" routerLink="/compras/albaranes/nuevo"><mat-icon>add</mat-icon>Nuevo albarán</a>
+    </div>
+  </div>
+
+  <mat-card class="panel">
+    <mat-card-content>
+      @if (loading) {
+        <div class="empty-state">Cargando albaranes...</div>
+      } @else if (albaranes.length === 0) {
+        <div class="empty-state"><mat-icon>receipt_long</mat-icon><h3>No hay albaranes registrados</h3><p>Cuando recibas mercancía de un proveedor podrás registrarla aquí.</p></div>
+      } @else {
+        <div class="table-scroll"><table mat-table [dataSource]="albaranes">
+          <ng-container matColumnDef="numero"><th mat-header-cell *matHeaderCellDef>Albarán</th><td mat-cell *matCellDef="let albaran"><strong>{{ albaran.numero_interno }}</strong></td></ng-container>
+          <ng-container matColumnDef="numero_proveedor"><th mat-header-cell *matHeaderCellDef>Nº proveedor</th><td mat-cell *matCellDef="let albaran">{{ albaran.numero_proveedor || '-' }}</td></ng-container>
+          <ng-container matColumnDef="fecha"><th mat-header-cell *matHeaderCellDef>Fecha</th><td mat-cell *matCellDef="let albaran">{{ albaran.fecha | date:'dd/MM/yyyy' }}</td></ng-container>
+          <ng-container matColumnDef="estado"><th mat-header-cell *matHeaderCellDef>Estado</th><td mat-cell *matCellDef="let albaran"><span class="status-chip" [class]="'status-chip ' + claseEstado(albaran.estado)">{{ albaran.estado }}</span></td></ng-container>
+          <ng-container matColumnDef="pedido"><th mat-header-cell *matHeaderCellDef>Pedido</th><td mat-cell *matCellDef="let albaran">@if (albaran.pedido_compra_id) { <a [routerLink]="['/compras', albaran.pedido_compra_id]">Ver pedido</a> } @else { - }</td></ng-container>
+          <ng-container matColumnDef="acciones"><th mat-header-cell *matHeaderCellDef>Acciones</th><td mat-cell *matCellDef="let albaran"><div class="actions-cell">
+            <a mat-icon-button [routerLink]="['/compras/albaranes', albaran.id]" matTooltip="Ver"><mat-icon>visibility</mat-icon></a>
+            @if (albaran.estado === 'BORRADOR') { <button mat-icon-button type="button" matTooltip="Confirmar recepción" (click)="confirmar(albaran)"><mat-icon>check_circle</mat-icon></button><button mat-icon-button type="button" matTooltip="Anular" (click)="anular(albaran)"><mat-icon>cancel</mat-icon></button> }
+          </div></td></ng-container>
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+        </table></div>
+      }
+    </mat-card-content>
+  </mat-card>
+</section>

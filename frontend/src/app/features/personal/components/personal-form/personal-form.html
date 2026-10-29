@@ -1,0 +1,186 @@
+<mat-card>
+  <mat-card-header>
+    <mat-card-title>
+      {{ usuario ? ((usuario.apellidos ? usuario.apellidos + ', ' : '') + usuario.nombre) : esNuevo ? 'Nuevo usuario' : 'Personal' }}
+    </mat-card-title>
+    <mat-card-subtitle>Ficha, rol y disponibilidad del miembro del equipo.</mat-card-subtitle>
+  </mat-card-header>
+
+  <mat-card-content>
+    @if (cargando) {
+      <p class="estado-vacio">Cargando ficha…</p>
+    } @else if (usuario || esNuevo) {
+      <form [formGroup]="form" (ngSubmit)="guardar()">
+        <section class="datos-formulario">
+          <mat-form-field appearance="outline">
+            <mat-label>Nombre</mat-label>
+            <input matInput formControlName="nombre" [readonly]="!puedeEditar">
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>Apellidos</mat-label>
+            <input matInput formControlName="apellidos" [readonly]="!puedeEditar">
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>Email</mat-label>
+            <input matInput type="email" formControlName="email" [readonly]="!puedeEditar">
+          </mat-form-field>
+          @if (esNuevo) {
+            <mat-form-field appearance="outline">
+              <mat-label>Contraseña inicial</mat-label>
+              <input matInput type="password" formControlName="password" autocomplete="new-password">
+              <mat-hint>Mínimo 6 caracteres</mat-hint>
+              @if (form.controls.password.touched && form.controls.password.hasError('required')) {
+                <mat-error>La contraseña es obligatoria.</mat-error>
+              } @else if (form.controls.password.touched && form.controls.password.hasError('minlength')) {
+                <mat-error>Debe tener al menos 6 caracteres.</mat-error>
+              }
+            </mat-form-field>
+          }
+          <mat-form-field appearance="outline">
+            <mat-label>Rol</mat-label>
+            <mat-select formControlName="rol" [disabled]="!puedeEditar || roles.length === 0">
+              @if (roles.length === 0) {
+                @if (usuario) {
+                  <mat-option [value]="usuario.rol">{{ usuario.rol }}</mat-option>
+                }
+              } @else {
+                @for (rol of roles; track rol.id) {
+                  <mat-option [value]="rol.nombre">{{ rol.nombre }}</mat-option>
+                }
+              }
+            </mat-select>
+          </mat-form-field>
+          <mat-slide-toggle formControlName="activo" [disabled]="!puedeEditar">
+            Usuario activo
+          </mat-slide-toggle>
+        </section>
+
+        <div class="acciones-formulario">
+          <a mat-button routerLink="/personal">Volver</a>
+          @if (puedeEditar) {
+            <button mat-flat-button color="primary" type="submit" [disabled]="form.invalid || guardando">
+              <mat-icon>save</mat-icon>
+              {{ esNuevo ? 'Registrar usuario' : 'Guardar cambios' }}
+            </button>
+          }
+        </div>
+      </form>
+
+      @if (usuario) {
+      <mat-divider></mat-divider>
+
+      <section class="ausencias">
+        <div class="cabecera-seccion">
+          <div>
+            <h2>Vacaciones y ausencias</h2>
+            <p>Periodos en los que esta persona no está disponible.</p>
+          </div>
+          @if (puedeEditar) {
+            <button mat-stroked-button color="primary" type="button" (click)="nuevaAusencia()">
+              <mat-icon>event_busy</mat-icon>
+              Registrar ausencia
+            </button>
+          }
+        </div>
+
+        @if (ausencias.length === 0) {
+          <p class="estado-vacio">No hay vacaciones ni ausencias registradas.</p>
+        } @else {
+          <div class="tabla-contenedor">
+            <table mat-table [dataSource]="ausencias">
+              <ng-container matColumnDef="tipo">
+                <th mat-header-cell *matHeaderCellDef>Tipo</th>
+                <td mat-cell *matCellDef="let ausencia"><mat-chip>{{ ausencia.tipo }}</mat-chip></td>
+              </ng-container>
+              <ng-container matColumnDef="inicio">
+                <th mat-header-cell *matHeaderCellDef>Inicio</th>
+                <td mat-cell *matCellDef="let ausencia">{{ ausencia.fecha_inicio | date:'dd/MM/yyyy' }}</td>
+              </ng-container>
+              <ng-container matColumnDef="fin">
+                <th mat-header-cell *matHeaderCellDef>Fin</th>
+                <td mat-cell *matCellDef="let ausencia">
+                  {{ getFechaFinVisible(ausencia) | date:'dd/MM/yyyy' }}
+                </td>
+              </ng-container>
+              <ng-container matColumnDef="observaciones">
+                <th mat-header-cell *matHeaderCellDef>Observaciones</th>
+                <td mat-cell *matCellDef="let ausencia">{{ ausencia.observaciones || '—' }}</td>
+              </ng-container>
+              <ng-container matColumnDef="acciones">
+                <th mat-header-cell *matHeaderCellDef>Acciones</th>
+                <td mat-cell *matCellDef="let ausencia">
+                  @if (puedeEditar) {
+                    <button mat-icon-button type="button" title="Editar ausencia" (click)="editarAusencia(ausencia)"><mat-icon>edit</mat-icon></button>
+                    <button mat-icon-button type="button" title="Eliminar ausencia" (click)="eliminarAusencia(ausencia)"><mat-icon>delete</mat-icon></button>
+                  }
+                </td>
+              </ng-container>
+              <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+              <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+            </table>
+          </div>
+        }
+      </section>
+
+      @if (resumenOperativo) {
+        <mat-divider></mat-divider>
+
+        <section class="actividad-operativa">
+          <div class="cabecera-seccion">
+            <div>
+              <h2>Actividad actual</h2>
+              <p>Próximas citas, órdenes activas y ausencias pendientes.</p>
+            </div>
+          </div>
+
+          <div class="actividad-grid">
+            <section class="actividad-bloque">
+              <h3><mat-icon>event</mat-icon> Próximas citas</h3>
+              @if (resumenOperativo.citas.length === 0) {
+                <p class="sin-actividad">Sin citas próximas.</p>
+              } @else {
+                @for (cita of resumenOperativo.citas; track cita.id) {
+                  <a class="actividad-item" [routerLink]="['/agenda', cita.id]">
+                    <strong>{{ cita.fecha_inicio | date:'HH:mm' }} · {{ cita.motivo }}</strong>
+                    <span>{{ cita.vehiculo_descripcion }}</span>
+                  </a>
+                }
+              }
+            </section>
+
+            <section class="actividad-bloque">
+              <h3><mat-icon>build</mat-icon> Órdenes activas</h3>
+              @if (resumenOperativo.ordenes.length === 0) {
+                <p class="sin-actividad">Sin órdenes activas.</p>
+              } @else {
+                @for (orden of resumenOperativo.ordenes; track orden.id) {
+                  <a class="actividad-item" [routerLink]="['/ordenes', orden.id]">
+                    <strong>{{ orden.numero }}</strong>
+                    <span>{{ orden.descripcion_averia }}</span>
+                  </a>
+                }
+              }
+            </section>
+
+            <section class="actividad-bloque">
+              <h3><mat-icon>event_busy</mat-icon> Próximas ausencias</h3>
+              @if (resumenOperativo.ausencias.length === 0) {
+                <p class="sin-actividad">Sin ausencias próximas.</p>
+              } @else {
+                @for (ausencia of resumenOperativo.ausencias; track ausencia.id) {
+                  <div class="actividad-item">
+                    <strong>{{ ausencia.fecha_inicio | date:'dd/MM' }} - {{ getFechaFinVisible(ausencia) | date:'dd/MM' }} · {{ ausencia.tipo }}</strong>
+                    <span>{{ ausencia.observaciones || 'Sin observaciones' }}</span>
+                  </div>
+                }
+              }
+            </section>
+          </div>
+        </section>
+      }
+      }
+    } @else {
+      <p class="estado-vacio">No se encontró el usuario.</p>
+    }
+  </mat-card-content>
+</mat-card>

@@ -1,0 +1,39 @@
+.app-shell { display: flex; min-height: 100vh; background: var(--md-bg); }
+.sidebar-panel { display: flex; position: sticky; top: 0; width: var(--md-sidebar-width); height: 100vh; flex: 0 0 var(--md-sidebar-width); flex-direction: column; background: linear-gradient(180deg, var(--md-sidebar-start) 0%, var(--md-sidebar-end) 100%); color: #fff; box-shadow: 8px 0 30px rgba(15, 41, 78, .08); }
+.brand { display: flex; min-height: 112px; align-items: center; padding: 18px 16px; border-bottom: 1px solid rgba(255, 255, 255, .11); }
+.brand-lockup { position: relative; width: 150px; height: 68px; }.brand-logo { position: absolute; top: 0; left: 0; width: 96px; height: 48px; object-fit: contain; object-position: left center; }
+.brand-copy { position: absolute; top: 31px; left: 23px; }.brand-copy strong { display: block; color: #fff; font-size: 22px; font-weight: 800; letter-spacing: -1px; line-height: .95; }.brand-copy span { display: block; margin-top: 5px; color: #fff; font-size: 9px; font-weight: 500; letter-spacing: -.12px; white-space: nowrap; }
+.workspace { display: flex; min-width: 0; flex: 1; flex-direction: column; } main { flex: 1; overflow: auto; padding: 26px 30px 34px; background: var(--md-bg); color: var(--md-text); }
+.sidebar-colapsada .sidebar-panel { width: 76px; flex-basis: 76px; }.sidebar-colapsada .brand { justify-content: center; min-height: 91px; padding: 18px 7px; }.sidebar-colapsada .brand-lockup { width: 60px; height: 48px; }.sidebar-colapsada .brand-logo { width: 60px; height: 40px; }.sidebar-colapsada .brand-copy { display: none; }
+@media (max-width: 900px) { .sidebar-panel { width: 76px; flex-basis: 76px; }.brand { justify-content: center; min-height: 91px; padding: 18px 7px; }.brand-lockup { width: 60px; height: 48px; }.brand-logo { width: 60px; height: 40px; }.brand-copy { display: none; } main { padding: 18px; } }
+
+.sidebar-backdrop { display: none; }
+
+@media (max-width: 700px) {
+  .sidebar-panel {
+    position: fixed;
+    z-index: 200;
+    width: min(82vw, 290px);
+    height: 100dvh;
+    flex-basis: min(82vw, 290px);
+    transform: translateX(-105%);
+    transition: transform .22s ease;
+    box-shadow: 12px 0 32px rgba(0, 0, 0, .3);
+  }
+
+  .sidebar-movil-abierta .sidebar-panel { transform: translateX(0); }
+  .sidebar-movil-abierta .sidebar-backdrop { display: block; position: fixed; z-index: 190; inset: 0; border: 0; background: rgba(2, 11, 24, .56); }
+
+  .brand { justify-content: flex-start; min-height: 112px; padding: 18px 16px; }
+  .brand-lockup { width: 150px; height: 68px; }
+  .brand-logo { width: 96px; height: 48px; }
+  .brand-copy { display: block; }
+  .sidebar-colapsada .sidebar-panel { width: min(82vw, 290px); flex-basis: min(82vw, 290px); }
+  .sidebar-colapsada .brand { justify-content: flex-start; min-height: 112px; padding: 18px 16px; }
+  .sidebar-colapsada .brand-lockup { width: 150px; height: 68px; }
+  .sidebar-colapsada .brand-logo { width: 96px; height: 48px; }
+  .sidebar-colapsada .brand-copy { display: block; }
+
+  main { padding: 16px 12px 26px; }
+}
+/* Estructura responsive de sidebar, topbar y área de contenido principal. */

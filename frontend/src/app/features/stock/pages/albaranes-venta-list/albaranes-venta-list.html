@@ -1,0 +1,55 @@
+<section class="page-container">
+  <div class="page-header">
+    <div>
+      <h1>Albaranes de venta</h1>
+      <p>Registra la venta de recambios y descuenta las existencias al confirmar.</p>
+    </div>
+    <div class="page-actions">
+      <button mat-stroked-button [disabled]="seleccionados.size === 0 || facturando" (click)="facturarSeleccionados()">
+        <mat-icon>receipt_long</mat-icon> Facturar seleccionados ({{ seleccionados.size }})
+      </button>
+      <a mat-stroked-button routerLink="/facturas/nuevo" [queryParams]="{ tipo: 'RECAMBIO' }">
+        <mat-icon>receipt_long</mat-icon> Factura de recambio
+      </a>
+      <a mat-flat-button color="primary" routerLink="/stock/albaranes-venta/nuevo">
+        <mat-icon>add</mat-icon> Nuevo albar&aacute;n de venta
+      </a>
+    </div>
+  </div>
+
+  <mat-card>
+    <mat-card-content>
+      @if (loading) {
+        <p class="empty-state">Cargando albaranes...</p>
+      } @else if (albaranes.length === 0) {
+        <div class="empty-state"><mat-icon>sell</mat-icon><h3>No hay albaranes de venta</h3><p>Crea uno para vender recambios directamente desde almac&eacute;n.</p></div>
+      } @else {
+        <div class="table-scroll"><table mat-table [dataSource]="albaranes">
+          <ng-container matColumnDef="seleccion"><th mat-header-cell *matHeaderCellDef>Facturar</th><td mat-cell *matCellDef="let a">
+            @if (puedeFacturarse(a)) {
+              <mat-checkbox [checked]="seleccionados.has(a.id)" (change)="cambiarSeleccion(a, $event.checked)" aria-label="Seleccionar albarán para facturar"></mat-checkbox>
+            }
+          </td></ng-container>
+          <ng-container matColumnDef="numero"><th mat-header-cell *matHeaderCellDef>Albar&aacute;n</th><td mat-cell *matCellDef="let a"><a [routerLink]="['/stock/albaranes-venta', a.id]"><strong>{{ a.numero }}</strong></a></td></ng-container>
+          <ng-container matColumnDef="cliente"><th mat-header-cell *matHeaderCellDef>Cliente</th><td mat-cell *matCellDef="let a">{{ nombreCliente(a) }}</td></ng-container>
+          <ng-container matColumnDef="fecha"><th mat-header-cell *matHeaderCellDef>Fecha</th><td mat-cell *matCellDef="let a">{{ a.fecha | date:'dd/MM/yyyy' }}</td></ng-container>
+          <ng-container matColumnDef="estado"><th mat-header-cell *matHeaderCellDef>Estado</th><td mat-cell *matCellDef="let a"><span class="estado" [class]="'estado ' + a.estado.toLowerCase()">{{ a.estado }}</span></td></ng-container>
+          <ng-container matColumnDef="total"><th mat-header-cell *matHeaderCellDef>Total sin IVA</th><td mat-cell *matCellDef="let a">{{ a.total | number:'1.2-2' }} &euro;</td></ng-container>
+          <ng-container matColumnDef="acciones"><th mat-header-cell *matHeaderCellDef>Acciones</th><td mat-cell *matCellDef="let a">
+            <a mat-icon-button matTooltip="Ver albarán" [routerLink]="['/stock/albaranes-venta', a.id]"><mat-icon>visibility</mat-icon></a>
+            @if (a.estado === 'BORRADOR') {
+              <button mat-icon-button matTooltip="Confirmar y descontar stock" (click)="confirmar(a)"><mat-icon>check_circle</mat-icon></button>
+              <button mat-icon-button matTooltip="Anular" (click)="anular(a)"><mat-icon>cancel</mat-icon></button>
+            } @else if (a.estado === 'CONFIRMADO' && !a.factura_id) {
+              <button mat-icon-button matTooltip="Crear factura de recambio" [disabled]="facturando" (click)="facturar(a)"><mat-icon>receipt_long</mat-icon></button>
+            } @else if (a.factura_id) {
+              <a mat-icon-button matTooltip="Ver factura de recambio" [routerLink]="['/facturas', a.factura_id]"><mat-icon>receipt_long</mat-icon></a>
+            }
+          </td></ng-container>
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+        </table></div>
+      }
+    </mat-card-content>
+  </mat-card>
+</section>

@@ -1,0 +1,581 @@
+<mat-card>
+
+    <mat-card-header>
+
+        <mat-card-title>
+
+            @if (pedido) {
+
+                {{ pedido.numero }}
+
+            } @else {
+
+                Nuevo pedido de compra
+
+            }
+
+        </mat-card-title>
+
+        @if (pedido) {
+
+            <mat-chip>
+                {{ pedido.estado }}
+            </mat-chip>
+
+        }
+
+    </mat-card-header>
+
+
+    <mat-card-content>
+
+        <form
+            [formGroup]="form"
+            class="pedido-form">
+
+            <app-autocomplete-select
+                formControlName="proveedor_id"
+                etiqueta="Proveedor"
+                [items]="proveedores"
+                [mostrar]="etiquetaProveedor">
+            </app-autocomplete-select>
+
+
+            <mat-form-field
+                appearance="outline"
+                class="full-width">
+
+                <mat-label>
+                    Observaciones
+                </mat-label>
+
+                <textarea
+                    matInput
+                    rows="3"
+                    formControlName="observaciones">
+                </textarea>
+
+            </mat-form-field>
+
+        </form>
+
+
+        @if (pedido) {
+
+            <mat-divider></mat-divider>
+
+
+            <div class="pedido-info">
+
+                <div>
+
+                    <span>
+                        Fecha
+                    </span>
+
+                    <strong>
+                        {{
+                            pedido.fecha
+                            | date:'dd/MM/yyyy'
+                        }}
+                    </strong>
+
+                </div>
+
+
+                @if (pedido.fecha_envio) {
+
+                    <div>
+
+                        <span>
+                            Enviado
+                        </span>
+
+                        <strong>
+                            {{
+                                pedido.fecha_envio
+                                | date:'dd/MM/yyyy'
+                            }}
+                        </strong>
+
+                    </div>
+
+                }
+
+
+                @if (pedido.fecha_recepcion) {
+
+                    <div>
+
+                        <span>
+                            Recibido
+                        </span>
+
+                        <strong>
+                            {{
+                                pedido.fecha_recepcion
+                                | date:'dd/MM/yyyy'
+                            }}
+                        </strong>
+
+                    </div>
+
+                }
+
+            </div>
+
+
+            <mat-divider></mat-divider>
+
+
+            <div class="lineas-header">
+
+                <h3>
+                    Artículos del pedido
+                </h3>
+
+
+                @if (editable) {
+
+                    <button
+                        mat-flat-button
+                        color="primary"
+                        type="button"
+                        (click)="agregarLinea()">
+
+                        <mat-icon>
+                            add
+                        </mat-icon>
+
+                        Añadir artículo
+
+                    </button>
+
+                }
+
+            </div>
+
+
+            @if (
+                pedido.lineas.length === 0
+            ) {
+
+                <div class="sin-lineas">
+
+                    <mat-icon>
+                        inventory_2
+                    </mat-icon>
+
+                    <p>
+                        El pedido todavía no tiene artículos.
+                    </p>
+
+                </div>
+
+            } @else {
+
+                <table
+                    mat-table
+                    [dataSource]="pedido.lineas">
+
+
+                    <ng-container
+                        matColumnDef="referencia">
+
+                        <th
+                            mat-header-cell
+                            *matHeaderCellDef>
+
+                            Referencia
+
+                        </th>
+
+                        <td
+                            mat-cell
+                            *matCellDef="let linea">
+
+                            <strong>
+                                {{ linea.referencia }}
+                            </strong>
+
+                        </td>
+
+                    </ng-container>
+
+
+                    <ng-container
+                        matColumnDef="descripcion">
+
+                        <th
+                            mat-header-cell
+                            *matHeaderCellDef>
+
+                            Artículo
+
+                        </th>
+
+                        <td
+                            mat-cell
+                            *matCellDef="let linea">
+
+                            {{ linea.descripcion }}
+
+                        </td>
+
+                    </ng-container>
+
+
+                    <ng-container
+                        matColumnDef="cantidad">
+
+                        <th
+                            mat-header-cell
+                            *matHeaderCellDef>
+
+                            Pedidas
+
+                        </th>
+
+                        <td
+                            mat-cell
+                            *matCellDef="let linea">
+
+                            {{ linea.cantidad_pedida }}
+
+                        </td>
+
+                    </ng-container>
+
+
+                    <ng-container
+                        matColumnDef="recibida">
+
+                        <th
+                            mat-header-cell
+                            *matHeaderCellDef>
+
+                            Recibidas
+
+                        </th>
+
+                        <td
+                            mat-cell
+                            *matCellDef="let linea">
+
+                            {{ linea.cantidad_recibida }}
+
+                        </td>
+
+                    </ng-container>
+
+
+                    <ng-container
+                        matColumnDef="coste">
+
+                        <th
+                            mat-header-cell
+                            *matHeaderCellDef>
+
+                            Coste
+
+                        </th>
+
+                        <td
+                            mat-cell
+                            *matCellDef="let linea">
+
+                            {{
+                                linea.coste_unitario
+                                | number:'1.2-2'
+                            }} €
+
+                        </td>
+
+                    </ng-container>
+
+
+                    <ng-container
+                        matColumnDef="iva">
+
+                        <th
+                            mat-header-cell
+                            *matHeaderCellDef>
+
+                            IVA
+
+                        </th>
+
+                        <td
+                            mat-cell
+                            *matCellDef="let linea">
+
+                            {{ linea.iva }} %
+
+                        </td>
+
+                    </ng-container>
+
+
+                    <ng-container
+                        matColumnDef="total">
+
+                        <th
+                            mat-header-cell
+                            *matHeaderCellDef>
+
+                            Total
+
+                        </th>
+
+                        <td
+                            mat-cell
+                            *matCellDef="let linea">
+
+                            <strong>
+                                {{
+                                    linea.total
+                                    | number:'1.2-2'
+                                }} €
+                            </strong>
+
+                        </td>
+
+                    </ng-container>
+
+
+                    <ng-container
+                        matColumnDef="acciones">
+
+                        <th
+                            mat-header-cell
+                            *matHeaderCellDef>
+                        </th>
+
+                        <td
+                            mat-cell
+                            *matCellDef="let linea">
+
+                            @if (editable) {
+
+                                <button
+                                    mat-icon-button
+                                    type="button"
+                                    (click)="editarLinea(linea)"
+                                    aria-label="Editar línea">
+
+                                    <mat-icon>
+                                        edit
+                                    </mat-icon>
+
+                                </button>
+
+                                <button
+                                    mat-icon-button
+                                    type="button"
+                                    (click)="eliminarLinea(linea)"
+                                    aria-label="Eliminar línea">
+
+                                    <mat-icon>
+                                        delete
+                                    </mat-icon>
+
+                                </button>
+
+                            }
+
+                        </td>
+
+                    </ng-container>
+
+
+                    <tr
+                        mat-header-row
+                        *matHeaderRowDef="
+                            displayedColumns
+                        ">
+                    </tr>
+
+                    <tr
+                        mat-row
+                        *matRowDef="
+                            let row;
+                            columns:
+                                displayedColumns
+                        ">
+                    </tr>
+
+                </table>
+
+
+                <div class="totales">
+
+                    <div>
+                        <span>Subtotal</span>
+
+                        <strong>
+                            {{
+                                pedido.subtotal
+                                | number:'1.2-2'
+                            }} €
+                        </strong>
+                    </div>
+
+                    <div>
+                        <span>IVA</span>
+
+                        <strong>
+                            {{
+                                pedido.iva_total
+                                | number:'1.2-2'
+                            }} €
+                        </strong>
+                    </div>
+
+                    <div class="total-final">
+                        <span>Total</span>
+
+                        <strong>
+                            {{
+                                pedido.total
+                                | number:'1.2-2'
+                            }} €
+                        </strong>
+                    </div>
+
+                </div>
+
+            }
+
+        }
+
+    </mat-card-content>
+
+
+    <mat-card-actions align="end">
+
+        <button
+            mat-button
+            type="button"
+            (click)="volver()">
+
+            Volver
+
+        </button>
+
+        @if (pedido) {
+
+            <button
+                mat-stroked-button
+                type="button"
+                (click)="generarPdf()">
+
+                <mat-icon>
+                    picture_as_pdf
+                </mat-icon>
+
+                Ver PDF
+
+            </button>
+
+        }
+
+
+        @if (editable) {
+
+            <button
+                mat-flat-button
+                color="primary"
+                type="button"
+                [disabled]="guardando"
+                (click)="guardar()">
+
+                <mat-icon>
+                    save
+                </mat-icon>
+
+                {{ guardando ? 'Guardando...' : 'Guardar' }}
+
+            </button>
+
+        }
+
+
+        @if (
+            pedido?.estado === 'BORRADOR'
+        ) {
+
+            <button
+                mat-flat-button
+                type="button"
+                (click)="enviarPedido()">
+
+                <mat-icon>
+                    send
+                </mat-icon>
+
+                Enviar pedido
+
+            </button>
+
+        }
+
+
+        @if (
+            puedeRecibir
+            && authService.tienePermiso('compras.recibir')
+        ) {
+
+            <button
+                mat-flat-button
+                color="primary"
+                type="button"
+                (click)="registrarAlbaran()">
+
+                <mat-icon>
+                    inventory
+                </mat-icon>
+
+                Registrar recepción
+
+            </button>
+
+        }
+
+
+        @if (
+            pedido
+            &&
+            (
+                pedido.estado === 'BORRADOR'
+                ||
+                pedido.estado === 'ENVIADO'
+            )
+        ) {
+
+            <button
+                mat-button
+                type="button"
+                (click)="cancelarPedido()">
+
+                Cancelar pedido
+
+            </button>
+
+        }
+
+    </mat-card-actions>
+
+</mat-card>
+
+@if (pedido) {
+    <mat-card class="purchase-flow-panel">
+        <mat-card-header><mat-card-title>Seguimiento de compra</mat-card-title></mat-card-header>
+        <mat-card-content>
+            <div class="purchase-flow">
+                <a class="flow-step completed" [routerLink]="['/compras/pedidos', pedido.id]"><mat-icon>shopping_cart</mat-icon><span><strong>Pedido</strong><small>{{ pedido.numero }}</small></span></a>
+                <mat-icon class="flow-arrow">arrow_forward</mat-icon>
+                <a class="flow-step" routerLink="/compras/albaranes"><mat-icon>inventory</mat-icon><span><strong>Recepción</strong><small>Ver albaranes</small></span></a>
+            </div>
+        </mat-card-content>
+    </mat-card>
+}

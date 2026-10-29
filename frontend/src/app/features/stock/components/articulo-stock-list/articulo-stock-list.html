@@ -1,0 +1,612 @@
+<mat-card>
+
+    <mat-card-header>
+
+        <mat-card-title>
+            Almacén
+        </mat-card-title>
+
+    </mat-card-header>
+
+
+    <mat-card-content>
+
+        <nav class="nav-stock" aria-label="Secciones de almacén">
+            <a mat-button color="primary" routerLink="/stock">
+                <mat-icon>inventory_2</mat-icon>
+                Artículos
+            </a>
+
+            <a mat-button routerLink="/stock/reposicion">
+                <mat-icon>assignment_late</mat-icon>
+                Reposición
+            </a>
+            <a mat-button routerLink="/stock/productos-varios">
+                <mat-icon>local_car_wash</mat-icon>
+                Productos varios
+            </a>
+            <a mat-button routerLink="/stock/albaranes-venta">
+                <mat-icon>sell</mat-icon>
+                Albaranes de venta
+            </a>
+        </nav>
+
+        <!-- RESUMEN -->
+
+        <div class="stock-resumen">
+
+            <div class="resumen-item">
+
+                <span>
+                    Artículos activos
+                </span>
+
+                <strong>
+                    {{ resumen?.articulos_activos ?? 0 }}
+                </strong>
+
+            </div>
+
+            <div class="resumen-item alerta">
+
+                <span>
+                    Stock bajo
+                </span>
+
+                <strong>
+                    {{ resumen?.stock_bajo ?? 0 }}
+                </strong>
+
+            </div>
+
+            <div class="resumen-item peligro">
+
+                <span>
+                    Sin stock
+                </span>
+
+                <strong>
+                    {{ resumen?.sin_stock ?? 0 }}
+                </strong>
+
+            </div>
+
+        </div>
+
+        <div class="valor-inventario">
+
+            <div class="valor-item">
+                <span>Valor a coste</span>
+                <strong>
+                    {{ (resumen?.valor_inventario_coste ?? 0) | number:'1.2-2' }} €
+                </strong>
+            </div>
+
+            <div class="valor-item">
+                <span>Valor a PVP</span>
+                <strong>
+                    {{ (resumen?.valor_inventario_venta ?? 0) | number:'1.2-2' }} €
+                </strong>
+            </div>
+
+        </div>
+
+
+        <!-- BARRA SUPERIOR -->
+
+        <div class="acciones-superiores">
+
+            <mat-form-field
+                appearance="outline"
+                class="buscador">
+
+                <mat-label>
+                    Buscar artículo
+                </mat-label>
+
+                <mat-icon matPrefix>
+                    search
+                </mat-icon>
+
+                <input
+                    matInput
+                    [formControl]="filtro"
+                    placeholder="Referencia, nombre, marca...">
+
+            </mat-form-field>
+
+
+            <button
+                mat-flat-button
+                color="primary"
+                routerLink="/stock/nuevo">
+
+                <mat-icon>
+                    add
+                </mat-icon>
+
+                Nuevo artículo
+
+            </button>
+
+        </div>
+
+        <div class="filtros-catalogo">
+
+            <mat-form-field appearance="outline">
+                <mat-label>Estado</mat-label>
+                <mat-select
+                    [value]="filtroEstado"
+                    (selectionChange)="filtroEstado = $event.value">
+                    <mat-option value="TODOS">Todos</mat-option>
+                    <mat-option value="ACTIVOS">Activos</mat-option>
+                    <mat-option value="INACTIVOS">Inactivos</mat-option>
+                </mat-select>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+                <mat-label>Stock</mat-label>
+                <mat-select
+                    [value]="filtroStock"
+                    (selectionChange)="filtroStock = $event.value">
+                    <mat-option value="TODOS">Todos</mat-option>
+                    <mat-option value="DISPONIBLE">Disponible</mat-option>
+                    <mat-option value="BAJO">Stock bajo</mat-option>
+                    <mat-option value="SIN_STOCK">Sin stock</mat-option>
+                </mat-select>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+                <mat-label>Categoría</mat-label>
+                <mat-select
+                    [value]="filtroCategoria"
+                    (selectionChange)="filtroCategoria = $event.value">
+                    <mat-option value="">Todas</mat-option>
+                    @for (categoria of categoriasDisponibles; track categoria) {
+                        <mat-option [value]="categoria">{{ categoria }}</mat-option>
+                    }
+                </mat-select>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+                <mat-label>Marca</mat-label>
+                <mat-select
+                    [value]="filtroMarca"
+                    (selectionChange)="filtroMarca = $event.value">
+                    <mat-option value="">Todas</mat-option>
+                    @for (marca of marcasDisponibles; track marca) {
+                        <mat-option [value]="marca">{{ marca }}</mat-option>
+                    }
+                </mat-select>
+            </mat-form-field>
+
+        </div>
+
+
+        <!-- SIN RESULTADOS -->
+
+        @if (
+            articulosFiltrados.length === 0
+        ) {
+
+            <div class="sin-articulos">
+
+                <mat-icon>
+                    inventory_2
+                </mat-icon>
+
+                <p>
+                    No hay artículos para mostrar.
+                </p>
+
+            </div>
+
+        } @else {
+
+            <!-- TABLA -->
+
+            <table
+                mat-table
+                [dataSource]="articulosFiltrados"
+                class="stock-table">
+
+
+                <!-- REFERENCIA -->
+
+                <ng-container matColumnDef="referencia">
+
+                    <th
+                        mat-header-cell
+                        *matHeaderCellDef>
+
+                        Referencia
+
+                    </th>
+
+                    <td
+                        mat-cell
+                        *matCellDef="let articulo">
+
+                        <strong>
+                            {{ articulo.referencia }}
+                        </strong>
+
+                    </td>
+
+                </ng-container>
+
+
+                <!-- NOMBRE -->
+
+                <ng-container matColumnDef="nombre">
+
+                    <th
+                        mat-header-cell
+                        *matHeaderCellDef>
+
+                        Artículo
+
+                    </th>
+
+                    <td
+                        mat-cell
+                        *matCellDef="let articulo">
+
+                        {{ articulo.nombre }}
+
+                    </td>
+
+                </ng-container>
+
+
+                <!-- MARCA -->
+
+                <ng-container matColumnDef="marca">
+
+                    <th
+                        mat-header-cell
+                        *matHeaderCellDef>
+
+                        Marca
+
+                    </th>
+
+                    <td
+                        mat-cell
+                        *matCellDef="let articulo">
+
+                        {{ articulo.marca || '-' }}
+
+                    </td>
+
+                </ng-container>
+
+
+                <!-- CATEGORÍA -->
+
+                <ng-container matColumnDef="categoria">
+
+                    <th
+                        mat-header-cell
+                        *matHeaderCellDef>
+
+                        Categoría
+
+                    </th>
+
+                    <td
+                        mat-cell
+                        *matCellDef="let articulo">
+
+                        {{ articulo.categoria || '-' }}
+
+                    </td>
+
+                </ng-container>
+
+
+                <!-- STOCK -->
+
+                <ng-container matColumnDef="stock">
+
+                    <th
+                        mat-header-cell
+                        *matHeaderCellDef>
+
+                        Stock
+
+                    </th>
+
+                    <td
+                        mat-cell
+                        *matCellDef="let articulo">
+
+                        <strong
+                            [class.stock-bajo]="
+                                esStockBajo(
+                                    articulo
+                                )
+                            ">
+
+                            {{
+                                articulo.stock_actual
+                                | number:'1.0-2'
+                            }}
+
+                        </strong>
+
+                    </td>
+
+                </ng-container>
+
+
+                <!-- STOCK MÍNIMO -->
+
+                <ng-container
+                    matColumnDef="stock_minimo">
+
+                    <th
+                        mat-header-cell
+                        *matHeaderCellDef>
+
+                        Mínimo
+
+                    </th>
+
+                    <td
+                        mat-cell
+                        *matCellDef="let articulo">
+
+                        {{
+                            articulo.stock_minimo
+                            | number:'1.0-2'
+                        }}
+
+                    </td>
+
+                </ng-container>
+
+
+                <!-- PRECIO -->
+
+                <ng-container matColumnDef="precio">
+
+                    <th
+                        mat-header-cell
+                        *matHeaderCellDef>
+
+                        PVP
+
+                    </th>
+
+                    <td
+                        mat-cell
+                        *matCellDef="let articulo">
+
+                        {{
+                            articulo.precio_venta
+                            | number:'1.2-2'
+                        }} €
+
+                    </td>
+
+                </ng-container>
+
+
+                <!-- ESTADO -->
+
+                <ng-container matColumnDef="estado">
+
+                    <th
+                        mat-header-cell
+                        *matHeaderCellDef>
+
+                        Estado
+
+                    </th>
+
+                    <td
+                        mat-cell
+                        *matCellDef="let articulo">
+
+                        @if (!articulo.activo) {
+
+                            <mat-chip class="chip-inactivo">
+                                Inactivo
+                            </mat-chip>
+
+                        } @else if (
+                            estaSinStock(
+                                articulo
+                            )
+                        ) {
+
+                            <mat-chip
+                                class="chip-sin-stock">
+
+                                Sin stock
+
+                            </mat-chip>
+
+                        } @else if (
+                            esStockBajo(
+                                articulo
+                            )
+                        ) {
+
+                            <mat-chip
+                                class="chip-stock-bajo">
+
+                                Stock bajo
+
+                            </mat-chip>
+
+                        } @else {
+
+                            <mat-chip
+                                class="chip-stock-ok">
+
+                                Disponible
+
+                            </mat-chip>
+
+                        }
+
+                    </td>
+
+                </ng-container>
+
+
+                <!-- ACCIONES -->
+
+                <ng-container matColumnDef="acciones">
+
+                    <th
+                        mat-header-cell
+                        *matHeaderCellDef>
+
+                        Acciones
+
+                    </th>
+
+                    <td
+                        mat-cell
+                        *matCellDef="let articulo">
+
+                        <a
+                            mat-icon-button
+                            [routerLink]="[
+                                '/stock',
+                                articulo.id
+                            ]">
+
+                            <mat-icon>
+                                visibility
+                            </mat-icon>
+
+                        </a>
+
+                        <button
+                            mat-icon-button
+                            type="button"
+                            [attr.aria-label]="
+                                articulo.activo
+                                    ? 'Desactivar artículo'
+                                    : 'Reactivar artículo'
+                            "
+                            [title]="
+                                articulo.activo
+                                    ? 'Desactivar artículo'
+                                    : 'Reactivar artículo'
+                            "
+                            (click)="cambiarEstadoArticulo(articulo)">
+
+                            <mat-icon>
+                                {{ articulo.activo ? 'toggle_on' : 'toggle_off' }}
+                            </mat-icon>
+
+                        </button>
+
+                    </td>
+
+                </ng-container>
+
+
+                <tr
+                    mat-header-row
+                    *matHeaderRowDef="
+                        displayedColumns
+                    ">
+                </tr>
+
+                <tr
+                    mat-row
+                    *matRowDef="
+                        let row;
+                        columns:
+                            displayedColumns
+                    "
+                    [class.fila-stock-bajo]="
+                        esStockBajo(row)
+                    ">
+                </tr>
+
+            </table>
+
+        }
+
+        <section class="actividad-stock">
+
+            <article class="actividad-card">
+
+                <div class="actividad-titulo">
+                    <mat-icon>local_fire_department</mat-icon>
+                    <h2>Más consumidos</h2>
+                </div>
+
+                @if (masConsumidos.length === 0) {
+
+                    <p class="sin-actividad">
+                        Todavía no hay consumos registrados desde órdenes.
+                    </p>
+
+                } @else {
+
+                    <ol class="lista-consumidos">
+                        @for (articulo of masConsumidos; track articulo.articulo_id) {
+                            <li>
+                                <div>
+                                    <strong>{{ articulo.nombre }}</strong>
+                                    <small>{{ articulo.referencia }}</small>
+                                </div>
+                                <strong>{{ articulo.cantidad_consumida | number:'1.0-2' }}</strong>
+                            </li>
+                        }
+                    </ol>
+
+                }
+
+            </article>
+
+            <article class="actividad-card">
+
+                <div class="actividad-titulo">
+                    <mat-icon>history</mat-icon>
+                    <h2>Movimientos recientes</h2>
+                </div>
+
+                @if (movimientosRecientes.length === 0) {
+
+                    <p class="sin-actividad">
+                        Todavía no hay movimientos de stock.
+                    </p>
+
+                } @else {
+
+                    <div class="lista-movimientos">
+                        @for (movimiento of movimientosRecientes; track movimiento.id) {
+                            <div class="movimiento-reciente">
+                                <time>{{ movimiento.fecha | date:'HH:mm' }}</time>
+                                <strong [class.salida]="esMovimientoSalida(movimiento)">
+                                    {{ esMovimientoSalida(movimiento) ? '-' : '+' }}
+                                    {{ movimiento.cantidad | number:'1.0-2' }}
+                                </strong>
+                                <div>
+                                    <strong>
+                                        {{ getArticuloMovimiento(movimiento)?.nombre ?? 'Artículo eliminado' }}
+                                    </strong>
+                                    <small>{{ movimiento.motivo || movimiento.tipo }}</small>
+                                </div>
+                            </div>
+                        }
+                    </div>
+
+                }
+
+            </article>
+
+        </section>
+
+    </mat-card-content>
+
+</mat-card>

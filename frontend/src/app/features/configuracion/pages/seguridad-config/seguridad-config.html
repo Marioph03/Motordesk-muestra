@@ -1,0 +1,96 @@
+<section class="security-config-page">
+  <div class="page-header">
+    <div class="page-header-content">
+      <h1 class="page-title">Seguridad</h1>
+      <p class="page-subtitle">Gestiona tu cuenta y la seguridad de acceso a MotorDesk.</p>
+    </div>
+  </div>
+
+  @if (cargando) {
+    <div class="loading-container">
+      <mat-spinner diameter="40"></mat-spinner>
+      <span>Cargando información...</span>
+    </div>
+  } @else {
+    <div class="security-grid">
+      <mat-card class="security-card">
+        <mat-card-header>
+          <div class="section-icon blue"><mat-icon>account_circle</mat-icon></div>
+          <div>
+            <mat-card-title>Mi cuenta</mat-card-title>
+            <mat-card-subtitle>Información del usuario actual</mat-card-subtitle>
+          </div>
+        </mat-card-header>
+
+        <mat-card-content>
+          @if (usuario) {
+            <div class="account-info">
+              <div class="account-avatar">{{ usuario.nombre.charAt(0).toUpperCase() }}</div>
+              <div class="account-name"><strong>{{ usuario.nombre }}</strong><span>{{ usuario.rol }}</span></div>
+              <div class="account-data">
+                <div><span>Email</span><strong>{{ usuario.email }}</strong></div>
+                <div><span>Rol</span><strong>{{ usuario.rol }}</strong></div>
+                <div>
+                  <span>Último acceso</span>
+                  <strong>{{ usuario.ultimo_acceso ? (usuario.ultimo_acceso | date:'dd/MM/yyyy HH:mm') : 'No disponible' }}</strong>
+                </div>
+                <div>
+                  <span>Sesión actual</span>
+                  <strong class="session-active"><mat-icon>check_circle</mat-icon>Activa</strong>
+                </div>
+              </div>
+            </div>
+          }
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="security-card">
+        <mat-card-header>
+          <div class="section-icon orange"><mat-icon>lock</mat-icon></div>
+          <div>
+            <mat-card-title>Cambiar contraseña</mat-card-title>
+            <mat-card-subtitle>Actualiza la contraseña de tu cuenta</mat-card-subtitle>
+          </div>
+        </mat-card-header>
+
+        <mat-card-content>
+          <form [formGroup]="form" class="password-form">
+            <mat-form-field appearance="outline">
+              <mat-label>Contraseña actual</mat-label>
+              <input matInput [type]="mostrarActual ? 'text' : 'password'" formControlName="password_actual" autocomplete="current-password">
+              <button mat-icon-button matSuffix type="button" aria-label="Mostrar u ocultar contraseña actual" (click)="mostrarActual = !mostrarActual"><mat-icon>{{ mostrarActual ? 'visibility_off' : 'visibility' }}</mat-icon></button>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>Nueva contraseña</mat-label>
+              <input matInput [type]="mostrarNueva ? 'text' : 'password'" formControlName="password_nueva" autocomplete="new-password">
+              <button mat-icon-button matSuffix type="button" aria-label="Mostrar u ocultar contraseña nueva" (click)="mostrarNueva = !mostrarNueva"><mat-icon>{{ mostrarNueva ? 'visibility_off' : 'visibility' }}</mat-icon></button>
+              <mat-hint>Mínimo 8 caracteres</mat-hint>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>Repetir nueva contraseña</mat-label>
+              <input matInput [type]="mostrarRepetida ? 'text' : 'password'" formControlName="repetir_password" autocomplete="new-password">
+              <button mat-icon-button matSuffix type="button" aria-label="Mostrar u ocultar repetición de contraseña" (click)="mostrarRepetida = !mostrarRepetida"><mat-icon>{{ mostrarRepetida ? 'visibility_off' : 'visibility' }}</mat-icon></button>
+            </mat-form-field>
+
+            @if (form.hasError('passwordsNoCoinciden') && form.controls.repetir_password.touched) {
+              <div class="password-error"><mat-icon>error_outline</mat-icon>Las contraseñas no coinciden.</div>
+            }
+
+            <div class="password-help">
+              <mat-icon>security</mat-icon>
+              <div><strong>Recomendación</strong><span>Utiliza una contraseña distinta de la anterior y difícil de adivinar.</span></div>
+            </div>
+
+            <div class="form-actions">
+              <button mat-flat-button color="primary" class="md-primary-button" type="button" [disabled]="form.invalid || guardando" (click)="cambiarPassword()">
+                <mat-icon>lock_reset</mat-icon>{{ guardando ? 'Actualizando...' : 'Cambiar contraseña' }}
+              </button>
+            </div>
+          </form>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  }
+</section>

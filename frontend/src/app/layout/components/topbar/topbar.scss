@@ -1,0 +1,85 @@
+.topbar { display: flex; min-height: var(--md-topbar-height); align-items: center; justify-content: space-between; gap: 20px; padding: 12px 30px; border-bottom: 1px solid var(--md-border); background: var(--md-topbar-bg); transition: background .2s ease, border-color .2s ease; }
+.topbar-title, .topbar-actions, .user-menu { display: flex; align-items: center; }
+.topbar-title { gap: 15px; }
+.topbar-title strong { display: block; color: var(--md-text); font-size: 20px; letter-spacing: -.35px; }
+.topbar-title span { display: block; margin-top: 3px; color: var(--md-text-secondary); font-size: 12px; }
+.topbar-actions { gap: 11px; }
+.topbar-actions a { min-height: 40px; border-radius: 9px; }
+.topbar-actions a mat-icon { margin-right: 5px; }
+.menu-button { color: var(--md-text-secondary); }
+.topbar-actions a[mat-stroked-button] { border-color: var(--md-border); color: var(--md-text); }
+.notification-button { position: relative; }
+.notification-button span { display: grid; position: absolute; top: 2px; right: 1px; min-width: 17px; height: 17px; place-items: center; padding: 0 3px; border: 2px solid var(--md-surface); border-radius: 99px; background: #ef476f; color: #fff; font-size: 9px; font-weight: 700; line-height: 1; }
+.user-menu.mat-mdc-button {
+  box-sizing: border-box;
+  min-width: 0;
+  min-height: 48px;
+  height: 48px;
+  gap: 8px;
+  margin-left: 6px;
+  padding: 4px 10px 4px 5px;
+  border: 1px solid transparent;
+  border-radius: 99px;
+  background: transparent;
+  box-shadow: none;
+  color: var(--md-text);
+  font-size: 14px;
+  line-height: 1;
+  white-space: nowrap;
+}
+.user-menu.mat-mdc-button:hover,
+.user-menu.mat-mdc-button:focus-visible {
+  border-color: var(--md-border);
+  background: var(--md-primary-soft);
+  box-shadow: 0 3px 10px rgba(37, 99, 235, .10);
+}
+.user-menu.mat-mdc-button .mdc-button__label { display: flex; min-width: 0; align-items: center; gap: 8px; overflow: hidden; }
+.user-menu.mat-mdc-button strong { display: block; min-width: 0; overflow: hidden; line-height: 1; text-overflow: ellipsis; white-space: nowrap; }
+.user-menu.mat-mdc-button .avatar { flex: 0 0 40px; }
+.user-menu > mat-icon { color: var(--md-text-muted); font-size: 18px; }
+.avatar { display: grid; width: 40px; height: 40px; place-items: center; overflow: hidden; border: 1px solid var(--md-border); border-radius: 50%; background: var(--md-primary-soft); color: var(--md-primary); font-size: 13px; font-weight: 700; }
+.avatar img { display: block; width: 100%; height: 100%; object-fit: cover; }
+::ng-deep .mat-mdc-menu-panel.topbar-dropdown {
+  min-width: 285px;
+  max-width: calc(100vw - 16px);
+  overflow-x: hidden;
+}
+::ng-deep .topbar-dropdown .mat-mdc-menu-content {
+  box-sizing: border-box;
+  width: 100%;
+  min-width: 0;
+  padding: 6px;
+  overflow-x: hidden;
+}
+::ng-deep .topbar-dropdown .mat-mdc-menu-item { min-height: 42px; border-radius: 7px; font-size: 13px; }
+::ng-deep .topbar-dropdown .mat-mdc-menu-item mat-icon { color: var(--md-text-secondary); }
+.notifications-menu { min-width: 0; padding: 5px; overflow-x: hidden; }
+.dropdown-heading { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 8px 7px 10px; color: var(--md-text); font-size: 13px; }
+.dropdown-heading small { color: var(--md-text-secondary); font-size: 10px; }
+.dropdown-empty { margin: 0; padding: 14px 7px; color: var(--md-text-secondary); font-size: 12px; }
+.dropdown-alert { display: grid; grid-template-columns: 30px 1fr; align-items: center; gap: 8px; padding: 9px 7px; border-radius: 8px; color: var(--md-text); text-decoration: none; }
+.dropdown-alert:hover { background: var(--md-bg); }.dropdown-alert > mat-icon { display: grid; width: 28px; height: 28px; place-items: center; border-radius: 50%; font-size: 16px; }.dropdown-alert span { display: grid; min-width: 0; gap: 1px; }.dropdown-alert strong { font-size: 12px; }.dropdown-alert small { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--md-text-secondary); font-size: 10px; }.dropdown-alert.stock > mat-icon { background: #fff1f2; color: #e74c3c; }.dropdown-alert.orders > mat-icon { background: #fff7ed; color: #f97316; }.dropdown-alert.agenda > mat-icon { background: var(--md-info-soft); color: var(--md-info); }.dropdown-alert.payments > mat-icon { background: var(--md-success-soft); color: var(--md-success); }
+.profile-menu-heading { display: flex; align-items: center; gap: 10px; padding: 10px 9px 12px; border-bottom: 1px solid var(--md-border); }.profile-menu-heading .avatar { width: 34px; height: 34px; font-size: 11px; }.profile-menu-heading strong, .profile-menu-heading small { display: block; }.profile-menu-heading strong { color: var(--md-text); font-size: 13px; }.profile-menu-heading small { margin-top: 2px; color: var(--md-text-secondary); font-size: 10px; }
+:host-context(.md-dark-theme) .topbar-actions a[mat-stroked-button] { background: transparent; }
+:host-context(.md-dark-theme) ::ng-deep .topbar-dropdown .mat-mdc-menu-content { background: var(--md-surface); color: var(--md-text); border: 1px solid var(--md-border); }
+:host-context(.md-dark-theme) ::ng-deep .topbar-dropdown .mat-mdc-menu-item { color: var(--md-text); }
+:host-context(.md-dark-theme) ::ng-deep .topbar-dropdown .mat-mdc-menu-item:hover { background: #202c3f; }
+@media (max-width: 900px) { .topbar { padding: 12px 18px; }.topbar-title span, .topbar-actions a span, .user-menu strong, .user-menu > mat-icon { display: none; }.topbar-actions { gap: 4px; } }
+
+@media (max-width: 700px) {
+  .topbar { min-height: 66px; gap: 8px; padding: 8px 10px; }
+  .topbar-title { min-width: 0; gap: 7px; }
+  .topbar-title strong { overflow: hidden; font-size: 17px; text-overflow: ellipsis; white-space: nowrap; }
+  .topbar-actions { gap: 0; }
+  .topbar-actions a { min-width: 40px; padding: 0 8px; }
+  .topbar-actions a mat-icon { margin: 0; }
+  .user-menu.mat-mdc-button { min-height: 42px; height: 42px; margin-left: 0; padding: 2px; }
+  .user-menu.mat-mdc-button .avatar { flex-basis: 36px; width: 36px; height: 36px; }
+  .notification-button, .topbar-actions > button:last-child { transform: scale(.92); }
+}
+
+@media (max-width: 480px) {
+  .topbar-actions a[mat-stroked-button] { display: none; }
+  .topbar-title { max-width: calc(100vw - 220px); }
+}
+/* Barra superior responsive y superficies visuales para tema claro u oscuro. */

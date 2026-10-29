@@ -1,0 +1,785 @@
+<div class="configuracion-page">
+
+  <header class="page-header">
+    <div>
+      <h1>Configuración</h1>
+      <p>
+        Gestiona las preferencias e integraciones de MotorDesk.
+      </p>
+    </div>
+  </header>
+
+
+  <section class="config-section">
+
+    <div class="section-header">
+      <h2>Taller</h2>
+      <p>Datos fiscales, contacto e identidad visual del negocio.</p>
+    </div>
+
+    <mat-card class="integration-card">
+      <mat-card-content>
+
+        <div class="integration-layout">
+
+          <div class="integration-info">
+
+            <div class="integration-icon business">
+              <mat-icon>business</mat-icon>
+            </div>
+
+            <div class="integration-text">
+              <h3>Configuración del taller</h3>
+              <p>
+                Gestiona el logo, los datos de contacto y la información fiscal
+                que se utiliza en los documentos.
+              </p>
+            </div>
+
+          </div>
+
+          <div class="integration-action">
+            <a
+              mat-stroked-button
+              routerLink="/configuracion/taller"
+            >
+              <mat-icon>settings</mat-icon>
+              Configurar taller
+            </a>
+          </div>
+
+        </div>
+
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="integration-card certificate-shortcut">
+      <mat-card-content>
+
+        <div class="integration-layout">
+
+          <div class="integration-info">
+
+            <div class="integration-icon security">
+              <mat-icon>verified_user</mat-icon>
+            </div>
+
+            <div class="integration-text">
+              <h3>Certificado electrónico</h3>
+              <p>
+                Añade, renueva o consulta el certificado utilizado para los
+                envíos fiscales a AEAT.
+              </p>
+            </div>
+
+          </div>
+
+          <div class="integration-action">
+            <a
+              mat-stroked-button
+              routerLink="/configuracion/certificado-electronico"
+            >
+              <mat-icon>key</mat-icon>
+              Gestionar certificado
+            </a>
+          </div>
+
+        </div>
+
+      </mat-card-content>
+    </mat-card>
+
+  </section>
+
+
+  <section class="config-section">
+
+    <div class="section-header">
+      <h2>Apariencia</h2>
+      <p>Personaliza el aspecto visual de la aplicación.</p>
+    </div>
+
+    <mat-card class="integration-card">
+      <mat-card-content>
+
+        <div class="integration-layout">
+
+          <div class="integration-info">
+
+            <div class="integration-icon appearance">
+              <mat-icon>palette</mat-icon>
+            </div>
+
+            <div class="integration-text">
+              <h3>Tema de MotorDesk</h3>
+              <p>
+                Alterna entre tema claro y tema oscuro para adaptar
+                la interfaz a tu entorno de trabajo.
+              </p>
+            </div>
+
+          </div>
+
+          <div class="integration-action">
+            <a
+              mat-stroked-button
+              routerLink="/configuracion/apariencia"
+            >
+              <mat-icon>dark_mode</mat-icon>
+              Configurar apariencia
+            </a>
+          </div>
+
+        </div>
+
+      </mat-card-content>
+    </mat-card>
+
+  </section>
+
+
+  <section class="config-section">
+
+    <div class="section-header">
+      <h2>Sistema</h2>
+      <p>Estado de servicios y gestión de copias de seguridad.</p>
+    </div>
+
+    <mat-card class="integration-card">
+      <mat-card-content>
+
+        <div class="integration-layout">
+
+          <div class="integration-info">
+
+            <div class="integration-icon system">
+              <mat-icon>memory</mat-icon>
+            </div>
+
+            <div class="integration-text">
+              <h3>Estado del sistema</h3>
+              <p>
+                Consulta el estado del backend, la base de datos
+                y las integraciones de MotorDesk.
+              </p>
+            </div>
+
+          </div>
+
+          <div class="integration-action">
+            <a
+              mat-stroked-button
+              routerLink="/configuracion/sistema"
+            >
+              <mat-icon>settings</mat-icon>
+              Gestionar sistema
+            </a>
+          </div>
+
+        </div>
+
+      </mat-card-content>
+    </mat-card>
+
+  </section>
+
+
+  <section class="config-section">
+
+    <div class="section-header">
+      <h2>Seguridad</h2>
+      <p>Cuenta, contraseña y estado de la sesión actual.</p>
+    </div>
+
+    <mat-card class="integration-card">
+      <mat-card-content>
+
+        <div class="integration-layout">
+
+          <div class="integration-info">
+
+            <div class="integration-icon security">
+              <mat-icon>security</mat-icon>
+            </div>
+
+            <div class="integration-text">
+              <h3>Seguridad de la cuenta</h3>
+              <p>
+                Consulta los datos de tu sesión actual y actualiza
+                tu contraseña de acceso.
+              </p>
+            </div>
+
+          </div>
+
+          <div class="integration-action">
+            <a
+              mat-stroked-button
+              routerLink="/configuracion/seguridad"
+            >
+              <mat-icon>lock</mat-icon>
+              Gestionar seguridad
+            </a>
+          </div>
+
+        </div>
+
+      </mat-card-content>
+    </mat-card>
+
+  </section>
+
+
+  <section class="config-section">
+
+    <div class="section-header">
+      <h2>Notificaciones</h2>
+      <p>Alertas y recordatorios visibles en el Dashboard.</p>
+    </div>
+
+    <mat-card class="integration-card">
+      <mat-card-content>
+
+        <div class="integration-layout">
+
+          <div class="integration-info">
+
+            <div class="integration-icon notifications">
+              <mat-icon>notifications</mat-icon>
+            </div>
+
+            <div class="integration-text">
+              <h3>Configuración de notificaciones</h3>
+              <p>
+                Elige qué avisos de stock, pedidos, garantías,
+                presupuestos, citas y personal quieres recibir.
+              </p>
+            </div>
+
+          </div>
+
+          <div class="integration-action">
+            <a
+              mat-stroked-button
+              routerLink="/configuracion/notificaciones"
+            >
+              <mat-icon>settings</mat-icon>
+              Configurar notificaciones
+            </a>
+          </div>
+
+        </div>
+
+      </mat-card-content>
+    </mat-card>
+
+  </section>
+
+
+  <section class="config-section">
+
+    <div class="section-header">
+      <h2>Documentos</h2>
+      <p>
+        Datos visibles, textos y valores predeterminados de los documentos.
+      </p>
+    </div>
+
+    <mat-card class="integration-card">
+      <mat-card-content>
+
+        <div class="integration-layout">
+
+          <div class="integration-info">
+
+            <div class="integration-icon documents">
+              <mat-icon>description</mat-icon>
+            </div>
+
+            <div class="integration-text">
+              <h3>Configuración de documentos</h3>
+              <p>
+                Personaliza presupuestos, órdenes, garantías,
+                facturas y pedidos de compra.
+              </p>
+            </div>
+
+          </div>
+
+          <div class="integration-action">
+            <a
+              mat-stroked-button
+              routerLink="/configuracion/documentos"
+            >
+              <mat-icon>settings</mat-icon>
+              Configurar documentos
+            </a>
+          </div>
+
+        </div>
+
+      </mat-card-content>
+    </mat-card>
+
+  </section>
+
+
+  <section class="config-section">
+
+    <div class="section-header">
+      <h2>Agenda</h2>
+      <p>
+        Horario semanal, duración predeterminada y cierres excepcionales.
+      </p>
+    </div>
+
+    <mat-card class="integration-card">
+      <mat-card-content>
+
+        <div class="integration-layout">
+
+          <div class="integration-info">
+
+            <div class="integration-icon agenda">
+              <mat-icon>calendar_month</mat-icon>
+            </div>
+
+            <div class="integration-text">
+              <h3>Configuración de Agenda</h3>
+              <p>
+                Define cuándo atiende el taller y los días
+                que deben bloquearse en la agenda.
+              </p>
+            </div>
+
+          </div>
+
+          <div class="integration-action">
+            <a
+              mat-stroked-button
+              routerLink="/configuracion/agenda"
+            >
+              <mat-icon>schedule</mat-icon>
+              Configurar agenda
+            </a>
+          </div>
+
+        </div>
+
+      </mat-card-content>
+    </mat-card>
+
+  </section>
+
+
+  <section class="config-section">
+
+    <div class="section-header">
+      <h2>Integraciones</h2>
+      <p>
+        Conecta MotorDesk con servicios externos.
+      </p>
+    </div>
+
+    <mat-card class="integration-card">
+      <mat-card-content>
+        <div class="integration-layout">
+          <div class="integration-info">
+            <div class="integration-icon system"><mat-icon>email</mat-icon></div>
+            <div class="integration-text">
+              <h3>Correo electrónico</h3>
+              <p>Configura Gmail, Outlook u otro proveedor para enviar documentos por correo.</p>
+            </div>
+          </div>
+          <div class="integration-action">
+            <a mat-stroked-button routerLink="/configuracion/email"><mat-icon>settings</mat-icon> Configurar correo</a>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="integration-card">
+      <mat-card-content>
+
+        <div class="integration-layout">
+
+          <!-- INFORMACIÓN -->
+
+          <div class="integration-info">
+
+            <div class="integration-icon whatsapp">
+              <mat-icon>chat</mat-icon>
+            </div>
+
+            <div class="integration-text">
+
+              <h3>
+                WhatsApp Business
+              </h3>
+
+              <p>
+                Conecta el número de WhatsApp Business del taller
+                para enviar órdenes y documentos directamente
+                desde MotorDesk.
+              </p>
+
+
+              <!-- ESTADO -->
+
+              <div
+                class="status"
+                [class.connected]="whatsappConectado"
+              >
+                <span class="status-dot"></span>
+
+                @if (whatsappConectado) {
+                  Conectado
+                } @else {
+                  No conectado
+                }
+
+              </div>
+
+            </div>
+
+          </div>
+
+
+          <!-- ACCIONES -->
+
+          <div class="integration-action">
+
+            @if (!whatsappConectado) {
+
+              <button
+                mat-flat-button
+                class="connect-button"
+                type="button"
+                [disabled]="
+                  conectandoWhatsApp
+                  || !whatsappEmbeddedSignupDisponible
+                "
+                (click)="conectarWhatsApp()"
+              >
+                <mat-icon>link</mat-icon>
+
+                @if (conectandoWhatsApp) {
+                  Conectando...
+                } @else {
+                  Conectar WhatsApp
+                }
+
+              </button>
+
+            } @else {
+              <div class="whatsapp-actions">
+                <button
+                  mat-stroked-button
+                  type="button"
+                  [disabled]="desconectandoWhatsApp"
+                  (click)="administrarWhatsApp()"
+                >
+                  <mat-icon>settings</mat-icon>
+
+                  @if (mostrarGestionWhatsApp) {
+                    Ocultar
+                  } @else {
+                    Administrar
+                  }
+                </button>
+
+                <button
+                  mat-stroked-button
+                  color="warn"
+                  type="button"
+                  [disabled]="desconectandoWhatsApp"
+                  (click)="desconectarWhatsApp()"
+                >
+                  <mat-icon>link_off</mat-icon>
+                  @if (desconectandoWhatsApp) {
+                    Desconectando...
+                  } @else {
+                    Desconectar
+                  }
+                </button>
+              </div>
+
+            }
+
+          </div>
+
+
+          @if (errorWhatsApp) {
+
+            <div class="whatsapp-error">
+              <mat-icon>error_outline</mat-icon>
+              {{ errorWhatsApp }}
+            </div>
+
+          }
+
+          @if (
+            !whatsappConectado
+            && !whatsappEmbeddedSignupDisponible
+            && !errorWhatsApp
+          ) {
+
+            <div class="whatsapp-error">
+              <mat-icon>info_outline</mat-icon>
+              @if (configuracionMetaPendiente.length > 0) {
+                La configuración local de WhatsApp está incompleta
+                ({{ configuracionMetaPendiente.join(', ') }}).
+                Instala la actualización de MotorDesk con las credenciales
+                de Meta configuradas.
+              } @else {
+                WhatsApp Business aún no está habilitado para esta instalación.
+              }
+            </div>
+
+          }
+
+        </div>
+
+
+        <!-- GESTIÓN DE PLANTILLAS -->
+
+        @if (
+          whatsappConectado
+          && mostrarGestionWhatsApp
+        ) {
+
+          <div class="whatsapp-management">
+
+            <div class="whatsapp-management-header">
+
+              <div>
+                <h4>Plantillas de WhatsApp</h4>
+
+                <p>
+                  Plantillas utilizadas por MotorDesk para
+                  enviar documentos desde este taller.
+                </p>
+              </div>
+
+
+              <button
+                mat-stroked-button
+                type="button"
+                [disabled]="
+                  sincronizandoPlantillasWhatsApp
+                  || creandoPlantillaWhatsApp !== null
+                "
+                (click)="sincronizarPlantillasWhatsApp()"
+              >
+                <mat-icon>sync</mat-icon>
+
+                @if (sincronizandoPlantillasWhatsApp) {
+                  Sincronizando...
+                } @else {
+                  Sincronizar con Meta
+                }
+
+              </button>
+
+            </div>
+
+
+            @if (cargandoPlantillasWhatsApp) {
+
+              <p>
+                Cargando plantillas...
+              </p>
+
+            } @else {
+
+              @if (errorPlantillasWhatsApp) {
+
+                <div class="whatsapp-error">
+                  <mat-icon>error_outline</mat-icon>
+                  {{ errorPlantillasWhatsApp }}
+                </div>
+
+              }
+
+
+              <div class="whatsapp-templates">
+
+                @for (
+                  plantilla of plantillasWhatsApp;
+                  track plantilla.id
+                ) {
+
+                  <div class="whatsapp-template">
+
+                    <div>
+
+                      <strong>
+                        {{ plantilla.tipo }}
+                      </strong>
+
+                      <div class="template-meta">
+                        {{ plantilla.nombre_meta }}
+                        ·
+                        {{ plantilla.idioma }}
+                      </div>
+
+                    </div>
+
+
+                    <div class="whatsapp-template-actions">
+
+                      <span
+                        class="template-status"
+                        [attr.data-status]="plantilla.estado"
+                      >
+                        {{ plantilla.estado }}
+                      </span>
+
+
+                      @if (
+                        plantilla.estado === 'NO_CREADA'
+                        && (
+                          plantilla.tipo === 'FACTURA'
+                          || plantilla.tipo === 'PRESUPUESTO'
+                          || plantilla.tipo === 'GARANTIA'
+                          || plantilla.tipo === 'ORDEN_REPARACION'
+                        )
+                      ) {
+
+                        <button
+                          mat-stroked-button
+                          type="button"
+                          [disabled]="creandoPlantillaWhatsApp !== null"
+                        (click)="crearPlantilla(plantilla)"
+                      >
+                        <mat-icon>
+                          {{
+                            creandoPlantillaWhatsApp === plantilla.tipo
+                              ? 'hourglass_top'
+                              : 'add'
+                          }}
+                        </mat-icon>
+
+                        @if (creandoPlantillaWhatsApp === plantilla.tipo) {
+                          Creando...
+                        } @else {
+                          Crear plantilla
+                        }
+
+                      </button>
+
+                      }
+
+                    </div>
+
+                  </div>
+
+                }
+
+              </div>
+
+            }
+
+          </div>
+
+        }
+
+      </mat-card-content>
+    </mat-card>
+
+  </section>
+
+
+  <section class="config-section">
+
+    <div class="section-header">
+      <h2>Datos</h2>
+      <p>Migración de datos históricos y copias en formato Excel.</p>
+    </div>
+
+    <mat-card class="integration-card">
+      <mat-card-content>
+
+        <div class="integration-layout">
+
+          <div class="integration-info">
+
+            <div class="integration-icon documents">
+              <mat-icon>import_export</mat-icon>
+            </div>
+
+            <div class="integration-text">
+              <h3>Importar / Exportar</h3>
+              <p>
+                Migra datos desde Excel o genera copias en XLSX.
+              </p>
+            </div>
+
+          </div>
+
+          <div class="integration-action">
+            <a
+              mat-stroked-button
+              routerLink="/configuracion/datos"
+            >
+              <mat-icon>upload_file</mat-icon>
+              Gestionar datos
+            </a>
+          </div>
+
+        </div>
+
+      </mat-card-content>
+    </mat-card>
+
+  </section>
+
+
+  <section class="config-section">
+
+    <div class="section-header">
+      <h2>Facturación</h2>
+      <p>
+        Modo de pruebas, numeración y activación fiscal protegida.
+      </p>
+    </div>
+
+    <mat-card class="integration-card">
+      <mat-card-content>
+
+        <div class="integration-layout">
+
+          <div class="integration-info">
+
+            <div class="integration-icon security">
+              <mat-icon>receipt_long</mat-icon>
+            </div>
+
+            <div class="integration-text">
+              <h3>Facturación fiscal</h3>
+              <p>
+                Consulta o cambia entre el modo de pruebas y VERI*FACTU
+                con sus protecciones de seguridad.
+              </p>
+            </div>
+
+          </div>
+
+          <div class="integration-action">
+            <a
+              mat-stroked-button
+              routerLink="/configuracion/facturacion"
+            >
+              <mat-icon>settings</mat-icon>
+              Configurar facturación
+            </a>
+          </div>
+
+        </div>
+
+      </mat-card-content>
+    </mat-card>
+
+  </section>
+
+</div>

@@ -1,0 +1,30 @@
+:host {
+    display: block;
+    padding: 24px;
+}
+
+mat-card {
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 16px;
+    margin-top: 16px;
+}
+
+.full-width {
+    grid-column: 1 / -1;
+}
+
+mat-card-actions {
+    padding-top: 16px;
+}
+
+@media (max-width: 600px) {
+  :host { padding: 12px; }
+  .grid { grid-template-columns: 1fr; }
+  .full-width { grid-column: auto; }
+}

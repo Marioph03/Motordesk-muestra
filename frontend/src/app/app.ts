@@ -1,0 +1,18 @@
+import { Component, inject } from '@angular/core';
+import { RouterOutlet } from '@angular/router';
+import { ThemeService } from './core/services/theme.service';
+
+@Component({
+  selector: 'app-root',
+  imports: [RouterOutlet],
+  templateUrl: './app.html',
+  styleUrl: './app.scss'
+})
+export class AppComponent {
+  private readonly themeService = inject(ThemeService);
+
+  constructor() {
+    this.themeService.inicializar();
+  }
+}
+/** Raíz Angular: solo contiene el punto de montaje de la aplicación. */

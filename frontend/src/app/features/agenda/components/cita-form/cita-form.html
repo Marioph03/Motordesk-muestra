@@ -1,0 +1,310 @@
+<mat-card>
+
+    <mat-card-header>
+
+        <mat-card-title>
+
+            {{
+                isEditMode
+                    ? 'Editar cita'
+                    : 'Nueva cita'
+            }}
+
+        </mat-card-title>
+
+    </mat-card-header>
+
+
+    <mat-card-content>
+
+        <form
+            [formGroup]="form"
+            class="cita-form">
+
+
+            <app-autocomplete-select
+                class="full-width"
+                formControlName="vehiculo_id"
+                etiqueta="Vehículo"
+                [items]="vehiculos"
+                [mostrar]="etiquetaVehiculo">
+            </app-autocomplete-select>
+
+            <mat-form-field
+                appearance="outline"
+                class="full-width">
+
+                <mat-label>
+                    Personal asignado
+                </mat-label>
+
+                <mat-select
+                    formControlName="usuarios_ids"
+                    multiple>
+
+                    @for (usuario of usuarios; track usuario.id) {
+                        <mat-option
+                            [value]="usuario.id"
+                            [disabled]="!estaUsuarioDisponible(usuario.id)">
+                            {{ usuario.apellidos ? (usuario.apellidos + ', ') : '' }}{{ usuario.nombre }}
+                            · {{ usuario.rol }}
+
+                            @if (
+                                getDisponibilidadUsuario(usuario.id);
+                                as disponibilidad
+                            ) {
+                                <span
+                                    class="estado-personal"
+                                    [class.no-disponible]="!disponibilidad.disponible">
+                                    {{
+                                        disponibilidad.disponible
+                                            ? 'Disponible'
+                                            : getMotivoNoDisponible(
+                                                disponibilidad.motivo
+                                            )
+                                    }}
+                                </span>
+                            }
+                        </mat-option>
+                    }
+
+                </mat-select>
+
+                <mat-hint>
+                    Selecciona los profesionales que atenderán la cita.
+                </mat-hint>
+
+            </mat-form-field>
+
+
+            <mat-form-field
+                appearance="outline">
+
+                <mat-label>
+                    Fecha
+                </mat-label>
+
+                <input
+                    matInput
+                    type="date"
+                    formControlName="fecha"
+                    [readonly]="isEditMode && !reprogramando"
+                    (change)="actualizarHoraFin()">
+
+            </mat-form-field>
+
+
+            <mat-form-field
+                appearance="outline">
+
+                <mat-label>
+                    Hora de la cita
+                </mat-label>
+
+                <input
+                    matInput
+                    type="time"
+                    formControlName="hora_inicio"
+                    [readonly]="isEditMode && !reprogramando"
+                    (change)="actualizarHoraFin()">
+
+            </mat-form-field>
+
+
+            <div class="schedule-help">
+                <mat-icon>schedule</mat-icon>
+                <span>La disponibilidad se valida según el horario configurado del taller.</span>
+            </div>
+
+
+            @if (comprobandoDisponibilidad) {
+                <div class="estado-disponibilidad"><mat-icon>schedule</mat-icon>Comprobando disponibilidad...</div>
+            }
+
+            @if (!comprobandoDisponibilidad && disponible === true) {
+                <div class="estado-disponibilidad disponible"><mat-icon>check_circle</mat-icon>Horario disponible</div>
+            }
+
+            @if (!comprobandoDisponibilidad && disponible === false) {
+                <div class="estado-disponibilidad ocupado"><mat-icon>event_busy</mat-icon>Ya existe una cita en este horario</div>
+            }
+
+
+            @if (isEditMode && cita) {
+
+                <mat-form-field
+                    appearance="outline">
+
+                    <mat-label>
+                        Estado
+                    </mat-label>
+
+                    <input
+                        matInput
+                        [value]="cita.estado"
+                        readonly>
+
+                </mat-form-field>
+
+            }
+
+
+            <mat-form-field
+                appearance="outline"
+                class="full-width">
+
+                <mat-label>
+                    Motivo
+                </mat-label>
+
+                <textarea
+                    matInput
+                    rows="4"
+                    formControlName="motivo">
+                </textarea>
+
+            </mat-form-field>
+
+
+            <mat-form-field
+                appearance="outline"
+                class="full-width">
+
+                <mat-label>
+                    Observaciones
+                </mat-label>
+
+                <textarea
+                    matInput
+                    rows="4"
+                    formControlName="observaciones">
+                </textarea>
+
+            </mat-form-field>
+
+        </form>
+
+        @if (cita?.fecha_reprogramacion && cita?.fecha_inicio_anterior) {
+            <div class="reprogramacion-info">
+                <div class="reprogramacion-titulo">
+                    <mat-icon>event_repeat</mat-icon>
+                    Cita reprogramada
+                </div>
+                <div class="reprogramacion-fechas">
+                    <div>
+                        <span>Anterior</span>
+                        <strong>{{ cita!.fecha_inicio_anterior | date:'dd/MM/yyyy · HH:mm' }}</strong>
+                    </div>
+                    <div>
+                        <span>Nueva</span>
+                        <strong>{{ cita!.fecha_inicio | date:'dd/MM/yyyy · HH:mm' }}</strong>
+                    </div>
+                    <div>
+                        <span>Reprogramada el</span>
+                        <strong>{{ cita!.fecha_reprogramacion | date:'dd/MM/yyyy · HH:mm' }}</strong>
+                    </div>
+                </div>
+            </div>
+        }
+
+    </mat-card-content>
+
+
+    <mat-card-actions class="acciones-cita">
+
+        @if (isEditMode && cita && cita.estado !== 'Cancelada' && cita.estado !== 'No presentado' && !reprogramando) {
+            <button mat-stroked-button color="primary" type="button" (click)="iniciarReprogramacion()">
+                <mat-icon>event_repeat</mat-icon>
+                Reprogramar
+            </button>
+        }
+
+        @if (isEditMode && cita?.fecha_reprogramacion) {
+            <button mat-stroked-button color="primary" type="button" (click)="avisarReprogramacionEmail()">
+                <mat-icon>email</mat-icon>
+                Avisar cambio por Email
+            </button>
+        }
+
+        @if (isEditMode && cita?.estado === 'Pendiente') {
+            <button mat-flat-button color="primary" type="button" (click)="confirmarCita()">
+                <mat-icon>check_circle</mat-icon>
+                Confirmar cita
+            </button>
+        }
+
+        @if (isEditMode && (cita?.estado === 'Pendiente' || cita?.estado === 'Confirmada')) {
+            <button mat-flat-button color="primary" type="button" (click)="marcarEnTaller()">
+                <mat-icon>directions_car</mat-icon>
+                Cliente ha llegado
+            </button>
+
+            <button mat-stroked-button color="warn" type="button" (click)="cancelarCita()">
+                <mat-icon>cancel</mat-icon>
+                Cancelar cita
+            </button>
+
+            <button mat-stroked-button color="warn" type="button" (click)="marcarNoPresentado()">
+                <mat-icon>person_off</mat-icon>
+                No presentado
+            </button>
+        }
+
+        @if (isEditMode && cita?.estado === 'En taller') {
+            <button mat-flat-button color="primary" type="button" (click)="completarCita()">
+                <mat-icon>task_alt</mat-icon>
+                Completar cita
+            </button>
+        }
+
+        @if (isEditMode && cita && cita.estado !== 'Cancelada' && cita.estado !== 'No presentado') {
+            <button mat-stroked-button color="primary" type="button" (click)="enviarConfirmacionEmail()">
+                <mat-icon>email</mat-icon>
+                Enviar confirmación por Email
+            </button>
+        }
+
+        @if (isEditMode && cita && !cita.orden_generada_id && cita.estado !== 'Cancelada' && cita.estado !== 'No presentado') {
+            <button mat-flat-button color="primary" type="button" (click)="crearOrden()">
+                <mat-icon>build</mat-icon>
+                Crear orden
+            </button>
+
+            <button mat-stroked-button color="primary" type="button" (click)="crearPresupuesto()">
+                <mat-icon>request_quote</mat-icon>
+                Crear presupuesto
+            </button>
+        }
+
+        <button
+            mat-button
+            type="button"
+            (click)="cancelar()">
+
+            Cancelar
+
+        </button>
+
+        <button
+            mat-flat-button
+            color="primary"
+            class="accion-guardar"
+            type="button"
+            [disabled]="comprobandoDisponibilidad || disponible === false"
+            (click)="guardar()">
+
+            <mat-icon>
+                save
+            </mat-icon>
+
+            {{
+                isEditMode
+                    ? 'Guardar cambios'
+                    : 'Crear cita'
+            }}
+
+        </button>
+
+    </mat-card-actions>
+
+</mat-card>

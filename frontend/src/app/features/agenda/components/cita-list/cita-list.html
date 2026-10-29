@@ -1,0 +1,371 @@
+<mat-card>
+
+    <mat-card-header>
+
+        <mat-card-title>
+            Agenda
+        </mat-card-title>
+
+    </mat-card-header>
+
+
+    <mat-card-content>
+
+        <div class="resumen-hoy">
+            <mat-card class="resumen-hoy-card">
+                <mat-card-header>
+                    <mat-card-title>Hoy</mat-card-title>
+                </mat-card-header>
+
+                <mat-card-content>
+                    <div class="resumen-hoy-grid">
+                        <div class="resumen-hoy-item">
+                            <span>Citas previstas</span>
+                            <strong>{{ citasHoy.length }}</strong>
+                        </div>
+
+                        <div class="resumen-hoy-item">
+                            <span>Confirmadas</span>
+                            <strong>{{ citasConfirmadasHoy }}</strong>
+                        </div>
+
+                        <div class="resumen-hoy-item">
+                            <span>En taller</span>
+                            <strong>{{ citasEnTallerHoy }}</strong>
+                        </div>
+                    </div>
+
+                    @if (proximaCitaHoy; as proximaCita) {
+                        <div class="proxima-cita">
+                            <div>
+                                <span class="proxima-label">Próxima cita</span>
+                                <strong>
+                                    {{ proximaCita.fecha_inicio | date:'HH:mm' }} ·
+                                    {{ proximaCita.motivo }}
+                                </strong>
+                                <small>
+                                    {{ proximaCita.cliente.apellidos ? (proximaCita.cliente.apellidos + ', ') : '' }}{{ proximaCita.cliente.nombre }} ·
+                                    {{ proximaCita.vehiculo.marca }} {{ proximaCita.vehiculo.modelo }} ·
+                                    {{ proximaCita.vehiculo.matricula }}
+                                </small>
+                            </div>
+
+                            <button mat-stroked-button color="primary" [routerLink]="['/agenda', proximaCita.id]">
+                                Abrir
+                            </button>
+                        </div>
+                    } @else {
+                        <p class="sin-proxima-cita">No hay más citas previstas para hoy.</p>
+                    }
+                </mat-card-content>
+            </mat-card>
+        </div>
+
+        <div class="acciones-superiores">
+
+            <button
+                mat-flat-button
+                color="primary"
+                routerLink="/agenda/nueva">
+
+                <mat-icon>
+                    add
+                </mat-icon>
+
+                Nueva cita
+
+            </button>
+
+        </div>
+
+
+        <mat-tab-group>
+
+            <mat-tab label="Calendario">
+
+                <div class="controles-semana">
+
+                    <button
+                        mat-icon-button
+                        type="button"
+                        aria-label="Semana anterior"
+                        (click)="semanaAnterior()">
+
+                        <mat-icon>
+                            chevron_left
+                        </mat-icon>
+
+                    </button>
+
+                    <strong>
+                        {{ inicioSemana | date:'dd/MM/yyyy' }}
+                        -
+                        {{ finSemana | date:'dd/MM/yyyy' }}
+                    </strong>
+
+                    <button
+                        mat-icon-button
+                        type="button"
+                        aria-label="Semana siguiente"
+                        (click)="semanaSiguiente()">
+
+                        <mat-icon>
+                            chevron_right
+                        </mat-icon>
+
+                    </button>
+
+                    <button
+                        mat-stroked-button
+                        type="button"
+                        (click)="irSemanaActual()">
+
+                        Hoy
+
+                    </button>
+
+                </div>
+
+                <div class="agenda-semanal">
+                    <div class="columna-horas">
+                        <div class="cabecera-horas"></div>
+                        @for (hora of horasEtiquetas; track hora) {
+                            <div class="hora-label">{{ hora.toString().padStart(2, '0') }}:00</div>
+                        }
+                    </div>
+
+                    @for (dia of diasSemana; track dia.getTime()) {
+                        <div class="dia-agenda">
+                            <div class="dia-agenda-header" (click)="nuevaCitaEnDia(dia)" title="Crear cita">
+                                <span>{{ dia | date:'EEE' }}</span>
+                                <strong>{{ dia | date:'dd/MM' }}</strong>
+                            </div>
+
+                            <div class="dia-agenda-body">
+                                @for (hora of horasAgenda; track hora) {
+                                    <div
+                                        class="linea-hora"
+                                        (click)="nuevaCitaEnHora(dia, hora)"
+                                        title="Crear cita a esta hora">
+                                    </div>
+                                }
+
+                                @for (cita of getCitasDiaOrdenadas(dia); track cita.id) {
+                                    <a
+                                        class="cita-bloque"
+                                        [routerLink]="['/agenda', cita.id]"
+                                        (click)="$event.stopPropagation()"
+                                        [style.top.px]="getTopCita(cita)"
+                                        [style.height.px]="getAlturaCita(cita)"
+                                        [style.borderLeftColor]="getEstadoColor(cita.estado)">
+                                        <span class="cita-hora">{{ cita.fecha_inicio | date:'HH:mm' }}</span>
+                                        <span class="cita-motivo" [title]="cita.motivo">{{ cita.motivo }}</span>
+                                    </a>
+                                }
+                            </div>
+                        </div>
+                    }
+                </div>
+
+            </mat-tab>
+
+            <mat-tab label="Listado">
+
+        @if (citas.length === 0) {
+
+            <div class="sin-citas">
+
+                <mat-icon>
+                    event_available
+                </mat-icon>
+
+                <p>
+                    No hay citas registradas.
+                </p>
+
+            </div>
+
+        } @else {
+
+            <table
+                mat-table
+                [dataSource]="citas"
+                class="citas-table">
+
+
+                <!-- FECHA -->
+
+                <ng-container matColumnDef="fecha">
+
+                    <th
+                        mat-header-cell
+                        *matHeaderCellDef>
+
+                        Fecha
+
+                    </th>
+
+                    <td
+                        mat-cell
+                        *matCellDef="let cita">
+
+                        {{
+                            cita.fecha_inicio
+                            | date:'dd/MM/yyyy'
+                        }}
+
+                    </td>
+
+                </ng-container>
+
+
+                <!-- HORA -->
+
+                <ng-container matColumnDef="hora">
+
+                    <th
+                        mat-header-cell
+                        *matHeaderCellDef>
+
+                        Hora
+
+                    </th>
+
+                    <td
+                        mat-cell
+                        *matCellDef="let cita">
+
+                        {{
+                            cita.fecha_inicio
+                            | date:'HH:mm'
+                        }}
+
+                        -
+
+                        {{
+                            cita.fecha_fin
+                            | date:'HH:mm'
+                        }}
+
+                    </td>
+
+                </ng-container>
+
+
+                <!-- MOTIVO -->
+
+                <ng-container matColumnDef="motivo">
+
+                    <th
+                        mat-header-cell
+                        *matHeaderCellDef>
+
+                        Motivo
+
+                    </th>
+
+                    <td
+                        mat-cell
+                        *matCellDef="let cita">
+
+                        {{ cita.motivo }}
+
+                    </td>
+
+                </ng-container>
+
+
+                <!-- ESTADO -->
+
+                <ng-container matColumnDef="estado">
+
+                    <th
+                        mat-header-cell
+                        *matHeaderCellDef>
+
+                        Estado
+
+                    </th>
+
+                    <td
+                        mat-cell
+                        *matCellDef="let cita">
+
+                        <mat-chip
+                            [style.backgroundColor]="
+                                getEstadoColor(
+                                    cita.estado
+                                )
+                            "
+                            style="color: white">
+
+                            {{ cita.estado }}
+
+                        </mat-chip>
+
+                    </td>
+
+                </ng-container>
+
+
+                <!-- ACCIONES -->
+
+                <ng-container matColumnDef="acciones">
+
+                    <th
+                        mat-header-cell
+                        *matHeaderCellDef>
+
+                        Acciones
+
+                    </th>
+
+                    <td
+                        mat-cell
+                        *matCellDef="let cita">
+
+                        <a
+                            mat-icon-button
+                            [routerLink]="[
+                                '/agenda',
+                                cita.id
+                            ]">
+
+                            <mat-icon>
+                                visibility
+                            </mat-icon>
+
+                        </a>
+
+                    </td>
+
+                </ng-container>
+
+
+                <tr
+                    mat-header-row
+                    *matHeaderRowDef="
+                        displayedColumns
+                    ">
+                </tr>
+
+                <tr
+                    mat-row
+                    *matRowDef="
+                        let row;
+                        columns:
+                            displayedColumns
+                    ">
+                </tr>
+
+            </table>
+
+        }
+
+            </mat-tab>
+
+        </mat-tab-group>
+
+    </mat-card-content>
+
+</mat-card>

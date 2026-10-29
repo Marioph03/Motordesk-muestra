@@ -1,0 +1,34 @@
+<section class="page-container">
+  <div class="page-header">
+    <div class="page-header-content">
+      <h1 class="page-title">Compras</h1>
+      <p class="page-subtitle">Gestiona pedidos, recepciones y devoluciones a proveedores.</p>
+    </div>
+  </div>
+
+  @if (cargando) {
+    <div class="loading-container"><mat-spinner diameter="40"></mat-spinner><span>Cargando compras...</span></div>
+  } @else if (resumen) {
+    <div class="purchase-grid">
+      <a class="purchase-card" routerLink="/compras/pedidos"><div class="purchase-icon pedidos"><mat-icon>shopping_cart</mat-icon></div><div class="purchase-card-content"><span>Pedidos</span><strong>{{ resumen.pedidos_total }}</strong><small>{{ resumen.pedidos_pendientes }} pendientes</small></div><mat-icon class="arrow">chevron_right</mat-icon></a>
+      <a class="purchase-card" routerLink="/compras/albaranes"><div class="purchase-icon albaranes"><mat-icon>inventory</mat-icon></div><div class="purchase-card-content"><span>Albaranes</span><strong>{{ resumen.albaranes_total }}</strong><small>{{ resumen.albaranes_borrador }} pendientes de confirmar</small></div><mat-icon class="arrow">chevron_right</mat-icon></a>
+      <a class="purchase-card" routerLink="/compras/facturas-proveedor"><div class="purchase-icon facturas"><mat-icon>receipt_long</mat-icon></div><div class="purchase-card-content"><span>Facturas de compra</span><strong>{{ resumen.facturas_total }}</strong><small>{{ resumen.facturas_pendientes }} pendientes de pago</small></div><mat-icon class="arrow">chevron_right</mat-icon></a>
+      <a class="purchase-card" routerLink="/compras/devoluciones"><div class="purchase-icon devoluciones"><mat-icon>assignment_return</mat-icon></div><div class="purchase-card-content"><span>Devoluciones</span><strong>{{ resumen.devoluciones_total }}</strong><small>{{ resumen.devoluciones_pendientes }} pendientes de resolución</small></div><mat-icon class="arrow">chevron_right</mat-icon></a>
+    </div>
+
+    <mat-card class="attention-card">
+      <mat-card-header><mat-card-title>Atención</mat-card-title><mat-card-subtitle>Situaciones que requieren seguimiento</mat-card-subtitle></mat-card-header>
+      <mat-card-content>
+        @if (!hayAlertas) {
+          <div class="all-good"><mat-icon>check_circle</mat-icon><div><strong>Todo al día</strong><span>No hay incidencias pendientes en el circuito de compras.</span></div></div>
+        } @else {
+          <div class="attention-list">
+            @if (resumen.pedidos_pendientes > 0) { <a class="attention-row" routerLink="/compras/pedidos"><mat-icon>shopping_cart</mat-icon><div><strong>Pedidos pendientes</strong><span>{{ resumen.pedidos_pendientes }} pedidos todavía no están completamente recibidos.</span></div><mat-icon>chevron_right</mat-icon></a> }
+            @if (resumen.albaranes_borrador > 0) { <a class="attention-row" routerLink="/compras/albaranes"><mat-icon>inventory</mat-icon><div><strong>Recepciones sin confirmar</strong><span>{{ resumen.albaranes_borrador }} albaranes todavía no han actualizado stock.</span></div><mat-icon>chevron_right</mat-icon></a> }
+            @if (resumen.devoluciones_pendientes > 0) { <a class="attention-row" routerLink="/compras/devoluciones"><mat-icon>assignment_return</mat-icon><div><strong>Devoluciones pendientes</strong><span>{{ resumen.devoluciones_pendientes }} devoluciones esperan respuesta del proveedor.</span></div><mat-icon>chevron_right</mat-icon></a> }
+          </div>
+        }
+      </mat-card-content>
+    </mat-card>
+  }
+</section>

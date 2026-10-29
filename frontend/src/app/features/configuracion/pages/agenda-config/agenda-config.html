@@ -1,0 +1,49 @@
+<section class="agenda-config-page">
+  <div class="page-header"><div class="page-header-content"><h1 class="page-title">Agenda</h1><p class="page-subtitle">Configura horarios, duración predeterminada de citas y cierres excepcionales.</p></div></div>
+  @if (cargando) {
+    <div class="loading-container"><mat-spinner diameter="40"></mat-spinner><span>Cargando configuración...</span></div>
+  } @else {
+    <div class="config-grid">
+      <mat-card class="config-card">
+        <mat-card-header><mat-card-title>Horario semanal</mat-card-title><mat-card-subtitle>Define los días y franjas de atención del taller.</mat-card-subtitle></mat-card-header>
+        <mat-card-content>
+          <form [formGroup]="form">
+            <div class="duration-row"><mat-form-field appearance="outline"><mat-label>Duración predeterminada de cita</mat-label><input matInput type="number" formControlName="duracion_cita_minutos"><span matTextSuffix>min</span><mat-error>Entre 5 y 480 minutos.</mat-error></mat-form-field></div>
+            @for (dia of dias; track dia.nombre) {
+              <div class="schedule-row" [class.inactivo]="!form.controls[dia.activo].value">
+                <div class="day-name">{{ dia.nombre }}</div>
+                <mat-slide-toggle [formControl]="form.controls[dia.activo]" [aria-label]="'Activar ' + dia.nombre"></mat-slide-toggle>
+                <input type="time" [formControl]="form.controls[dia.inicio]" [disabled]="!form.controls[dia.activo].value">
+                <span>a</span>
+                <input type="time" [formControl]="form.controls[dia.fin]" [disabled]="!form.controls[dia.activo].value">
+              </div>
+            }
+            <div class="form-actions"><button mat-flat-button color="primary" class="md-primary-button" type="button" [disabled]="form.invalid || guardando" (click)="guardar()"><mat-icon>save</mat-icon>{{ guardando ? 'Guardando...' : 'Guardar horario' }}</button></div>
+          </form>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="config-card">
+        <mat-card-header><mat-card-title>Cierres excepcionales</mat-card-title><mat-card-subtitle>Días no disponibles por festivos o circunstancias especiales.</mat-card-subtitle></mat-card-header>
+        <mat-card-content>
+          <form [formGroup]="cierreForm" class="closure-form">
+            <mat-form-field appearance="outline"><mat-label>Fecha</mat-label><input matInput type="date" formControlName="fecha"><mat-error>La fecha es obligatoria.</mat-error></mat-form-field>
+            <mat-form-field appearance="outline"><mat-label>Motivo</mat-label><input matInput formControlName="motivo"><mat-error>Indica un motivo.</mat-error></mat-form-field>
+            <mat-form-field appearance="outline" class="full-width"><mat-label>Observaciones</mat-label><textarea matInput rows="2" formControlName="observaciones"></textarea></mat-form-field>
+            <button mat-flat-button color="primary" type="button" (click)="crearCierre()"><mat-icon>add</mat-icon>Añadir cierre</button>
+          </form>
+          @if (cierres.length === 0) { <div class="empty-state">No hay cierres excepcionales configurados.</div> }
+          @else {
+            <div class="md-table-container"><table mat-table [dataSource]="cierres">
+              <ng-container matColumnDef="fecha"><th mat-header-cell *matHeaderCellDef>Fecha</th><td mat-cell *matCellDef="let cierre">{{ formatearFecha(cierre.fecha) }}</td></ng-container>
+              <ng-container matColumnDef="motivo"><th mat-header-cell *matHeaderCellDef>Motivo</th><td mat-cell *matCellDef="let cierre">{{ cierre.motivo }}</td></ng-container>
+              <ng-container matColumnDef="observaciones"><th mat-header-cell *matHeaderCellDef>Observaciones</th><td mat-cell *matCellDef="let cierre">{{ cierre.observaciones || '-' }}</td></ng-container>
+              <ng-container matColumnDef="acciones"><th mat-header-cell *matHeaderCellDef></th><td mat-cell *matCellDef="let cierre"><button mat-icon-button type="button" aria-label="Eliminar cierre" (click)="eliminarCierre(cierre)"><mat-icon>delete</mat-icon></button></td></ng-container>
+              <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr><tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+            </table></div>
+          }
+        </mat-card-content>
+      </mat-card>
+    </div>
+  }
+</section>

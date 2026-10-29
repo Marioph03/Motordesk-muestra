@@ -1,0 +1,38 @@
+<div class="email-config">
+  <a routerLink="/configuracion" class="back">← Configuración</a>
+  <h1>Correo electrónico</h1>
+  <p>Configura la cuenta desde la que se enviarán órdenes, presupuestos, garantías y facturas.</p>
+  @if (cargando) {
+    <p>Cargando configuración...</p>
+  } @else {
+    <section class="card">
+      <h2>Conectar Gmail sin contraseña</h2>
+      <p class="help">Autoriza una cuenta de Google una sola vez. MotorDesk nunca verá ni guardará la contraseña.</p>
+      <p class="connection-status" [class.connected]="googleConectado" [class.pending]="conectandoGoogle">
+        {{ conectandoGoogle ? 'Autorización en curso…' : googleConectado ? 'Conectado con Google' : 'Sin conectar' }}
+        @if (googleConectado && datos.usuario) { — {{ datos.usuario }} }
+      </p>
+      <button type="button" (click)="conectarGoogle()" [disabled]="conectandoGoogle">{{ conectandoGoogle ? 'Conectando con Google…' : googleConectado ? 'Reconectar Google' : 'Conectar con Google' }}</button>
+    </section>
+    <section class="card">
+      <h2>Conectar Outlook sin contraseña</h2>
+      <p class="help">Autoriza una cuenta Outlook, Hotmail o Microsoft 365 una sola vez. MotorDesk nunca verá ni guardará la contraseña.</p>
+      <p class="connection-status" [class.connected]="microsoftConectado" [class.pending]="conectandoMicrosoft">
+        {{ conectandoMicrosoft ? 'Autorización en curso…' : microsoftConectado ? 'Conectado con Microsoft' : 'Sin conectar' }}
+        @if (microsoftConectado && datos.usuario) { — {{ datos.usuario }} }
+      </p>
+      <button type="button" (click)="conectarMicrosoft()" [disabled]="conectandoMicrosoft">{{ conectandoMicrosoft ? 'Conectando con Microsoft…' : microsoftConectado ? 'Reconectar Microsoft' : 'Conectar con Microsoft' }}</button>
+    </section>
+    <section class="card">
+      <label>Proveedor<select [(ngModel)]="datos.proveedor" (change)="cambiarProveedor()"><option value="gmail">Gmail</option><option value="outlook">Outlook / Microsoft 365</option><option value="personalizado">Otro servidor SMTP</option></select></label>
+      <label>Correo electrónico<input type="email" [(ngModel)]="datos.usuario" placeholder="taller@gmail.com"></label>
+      <label>Remitente visible (opcional)<input type="email" [(ngModel)]="datos.remitente" placeholder="taller@gmail.com"></label>
+      <label>Contraseña de aplicación<input type="password" [(ngModel)]="datos.password" [placeholder]="configurado ? 'Déjala vacía para conservarla' : 'Obligatoria'" autocomplete="new-password"></label>
+      @if (datos.proveedor === 'personalizado') { <div class="smtp"><label>Servidor SMTP<input [(ngModel)]="datos.host"></label><label>Puerto<input type="number" [(ngModel)]="datos.puerto"></label><label>Seguridad<select [(ngModel)]="datos.seguridad"><option value="starttls">STARTTLS</option><option value="ssl">SSL/TLS</option></select></label></div> }
+      @if (datos.proveedor === 'gmail') { <p class="help">Gmail requiere una <strong>contraseña de aplicación</strong>, no la contraseña normal de Google.</p> }
+      <label class="check"><input type="checkbox" [(ngModel)]="datos.activo"> Activar envíos por correo</label>
+      <button type="button" (click)="guardar()" [disabled]="guardando">{{ guardando ? 'Guardando...' : 'Guardar configuración' }}</button>
+    </section>
+    <section class="card"><h2>Enviar prueba</h2><label>Destinatario de prueba<input type="email" [(ngModel)]="pruebaDestinatario" placeholder="correo@ejemplo.com"></label><button type="button" (click)="probar()" [disabled]="probando">{{ probando ? 'Enviando...' : 'Enviar correo de prueba' }}</button></section>
+  }
+</div>

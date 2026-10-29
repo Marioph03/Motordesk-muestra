@@ -1,0 +1,52 @@
+<section class="system-config-page">
+  <div class="page-header"><div class="page-header-content"><h1 class="page-title">Sistema</h1><p class="page-subtitle">Consulta el estado de MotorDesk y gestiona las copias de seguridad.</p></div></div>
+
+  @if (cargando) {
+    <div class="loading-container"><mat-spinner diameter="40"></mat-spinner><span>Comprobando sistema...</span></div>
+  } @else {
+    <div class="system-summary">
+      <mat-card class="version-card"><mat-card-content><div class="version-icon"><mat-icon>memory</mat-icon></div><div><span>MotorDesk</span><strong>v{{ estado?.version ?? '-' }}</strong><small>Versión instalada</small></div></mat-card-content></mat-card>
+    </div>
+
+    <mat-card class="system-card">
+      <mat-card-header><mat-card-title>Estado del sistema</mat-card-title><mat-card-subtitle>Servicios principales de MotorDesk</mat-card-subtitle></mat-card-header>
+      <mat-card-content>
+        <div class="services-grid">
+          <div class="service-card"><div class="service-icon blue"><mat-icon>dns</mat-icon></div><div class="service-content"><strong>Backend</strong><span [class]="claseEstado(estado?.backend)"><mat-icon>{{ iconoEstado(estado?.backend) }}</mat-icon>{{ estado?.backend?.estado ?? 'Desconocido' }}</span></div></div>
+          <div class="service-card"><div class="service-icon green"><mat-icon>storage</mat-icon></div><div class="service-content"><strong>Base de datos</strong><span [class]="claseEstado(estado?.base_datos)"><mat-icon>{{ iconoEstado(estado?.base_datos) }}</mat-icon>{{ estado?.base_datos?.estado ?? 'Desconocido' }}</span></div></div>
+          <div class="service-card"><div class="service-icon whatsapp"><mat-icon>chat</mat-icon></div><div class="service-content"><strong>WhatsApp</strong><span [class]="claseEstado(estado?.whatsapp)"><mat-icon>{{ iconoEstado(estado?.whatsapp) }}</mat-icon>{{ estado?.whatsapp?.estado ?? 'Desconocido' }}</span></div></div>
+          <div class="service-card"><div class="service-icon purple"><mat-icon>account_balance</mat-icon></div><div class="service-content"><strong>VERI*FACTU</strong><span [class]="claseEstado(estado?.verifactu)"><mat-icon>{{ iconoEstado(estado?.verifactu) }}</mat-icon>{{ estado?.verifactu?.estado ?? 'Desconocido' }}</span></div></div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="system-card backup-card">
+      <mat-card-header><mat-card-title>Copias de seguridad</mat-card-title><mat-card-subtitle>Protege los datos almacenados en MotorDesk</mat-card-subtitle></mat-card-header>
+      <mat-card-content>
+        @if (backup?.disponible) {
+          <div class="backup-info">
+            <div><span>Última copia</span><strong>{{ backup?.fecha ? (backup?.fecha | date:'dd/MM/yyyy HH:mm') : '-' }}</strong></div>
+            <div><span>Archivo</span><strong>{{ backup?.nombre_archivo ?? '-' }}</strong></div>
+            <div><span>Tamaño</span><strong>{{ formatearTamano(backup?.tamano_bytes) }}</strong></div>
+          </div>
+        } @else {
+          <div class="no-backup"><mat-icon>cloud_off</mat-icon><div><strong>Aún no hay copias disponibles</strong><span>Las copias se programan automáticamente cada 24 horas cuando PostgreSQL dispone de <code>pg_dump</code> compatible.</span></div></div>
+        }
+        <div class="backup-actions">
+          <button mat-flat-button color="primary" class="md-primary-button" type="button" [disabled]="creandoBackup" (click)="crearBackup()"><mat-icon>backup</mat-icon>{{ creandoBackup ? 'Creando copia...' : 'Crear copia ahora' }}</button>
+          <button mat-stroked-button type="button" [disabled]="!backup?.disponible || descargandoBackup" (click)="descargarBackup()"><mat-icon>download</mat-icon>{{ descargandoBackup ? 'Descargando...' : 'Descargar última copia' }}</button>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="system-card restore-card">
+      <mat-card-header><div class="warning-icon"><mat-icon>warning</mat-icon></div><div><mat-card-title>Restauración</mat-card-title><mat-card-subtitle>Recuperación de datos desde una copia anterior</mat-card-subtitle></div></mat-card-header>
+      <mat-card-content><div class="restore-info"><p>La restauración sustituye los datos actuales de MotorDesk por los de una copia de seguridad.</p><span>Estará disponible solo tras añadir permisos exclusivos, validación y una copia automática previa.</span></div><button mat-stroked-button type="button" disabled><mat-icon>restore</mat-icon>Restaurar copia</button></mat-card-content>
+    </mat-card>
+
+    <mat-card class="system-card restore-card">
+      <mat-card-header><div class="warning-icon"><mat-icon>delete_forever</mat-icon></div><div><mat-card-title>Restablecer datos de prueba</mat-card-title><mat-card-subtitle>Empieza de nuevo sin perder la configuración del taller</mat-card-subtitle></div></mat-card-header>
+      <mat-card-content><div class="restore-info"><p>Elimina clientes, vehículos, órdenes, facturas, compras, almacén, agenda y registros de prueba.</p><span>Se conservan empresa, usuarios, permisos, configuraciones, correo, WhatsApp, certificados y directorio Facturae. Antes se crea una copia de seguridad automática.</span></div><button mat-stroked-button color="warn" type="button" [disabled]="restableciendo" (click)="restablecerDatos()"><mat-icon>delete_forever</mat-icon>{{ restableciendo ? 'Restableciendo...' : 'Restablecer datos' }}</button></mat-card-content>
+    </mat-card>
+  }
+</section>

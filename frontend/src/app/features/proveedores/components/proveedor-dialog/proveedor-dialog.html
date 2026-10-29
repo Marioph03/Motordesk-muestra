@@ -1,0 +1,80 @@
+<h2 mat-dialog-title>
+  {{ isEditMode ? 'Editar proveedor' : 'Nuevo proveedor' }}
+</h2>
+
+<mat-dialog-content>
+  <form class="form" [formGroup]="form">
+    <div class="grid">
+      <mat-form-field appearance="outline">
+        <mat-label>Nombre comercial</mat-label>
+        <input matInput formControlName="nombre" autocomplete="organization">
+        @if (form.controls.nombre.hasError('required') && form.controls.nombre.touched) {
+          <mat-error>El nombre es obligatorio.</mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>NIF / CIF</mat-label>
+        <input matInput formControlName="cif" autocomplete="off">
+        @if (form.controls.cif.hasError('required') && form.controls.cif.touched) {
+          <mat-error>El NIF / CIF es obligatorio.</mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Teléfono</mat-label>
+        <input matInput formControlName="telefono" type="tel" autocomplete="tel">
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Email</mat-label>
+        <input matInput formControlName="email" type="email" autocomplete="email">
+        @if (form.controls.email.hasError('email') && form.controls.email.touched) {
+          <mat-error>Introduce un email válido.</mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Dirección</mat-label>
+        <input matInput formControlName="direccion" autocomplete="street-address">
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Localidad</mat-label>
+        <input matInput formControlName="ciudad" autocomplete="address-level2">
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Provincia</mat-label>
+        <input matInput formControlName="provincia" autocomplete="address-level1">
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Código postal</mat-label>
+        <input matInput formControlName="codigo_postal" autocomplete="postal-code" maxlength="10">
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Observaciones</mat-label>
+        <textarea
+          matInput
+          formControlName="observaciones"
+          rows="4"
+          maxlength="2000"
+          placeholder="Notas internas sobre el proveedor"></textarea>
+        <mat-hint align="end">
+          {{ form.controls.observaciones.value.length }}/2000
+        </mat-hint>
+      </mat-form-field>
+    </div>
+
+    <mat-checkbox formControlName="activo">Proveedor activo</mat-checkbox>
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button type="button" (click)="cancelar()">Cancelar</button>
+  <button mat-flat-button color="primary" type="button" (click)="guardar()" [disabled]="form.invalid">
+    {{ isEditMode ? 'Guardar cambios' : 'Crear proveedor' }}
+  </button>
+</mat-dialog-actions>

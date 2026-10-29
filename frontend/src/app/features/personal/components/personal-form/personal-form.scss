@@ -1,0 +1,46 @@
+.datos-formulario {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: center;
+  gap: 12px 16px;
+  margin: 20px 0;
+}
+
+.acciones-formulario {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin: 8px 0 24px;
+}
+
+.ausencias { margin-top: 24px; }
+.actividad-operativa { margin-top: 24px; }
+.actividad-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+.actividad-bloque { min-width: 0; padding: 16px; border: 1px solid #e1e5eb; border-radius: 8px; background: #fafbfd; }
+.actividad-bloque h3 { display: flex; align-items: center; gap: 7px; margin: 0 0 12px; font-size: 16px; }
+.actividad-bloque h3 mat-icon { color: #126ac2; }
+.actividad-item { display: flex; flex-direction: column; gap: 4px; padding: 9px 0; color: inherit; border-top: 1px solid #e5e7eb; text-decoration: none; }
+.actividad-item:first-of-type { border-top: 0; }
+.actividad-item span, .sin-actividad { color: #687386; font-size: 13px; }
+.sin-actividad { margin: 0; }
+
+.cabecera-seccion {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.cabecera-seccion h2 { margin: 0; }
+.cabecera-seccion p { margin: 4px 0 0; opacity: .7; }
+.tabla-contenedor { overflow-x: auto; }
+table { width: 100%; }
+.estado-vacio { margin: 20px 0; opacity: .7; }
+
+@media (max-width: 700px) {
+  .datos-formulario { grid-template-columns: 1fr; }
+  .cabecera-seccion { align-items: flex-start; flex-direction: column; }
+  .acciones-formulario { justify-content: space-between; }
+  .actividad-grid { grid-template-columns: 1fr; }
+}

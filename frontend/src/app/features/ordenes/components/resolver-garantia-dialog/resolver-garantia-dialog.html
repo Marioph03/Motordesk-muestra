@@ -1,0 +1,15 @@
+<h2 mat-dialog-title>Resolver garantía {{ data.numero }}</h2>
+<mat-dialog-content [formGroup]="form">
+  <p>Indica la resolución final que se comunicará y quedará registrada.</p>
+  <mat-form-field appearance="outline">
+    <mat-label>Resolución</mat-label>
+    <textarea matInput rows="5" formControlName="resolucion"></textarea>
+    @if (form.controls.resolucion.hasError('required') && form.controls.resolucion.touched) {
+      <mat-error>La resolución es obligatoria.</mat-error>
+    }
+  </mat-form-field>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-button mat-dialog-close>Cancelar</button>
+  <button mat-flat-button color="primary" (click)="confirmar()">Resolver garantía</button>
+</mat-dialog-actions>

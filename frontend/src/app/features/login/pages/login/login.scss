@@ -1,0 +1,58 @@
+:host { display: block; }
+
+.login-container {
+  box-sizing: border-box;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 32px 16px;
+  background: radial-gradient(circle at 10% 10%, rgba(37, 99, 235, .12), transparent 34%), radial-gradient(circle at 90% 90%, rgba(59, 130, 246, .08), transparent 30%), var(--md-bg);
+}
+
+mat-card { width: 420px; max-width: 100%; padding: 12px; border: 1px solid var(--md-border); border-radius: 16px; background: var(--md-surface); box-shadow: var(--md-shadow-md); }
+mat-card-header { padding: 20px 16px 6px; }
+mat-card-title { color: var(--md-text); font-size: 28px; font-weight: 750; letter-spacing: -.7px; }
+/* El subtitulo identifica claramente la accion principal del formulario. */
+mat-card-subtitle { color: #111827; font-size: 14px; font-weight: 600; }
+mat-card-content { padding: 8px 16px 18px; }
+
+form { display: flex; flex-direction: column; gap: 14px; margin-top: 14px; }
+mat-form-field { width: 100%; }
+
+button[mat-raised-button], button[mat-stroked-button] { width: 100%; min-height: 44px; margin: 0; border-radius: 8px; }
+button[mat-raised-button] {
+  background: var(--md-primary);
+  color: #fff;
+  // `mat-raised-button` usa los tokens "protected" de Material, no los "filled".
+  --mat-button-protected-label-text-color: #fff;
+  --mat-button-filled-label-text-color: #fff;
+  box-shadow: 0 5px 14px rgba(37, 99, 235, .22);
+}
+// Material inserta esta etiqueta dentro del botón; se fuerza para evitar que
+// un token de tema externo deje el texto del mismo color que el fondo.
+button[mat-raised-button] ::ng-deep .mdc-button__label {
+  color: #fff !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+button[mat-stroked-button] { color: var(--md-primary); border-color: var(--md-border); }
+
+.mensaje-acceso { margin: 0; padding: 10px 12px; border: 1px solid color-mix(in srgb, var(--md-danger) 42%, transparent); border-radius: 8px; background: var(--md-danger-soft); color: var(--md-danger); font-size: 13px; line-height: 1.4; }
+.registro-ayuda { margin: 0; padding: 10px 12px; border-radius: 8px; background: var(--md-primary-soft); color: var(--md-text-secondary); font-size: 13px; line-height: 1.4; }
+
+:host-context(.md-dark-theme) .login-container { background: radial-gradient(circle at 10% 8%, rgba(37, 99, 235, .24), transparent 33%), radial-gradient(circle at 92% 92%, rgba(14, 165, 233, .13), transparent 28%), #0b1220; }
+:host-context(.md-dark-theme) mat-card { background: #182235; border-color: #30415a; box-shadow: 0 18px 48px rgba(0, 0, 0, .42); }
+:host-context(.md-dark-theme) mat-card-subtitle { color: #f8fafc; }
+:host-context(.md-dark-theme) button[mat-raised-button] {
+  color: #06162a;
+  --mat-button-protected-label-text-color: #06162a;
+  --mat-button-filled-label-text-color: #06162a;
+}
+:host-context(.md-dark-theme) button[mat-raised-button] ::ng-deep .mdc-button__label {
+  color: #06162a !important;
+}
+:host-context(.md-dark-theme) button[mat-stroked-button] { color: #93c5fd; border-color: #43536b; }
+:host-context(.md-dark-theme) button[mat-stroked-button]:hover { background: #202f47; }
+
+@media (max-width: 480px) { .login-container { padding: 20px 12px; } mat-card { padding: 4px; } mat-card-header { padding: 18px 12px 4px; } mat-card-content { padding: 8px 12px 14px; } }

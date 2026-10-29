@@ -1,0 +1,226 @@
+<mat-card>
+
+    <mat-card-header>
+
+        <mat-card-title>
+
+            {{
+                isViewMode
+                    ? 'Vehículo'
+                    : isEditMode
+                        ? 'Editar Vehículo'
+                        : 'Nuevo Vehículo'
+            }}
+
+        </mat-card-title>
+
+    </mat-card-header>
+
+    <mat-card-content>
+
+        <form [formGroup]="form" (ngSubmit)="guardar()">
+
+            <div class="grid">
+
+                <div>
+                    <app-autocomplete-select
+                        formControlName="cliente_id"
+                        etiqueta="Cliente"
+                        [items]="clientes"
+                        [mostrar]="etiquetaCliente">
+                    </app-autocomplete-select>
+
+                    @if (
+                        form.get('cliente_id')?.hasError('required') &&
+                        form.get('cliente_id')?.touched
+                    ) {
+                        <div class="campo-error">
+                            Debes seleccionar un cliente.
+                        </div>
+                    }
+                </div>
+
+                <mat-form-field appearance="outline">
+
+                    <mat-label>Matrícula</mat-label>
+
+                    <input
+                        matInput
+                        formControlName="matricula">
+
+                    @if (
+                        form.get('matricula')?.hasError('required') &&
+                        form.get('matricula')?.touched
+                    ) {
+
+                        <mat-error>
+
+                            La matrícula es obligatoria.
+
+                        </mat-error>
+
+                    }
+
+                </mat-form-field>
+
+                <mat-form-field appearance="outline">
+
+                    <mat-label>Marca</mat-label>
+
+                    <input
+                        matInput
+                        formControlName="marca">
+
+                    @if (
+                        form.get('marca')?.hasError('required') &&
+                        form.get('marca')?.touched
+                    ) {
+
+                        <mat-error>
+
+                            La marca es obligatoria.
+
+                        </mat-error>
+
+                    }
+
+                </mat-form-field>
+
+                <mat-form-field appearance="outline">
+
+                    <mat-label>Modelo</mat-label>
+
+                    <input
+                        matInput
+                        formControlName="modelo">
+
+                    @if (
+                        form.get('modelo')?.hasError('required') &&
+                        form.get('modelo')?.touched
+                    ) {
+
+                        <mat-error>
+
+                            El modelo es obligatorio.
+
+                        </mat-error>
+
+                    }
+
+                </mat-form-field>
+
+                <mat-form-field appearance="outline">
+
+                    <mat-label>Versión</mat-label>
+
+                    <input
+                        matInput
+                        formControlName="version">
+
+                </mat-form-field>
+
+                <mat-form-field appearance="outline">
+
+                    <mat-label>Bastidor</mat-label>
+
+                    <input
+                        matInput
+                        formControlName="bastidor">
+
+                </mat-form-field>
+
+                <mat-form-field appearance="outline">
+
+                    <mat-label>Fecha de matriculación</mat-label>
+
+                    <input
+                        matInput
+                        type="date"
+                        formControlName="fecha_matriculacion">
+
+                </mat-form-field>
+
+                <mat-form-field appearance="outline">
+
+                    <mat-label>Color</mat-label>
+
+                    <input
+                        matInput
+                        formControlName="color">
+
+                </mat-form-field>
+
+                <mat-form-field appearance="outline">
+
+                    <mat-label>Combustible</mat-label>
+
+                    <input
+                        matInput
+                        formControlName="combustible">
+
+                </mat-form-field>
+
+                <mat-form-field appearance="outline">
+
+                    <mat-label>Transmisión</mat-label>
+
+                    <input
+                        matInput
+                        formControlName="transmision">
+
+                </mat-form-field>
+
+                <mat-form-field appearance="outline" class="full-width">
+
+                    <mat-label>Observaciones</mat-label>
+
+                    <textarea
+                        matInput
+                        rows="4"
+                        formControlName="observaciones">
+
+                    </textarea>
+
+                </mat-form-field>
+
+            </div>
+
+            <mat-card-actions align="end">
+
+                @if (!isViewMode) {
+                    <button
+                        mat-raised-button
+                        color="primary"
+                        type="submit"
+                        [disabled]="form.invalid || saving">
+
+                        @if (saving) {
+
+                            Guardando...
+
+                        } @else {
+
+                            {{ isEditMode ? 'Guardar cambios' : 'Guardar' }}
+
+                        }
+
+                    </button>
+                }
+
+                <button
+                    mat-button
+                    type="button"
+                    (click)="cancelar()">
+
+                    {{ isViewMode ? 'Volver' : 'Cancelar' }}
+
+                </button>
+
+            </mat-card-actions>
+
+        </form>
+
+    </mat-card-content>
+
+</mat-card>
+<!-- Formulario de identificación y características del vehículo de un cliente. -->

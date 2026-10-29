@@ -1,0 +1,98 @@
+.form {
+
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 16px;
+
+  margin-top: 8px;
+
+}
+
+.full-width {
+
+  width: 100%;
+
+}
+
+.origen-pieza {
+
+  display: flex;
+
+  gap: 8px;
+
+}
+
+.origen-pieza button {
+
+  flex: 1;
+
+}
+
+.origen-pieza button.activo {
+
+  border-color: var(--mat-sys-primary, #0067c8);
+
+  background: color-mix(
+    in srgb,
+    var(--mat-sys-primary, #0067c8) 8%,
+    transparent
+  );
+
+  color: var(--mat-sys-primary, #0067c8);
+
+}
+
+.info-stock,
+.stock-error {
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 6px;
+
+  margin-top: -8px;
+
+  font-size: 13px;
+
+}
+
+.info-stock { color: var(--md-success); }
+
+.stock-error { color: var(--md-danger); }
+
+.importe-sin-iva {
+  padding: 10px 12px;
+  border-radius: 8px;
+  background: color-mix(
+    in srgb,
+    var(--mat-sys-primary, #0067c8) 8%,
+    transparent
+  );
+}
+
+.info-stock mat-icon,
+.stock-error mat-icon {
+
+  width: 18px;
+
+  height: 18px;
+
+  font-size: 18px;
+
+}
+
+mat-dialog-content {
+
+  min-width: 500px;
+
+}
+
+mat-dialog-actions {
+
+  padding-top: 16px;
+
+}
+

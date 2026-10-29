@@ -1,0 +1,32 @@
+<nav class="sidebar-nav" aria-label="Navegación principal">
+  <a mat-list-item routerLink="/dashboard" routerLinkActive="active-link" [routerLinkActiveOptions]="{ exact: true }"><mat-icon matListItemIcon>grid_view</mat-icon><span>Dashboard</span></a>
+
+  <p class="nav-label">GESTIÓN</p>
+  @if (authService.tienePermiso('clientes.ver')) { <a mat-list-item routerLink="/clientes" routerLinkActive="active-link"><mat-icon matListItemIcon>groups</mat-icon><span>Clientes</span></a> }
+  @if (authService.tienePermiso('vehiculos.ver')) { <a mat-list-item routerLink="/vehiculos" routerLinkActive="active-link"><mat-icon matListItemIcon>directions_car</mat-icon><span>Vehículos</span></a> }
+  @if (authService.tienePermiso('ordenes.ver')) { <a mat-list-item routerLink="/ordenes" routerLinkActive="active-link"><mat-icon matListItemIcon>build</mat-icon><span>Órdenes y presupuestos</span></a><a mat-list-item routerLink="/ordenes-internas" routerLinkActive="active-link"><mat-icon matListItemIcon>engineering</mat-icon><span>Órdenes internas</span></a> }
+  @if (authService.tienePermiso('facturas.ver')) { <a mat-list-item routerLink="/facturas" routerLinkActive="active-link"><mat-icon matListItemIcon>receipt_long</mat-icon><span>Facturación</span></a> }
+  @if (authService.tienePermiso('stock.ver')) { <a mat-list-item routerLink="/stock" routerLinkActive="active-link"><mat-icon matListItemIcon>inventory_2</mat-icon><span>Almacén</span></a> }
+  @if (authService.tienePermiso('compras.ver')) { <a mat-list-item routerLink="/compras" routerLinkActive="active-link"><mat-icon matListItemIcon>shopping_cart</mat-icon><span>Compras</span></a> }
+  @if (authService.tienePermiso('proveedores.ver')) { <a mat-list-item routerLink="/proveedores" routerLinkActive="active-link"><mat-icon matListItemIcon>local_shipping</mat-icon><span>Proveedores</span></a> }
+
+  <p class="nav-label">HERRAMIENTAS</p>
+  @if (authService.tienePermiso('agenda.ver')) { <a mat-list-item routerLink="/agenda" routerLinkActive="active-link"><mat-icon matListItemIcon>calendar_month</mat-icon><span>Agenda</span></a> }
+  @if (authService.tienePermiso('personal.ver')) { <a mat-list-item routerLink="/personal" routerLinkActive="active-link"><mat-icon matListItemIcon>groups_2</mat-icon><span>Personal</span></a><a mat-list-item routerLink="/personal/planificacion" routerLinkActive="active-link"><mat-icon matListItemIcon>calendar_view_week</mat-icon><span>Planificación</span></a><a mat-list-item routerLink="/personal/registro-jornada" routerLinkActive="active-link"><mat-icon matListItemIcon>schedule</mat-icon><span>Registro jornada</span></a> }
+  @if (authService.tienePermiso('informes.ver')) { <a mat-list-item routerLink="/informes" routerLinkActive="active-link"><mat-icon matListItemIcon>analytics</mat-icon><span>Informes</span></a> }
+  <a mat-list-item routerLink="/actividad" routerLinkActive="active-link"><mat-icon matListItemIcon>history</mat-icon><span>Auditoría</span></a>
+
+  <p class="nav-label">SISTEMA</p>
+  <a mat-list-item routerLink="/configuracion" routerLinkActive="active-link"><mat-icon matListItemIcon>settings</mat-icon><span>Configuración</span></a>
+  @if (authService.tienePermiso('permisos.gestionar')) { <a mat-list-item routerLink="/personal/roles" routerLinkActive="active-link"><mat-icon matListItemIcon>admin_panel_settings</mat-icon><span>Roles y permisos</span></a> }
+</nav>
+
+<div class="sidebar-footer">
+  @if (usuarioId) {
+    <a class="profile-mini" [routerLink]="['/personal', usuarioId]" aria-label="Abrir mi perfil"><div class="profile-initials">@if (avatarUrl) { <img [src]="avatarUrl" alt="Foto de perfil"> } @else { {{ inicialesUsuario }} }</div><div><strong>{{ nombreUsuario }}</strong><span>{{ rolUsuario }}</span></div><mat-icon>chevron_right</mat-icon></a>
+  } @else {
+    <div class="profile-mini"><div class="profile-initials">{{ inicialesUsuario }}</div><div><strong>{{ nombreUsuario }}</strong><span>{{ rolUsuario }}</span></div></div>
+  }
+  <button type="button" (click)="logout()"><mat-icon>logout</mat-icon>Cerrar sesión</button>
+</div>
+<!-- Navegación principal filtrada según la experiencia del usuario autenticado. -->

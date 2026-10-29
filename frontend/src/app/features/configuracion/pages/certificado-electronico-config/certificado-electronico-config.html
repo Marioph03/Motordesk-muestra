@@ -1,0 +1,19 @@
+<section class="certificate-page">
+  <div class="page-header"><div class="page-header-content"><h1 class="page-title">Certificado electrónico</h1><p class="page-subtitle">Gestiona el certificado usado para los envíos fiscales a AEAT.</p></div></div>
+
+  @if (cargando) {
+    <div class="loading"><mat-spinner diameter="38"></mat-spinner><span>Comprobando certificado…</span></div>
+  } @else {
+    <mat-card class="certificate-card"><mat-card-content>
+      @if (certificado?.configurado) {
+        <div class="certificate-status" [class.valid]="certificado?.activo && !certificado?.caducado" [class.expired]="certificado?.caducado"><mat-icon>{{ certificado?.caducado ? 'error_outline' : 'verified_user' }}</mat-icon><div><strong>{{ certificado?.caducado ? 'Certificado caducado' : 'Certificado configurado' }}</strong><span>{{ certificado?.caducado ? 'Sustitúyelo antes de realizar envíos a AEAT.' : 'El certificado está listo para usarse en los envíos fiscales.' }}</span></div></div>
+        <dl class="certificate-data"><div><dt>Archivo</dt><dd>{{ certificado?.nombre_archivo }}</dd></div><div><dt>Titular</dt><dd>{{ certificado?.titular || 'No disponible' }}</dd></div><div><dt>NIF</dt><dd>{{ certificado?.nif_titular || 'No disponible' }}</dd></div><div><dt>Emisor</dt><dd>{{ certificado?.emisor || 'No disponible' }}</dd></div><div><dt>Válido desde</dt><dd>{{ certificado?.fecha_validez_desde ? (certificado?.fecha_validez_desde | date:'dd/MM/yyyy') : 'No disponible' }}</dd></div><div><dt>Caducidad</dt><dd>{{ certificado?.fecha_caducidad ? (certificado?.fecha_caducidad | date:'dd/MM/yyyy') : 'No disponible' }}</dd></div></dl>
+        <p class="replace-hint">Para renovarlo, selecciona el nuevo archivo. La contraseña no se guarda en el navegador.</p>
+      } @else {
+        <div class="certificate-status pending"><mat-icon>key_off</mat-icon><div><strong>No hay certificado configurado</strong><span>Puedes añadirlo ahora o continuar usando el modo de pruebas.</span></div></div>
+      }
+
+      <form [formGroup]="form" class="certificate-form"><label class="file-selector" for="certificate-file"><mat-icon>upload_file</mat-icon><span>{{ archivoSeleccionado?.name || 'Seleccionar certificado .p12 o .pfx' }}</span></label><input id="certificate-file" type="file" accept=".p12,.pfx,application/x-pkcs12" (change)="seleccionarArchivo($event)"><mat-form-field appearance="outline"><mat-label>Contraseña del certificado</mat-label><input matInput type="password" formControlName="password" autocomplete="new-password"><mat-hint>Solo se utiliza para validar y cifrar el certificado.</mat-hint></mat-form-field><div class="actions"><button mat-flat-button class="md-primary-button" type="button" [disabled]="!archivoSeleccionado || subiendo" (click)="subir()"><mat-icon>lock</mat-icon>{{ subiendo ? 'Validando…' : (certificado?.configurado ? 'Sustituir certificado' : 'Guardar certificado') }}</button>@if (certificado?.configurado) { <button mat-stroked-button color="warn" type="button" [disabled]="eliminando" (click)="eliminar()"><mat-icon>delete_outline</mat-icon>{{ eliminando ? 'Eliminando…' : 'Eliminar' }}</button> }</div></form>
+    </mat-card-content></mat-card>
+  }
+</section>

@@ -1,0 +1,286 @@
+<section class="informes-page">
+  <div class="page-header">
+    <div>
+      <h1>Informes</h1>
+      <p>Visión operativa del taller por periodo.</p>
+    </div>
+  </div>
+
+  <mat-card class="filtros-card">
+    <mat-card-content>
+      <form [formGroup]="form" (ngSubmit)="cargar()" class="filtros">
+        <mat-form-field appearance="outline">
+          <mat-label>Desde</mat-label>
+          <input matInput type="date" formControlName="desde">
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>Hasta</mat-label>
+          <input matInput type="date" formControlName="hasta">
+        </mat-form-field>
+        <mat-form-field appearance="outline"><mat-label>Cliente</mat-label><mat-select formControlName="cliente_id"><mat-option [value]="null">Todos</mat-option>@for (cliente of clientes; track cliente.id) { <mat-option [value]="cliente.id">{{ cliente.apellidos ? (cliente.apellidos + ', ') : '' }}{{ cliente.nombre }}</mat-option> }</mat-select></mat-form-field>
+        <mat-form-field appearance="outline"><mat-label>Proveedor</mat-label><mat-select formControlName="proveedor_id"><mat-option [value]="null">Todos</mat-option>@for (proveedor of proveedores; track proveedor.id) { <mat-option [value]="proveedor.id">{{ proveedor.nombre }}</mat-option> }</mat-select></mat-form-field>
+        <mat-form-field appearance="outline"><mat-label>Gasto</mat-label><mat-select formControlName="gasto_id"><mat-option [value]="null">Todos</mat-option>@for (gasto of gastos; track gasto.id) { <mat-option [value]="gasto.id">{{ gasto.numero_factura }} · {{ gasto.total | number:'1.2-2' }} €</mat-option> }</mat-select></mat-form-field>
+        <button mat-flat-button color="primary" type="submit" [disabled]="cargando">
+          <mat-icon>refresh</mat-icon>
+          {{ cargando ? 'Actualizando...' : 'Actualizar' }}
+        </button>
+        <button mat-stroked-button type="button" [disabled]="cargando || !!pdfCargando" (click)="verPdf('general')">
+          <mat-icon>picture_as_pdf</mat-icon>
+          {{ pdfCargando === 'general' ? 'Generando...' : 'Resumen general' }}
+        </button>
+      </form>
+      <div class="pdfs-economicos">
+        <span>Resúmenes económicos:</span>
+        <button mat-stroked-button type="button" [disabled]="cargando || !!pdfCargando" (click)="verPdf('facturacion')"><mat-icon>receipt_long</mat-icon>{{ pdfCargando === 'facturacion' ? 'Generando...' : 'Facturación' }}</button>
+        <button mat-stroked-button type="button" [disabled]="cargando || !!pdfCargando" (click)="verPdf('clientes')"><mat-icon>groups</mat-icon>{{ pdfCargando === 'clientes' ? 'Generando...' : 'Clientes' }}</button>
+        <button mat-stroked-button type="button" [disabled]="cargando || !!pdfCargando" (click)="verPdf('compras-gastos')"><mat-icon>shopping_cart</mat-icon>{{ pdfCargando === 'compras-gastos' ? 'Generando...' : 'Compras y gastos' }}</button>
+      </div>
+      <div class="pdfs-economicos">
+        <span>Exportar a Excel:</span>
+        <button mat-stroked-button type="button" [disabled]="cargando || !!excelCargando" (click)="exportarExcel('facturacion')"><mat-icon>table_view</mat-icon>{{ excelCargando === 'facturacion' ? 'Exportando...' : 'Facturación' }}</button>
+        <button mat-stroked-button type="button" [disabled]="cargando || !!excelCargando" (click)="exportarExcel('clientes')"><mat-icon>table_view</mat-icon>{{ excelCargando === 'clientes' ? 'Exportando...' : 'Clientes' }}</button>
+        <button mat-stroked-button type="button" [disabled]="cargando || !!excelCargando" (click)="exportarExcel('compras-gastos')"><mat-icon>table_view</mat-icon>{{ excelCargando === 'compras-gastos' ? 'Exportando...' : 'Compras y gastos' }}</button>
+      </div>
+    </mat-card-content>
+  </mat-card>
+
+  @if (cargando && !informe) {
+    <p class="estado-vacio">Cargando informes…</p>
+  } @else if (informe) {
+    <mat-tab-group animationDuration="150ms">
+      <mat-tab label="General">
+        <div class="contenido-tab">
+          <p class="periodo-general">
+            Resumen del {{ form.controls.desde.value | date:'dd/MM/yyyy' }} al {{ form.controls.hasta.value | date:'dd/MM/yyyy' }}
+          </p>
+          <div class="resumen-general">
+            <article class="metric-card"><span>Órdenes</span><strong>{{ informe.ordenes.total }}</strong><small>{{ informe.ordenes.en_curso }} en curso</small></article>
+            <article class="metric-card"><span>Facturación</span><strong>{{ numero(informe.facturacion.total_facturado) | number:'1.2-2' }} €</strong><small>{{ informe.facturacion.facturas_emitidas }} facturas emitidas</small></article>
+            <article class="metric-card"><span>Ticket medio</span><strong>{{ numero(informe.facturacion.ticket_medio) | number:'1.2-2' }} €</strong><small>Por factura emitida</small></article>
+            <article class="metric-card"><span>Compras</span><strong>{{ numero(informe.compras.total_compras) | number:'1.2-2' }} €</strong><small>{{ informe.compras.pedidos }} pedidos creados</small></article>
+            <article class="metric-card"><span>Garantías</span><strong>{{ informe.garantias.total }}</strong><small>{{ informe.garantias.resueltas }} resueltas</small></article>
+            <article class="metric-card"><span>Personal activo</span><strong>{{ informe.personal.usuarios_activos }}</strong><small>En el taller</small></article>
+          </div>
+          <div class="resumen-secundario">
+            <mat-card class="lista-card"><mat-card-title>Estado de órdenes</mat-card-title><mat-card-content><div class="lista-metricas"><div><span>Cerradas</span><strong>{{ informe.ordenes.cerradas }}</strong></div><div><span>Facturadas</span><strong>{{ informe.ordenes.facturadas }}</strong></div><div><span>En curso</span><strong>{{ informe.ordenes.en_curso }}</strong></div><div><span>Presupuestos</span><strong>{{ informe.ordenes.presupuestos }}</strong></div></div></mat-card-content></mat-card>
+            <mat-card class="lista-card"><mat-card-title>Almacén</mat-card-title><mat-card-content><div class="lista-metricas"><div><span>Movimientos</span><strong>{{ informe.stock.movimientos }}</strong></div><div><span>Consumido</span><strong>{{ numero(informe.stock.unidades_consumidas) | number:'1.0-2' }}</strong></div><div><span>Entradas</span><strong>{{ numero(informe.stock.entradas_compra) | number:'1.0-2' }}</strong></div><div><span>Ajustes</span><strong>{{ numero(informe.stock.ajustes_positivos) - numero(informe.stock.ajustes_negativos) | number:'1.0-2' }}</strong></div></div></mat-card-content></mat-card>
+            <mat-card class="lista-card"><mat-card-title>Compras</mat-card-title><mat-card-content><div class="lista-metricas"><div><span>Recibidos</span><strong>{{ informe.compras.recibidos }}</strong></div><div><span>Parciales</span><strong>{{ informe.compras.recibidos_parciales }}</strong></div><div><span>Cancelados</span><strong>{{ informe.compras.cancelados }}</strong></div><div><span>Ticket medio</span><strong>{{ numero(informe.compras.ticket_medio) | number:'1.2-2' }} €</strong></div></div></mat-card-content></mat-card>
+          </div>
+        </div>
+      </mat-tab>
+
+      <mat-tab label="Órdenes">
+        <div class="contenido-tab">
+          <div class="resumen-general">
+            <article class="metric-card"><span>Total órdenes</span><strong>{{ informe.ordenes.total }}</strong></article>
+            <article class="metric-card"><span>Cerradas</span><strong>{{ informe.ordenes.cerradas }}</strong></article>
+            <article class="metric-card"><span>Facturadas</span><strong>{{ informe.ordenes.facturadas }}</strong></article>
+            <article class="metric-card"><span>En curso</span><strong>{{ informe.ordenes.en_curso }}</strong></article>
+            <article class="metric-card"><span>Presupuestos</span><strong>{{ informe.ordenes.presupuestos }}</strong></article>
+            <article class="metric-card"><span>Garantías</span><strong>{{ informe.ordenes.garantias }}</strong></article>
+          </div>
+          <mat-card class="lista-card">
+            <mat-card-header><mat-card-title>Trabajos más frecuentes</mat-card-title></mat-card-header>
+            <mat-card-content>
+              @if (informe.ordenes.trabajos_frecuentes.length === 0) {
+                <div class="sin-datos">No hay trabajos registrados en este periodo.</div>
+              } @else {
+                <table class="ranking-table">
+                  <thead><tr><th>#</th><th>Trabajo</th><th>N.º órdenes</th></tr></thead>
+                  <tbody>
+                    @for (trabajo of informe.ordenes.trabajos_frecuentes; track trabajo.descripcion; let i = $index) {
+                      <tr>
+                        <td class="ranking-posicion">{{ i + 1 }}</td>
+                        <td>{{ trabajo.descripcion }}</td>
+                        <td><strong>{{ trabajo.total }}</strong></td>
+                      </tr>
+                    }
+                  </tbody>
+                </table>
+              }
+            </mat-card-content>
+          </mat-card>
+        </div>
+      </mat-tab>
+
+      <mat-tab label="Facturación">
+        <div class="contenido-tab">
+          <div class="resumen-general">
+            <article class="metric-card"><span>Facturas emitidas</span><strong>{{ informe.facturacion.facturas_emitidas }}</strong></article>
+            <article class="metric-card"><span>Facturas anuladas</span><strong>{{ informe.facturacion.facturas_anuladas }}</strong></article>
+            <article class="metric-card"><span>Total facturado</span><strong>{{ numero(informe.facturacion.total_facturado) | number:'1.2-2' }} €</strong></article>
+            <article class="metric-card"><span>Ticket medio</span><strong>{{ numero(informe.facturacion.ticket_medio) | number:'1.2-2' }} €</strong></article>
+          </div>
+          <mat-card class="lista-card">
+            <mat-card-header><mat-card-title>Evolución de facturación</mat-card-title></mat-card-header>
+            <mat-card-content>
+              @if (informe.facturacion.evolucion_diaria.length === 0) {
+                <div class="sin-datos">No hay facturación registrada en este periodo.</div>
+              } @else {
+                <div class="grafica-facturacion">
+                  @for (dia of informe.facturacion.evolucion_diaria; track dia.fecha) {
+                    <div class="barra-dia">
+                      <div class="barra-wrapper">
+                        <div class="barra" [style.height.%]="getAlturaFacturacion(dia.total)"></div>
+                      </div>
+                      <strong>{{ numero(dia.total) | number:'1.0-0' }} €</strong>
+                      <span>{{ dia.fecha | date:'dd/MM' }}</span>
+                    </div>
+                  }
+                </div>
+              }
+            </mat-card-content>
+          </mat-card>
+        </div>
+      </mat-tab>
+
+      <mat-tab label="Resumen IVA">
+        <div class="contenido-tab">
+          <p class="periodo-general">IVA calculado con las facturas emitidas a clientes y las facturas recibidas de proveedores del periodo.</p>
+          <div class="resumen-general">
+            <article class="metric-card"><span>IVA repercutido</span><strong>{{ numero(informe.iva.iva_repercutido) | number:'1.2-2' }} €</strong><small>Facturas a clientes</small></article>
+            <article class="metric-card"><span>IVA soportado</span><strong>{{ numero(informe.iva.iva_soportado) | number:'1.2-2' }} €</strong><small>Facturas de proveedores</small></article>
+            <article class="metric-card"><span>{{ numero(informe.iva.diferencia) >= 0 ? 'IVA a ingresar' : 'IVA a compensar' }}</span><strong>{{ numero(informe.iva.diferencia) | number:'1.2-2' }} €</strong><small>Repercutido menos soportado</small></article>
+          </div>
+        </div>
+      </mat-tab>
+
+      <mat-tab label="Stock">
+        <div class="contenido-tab">
+          <div class="resumen-general">
+            <article class="metric-card"><span>Movimientos</span><strong>{{ informe.stock.movimientos }}</strong></article>
+            <article class="metric-card"><span>Unidades consumidas</span><strong>{{ numero(informe.stock.unidades_consumidas) | number:'1.0-2' }}</strong></article>
+            <article class="metric-card"><span>Entradas por compra</span><strong>{{ numero(informe.stock.entradas_compra) | number:'1.0-2' }}</strong></article>
+            <article class="metric-card"><span>Ajustes positivos</span><strong>{{ numero(informe.stock.ajustes_positivos) | number:'1.0-2' }}</strong></article>
+            <article class="metric-card"><span>Ajustes negativos</span><strong>{{ numero(informe.stock.ajustes_negativos) | number:'1.0-2' }}</strong></article>
+          </div>
+          <mat-card class="lista-card">
+            <mat-card-header><mat-card-title>Artículos más consumidos</mat-card-title></mat-card-header>
+            <mat-card-content>
+              @if (informe.stock.articulos_mas_consumidos.length === 0) {
+                <div class="sin-datos">No hay consumos de almacén registrados en este periodo.</div>
+              } @else {
+                <table class="ranking-table">
+                  <thead><tr><th>#</th><th>Referencia</th><th>Artículo</th><th>Cantidad consumida</th></tr></thead>
+                  <tbody>
+                    @for (articulo of informe.stock.articulos_mas_consumidos; track articulo.articulo_id; let i = $index) {
+                      <tr>
+                        <td class="ranking-posicion">{{ i + 1 }}</td>
+                        <td>{{ articulo.referencia }}</td>
+                        <td>{{ articulo.nombre }}</td>
+                        <td><strong>{{ numero(articulo.cantidad_consumida) | number:'1.0-2' }}</strong></td>
+                      </tr>
+                    }
+                  </tbody>
+                </table>
+              }
+            </mat-card-content>
+          </mat-card>
+        </div>
+      </mat-tab>
+
+      <mat-tab label="Compras">
+        <div class="contenido-tab">
+          <div class="resumen-general">
+            <article class="metric-card"><span>Pedidos</span><strong>{{ informe.compras.pedidos }}</strong></article>
+            <article class="metric-card"><span>Recibidos</span><strong>{{ informe.compras.recibidos }}</strong></article>
+            <article class="metric-card"><span>Recibidos parciales</span><strong>{{ informe.compras.recibidos_parciales }}</strong></article>
+            <article class="metric-card"><span>Cancelados</span><strong>{{ informe.compras.cancelados }}</strong></article>
+            <article class="metric-card"><span>Total compras</span><strong>{{ numero(informe.compras.total_compras) | number:'1.2-2' }} €</strong></article>
+            <article class="metric-card"><span>Ticket medio</span><strong>{{ numero(informe.compras.ticket_medio) | number:'1.2-2' }} €</strong></article>
+          </div>
+          <mat-card class="lista-card">
+            <mat-card-header><mat-card-title>Proveedores con mayor volumen</mat-card-title></mat-card-header>
+            <mat-card-content>
+              @if (informe.compras.proveedores_top.length === 0) {
+                <div class="sin-datos">No hay compras válidas registradas en este periodo.</div>
+              } @else {
+                <table class="ranking-table">
+                  <thead><tr><th>#</th><th>Proveedor</th><th>Pedidos</th><th>Volumen de compra</th></tr></thead>
+                  <tbody>
+                    @for (proveedor of informe.compras.proveedores_top; track proveedor.proveedor_id; let i = $index) {
+                      <tr>
+                        <td class="ranking-posicion">{{ i + 1 }}</td>
+                        <td>{{ proveedor.nombre }}</td>
+                        <td>{{ proveedor.pedidos }}</td>
+                        <td><strong>{{ numero(proveedor.total_compras) | number:'1.2-2' }} €</strong></td>
+                      </tr>
+                    }
+                  </tbody>
+                </table>
+              }
+            </mat-card-content>
+          </mat-card>
+        </div>
+      </mat-tab>
+
+      <mat-tab label="Garantías">
+        <div class="contenido-tab">
+          <div class="resumen-general">
+            <article class="metric-card"><span>Total garantías</span><strong>{{ informe.garantias.total }}</strong><small>{{ informe.garantias.resueltas }} resueltas</small></article>
+          </div>
+          <div class="garantias-resumen">
+            <mat-card class="lista-card">
+              <mat-card-header><mat-card-title>Estado de garantías</mat-card-title></mat-card-header>
+              <mat-card-content>
+                <div class="estado-garantias">
+                  <div><span>Garantía abierta</span><strong>{{ informe.garantias.abiertas }}</strong></div>
+                  <div><span>En revisión</span><strong>{{ informe.garantias.en_revision }}</strong></div>
+                  <div><span>Garantía aprobada</span><strong>{{ informe.garantias.aprobadas }}</strong></div>
+                  <div><span>Garantía rechazada</span><strong>{{ informe.garantias.rechazadas }}</strong></div>
+                  <div><span>En reparación</span><strong>{{ informe.garantias.en_reparacion }}</strong></div>
+                  <div><span>Resuelta</span><strong>{{ informe.garantias.resueltas }}</strong></div>
+                </div>
+              </mat-card-content>
+            </mat-card>
+            <mat-card class="lista-card">
+              <mat-card-header><mat-card-title>Tiempo de resolución</mat-card-title></mat-card-header>
+              <mat-card-content>
+                <div class="resolucion-garantias">
+                  <span>Tiempo medio de resolución</span>
+                  <strong>{{ numero(informe.garantias.tiempo_medio_resolucion_dias) | number:'1.1-1' }} días</strong>
+                  <small>{{ numero(informe.garantias.tiempo_medio_resolucion_horas) | number:'1.1-1' }} horas de media</small>
+                </div>
+              </mat-card-content>
+            </mat-card>
+          </div>
+        </div>
+      </mat-tab>
+
+      <mat-tab label="Personal">
+        <div class="contenido-tab">
+          <div class="resumen-general">
+            <article class="metric-card"><span>Personal activo</span><strong>{{ informe.personal.usuarios_activos }}</strong></article>
+          </div>
+          <mat-card class="lista-card">
+            <mat-card-header><mat-card-title>Actividad por usuario</mat-card-title></mat-card-header>
+            <mat-card-content>
+              @if (informe.personal.detalle.length === 0) {
+                <div class="sin-datos">No hay actividad de personal registrada en este periodo.</div>
+              } @else {
+                <table class="ranking-table">
+                  <thead>
+                    <tr><th>Personal</th><th>Rol</th><th>Órdenes</th><th>Citas</th><th>Ausencias</th><th>Días ausente</th><th>Actividad total</th></tr>
+                  </thead>
+                  <tbody>
+                    @for (usuario of informe.personal.detalle; track usuario.usuario_id) {
+                      <tr>
+                        <td><strong>{{ usuario.nombre }}</strong></td>
+                        <td>{{ usuario.rol }}</td>
+                        <td>{{ usuario.ordenes_asignadas }}</td>
+                        <td>{{ usuario.citas_asignadas }}</td>
+                        <td>{{ usuario.ausencias }}</td>
+                        <td>{{ usuario.dias_ausencia | number:'1.1-1' }}</td>
+                        <td><strong>{{ usuario.actividad_total }}</strong></td>
+                      </tr>
+                    }
+                  </tbody>
+                </table>
+              }
+            </mat-card-content>
+          </mat-card>
+        </div>
+      </mat-tab>
+    </mat-tab-group>
+  }
+</section>

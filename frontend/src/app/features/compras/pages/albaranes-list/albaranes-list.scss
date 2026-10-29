@@ -1,0 +1,14 @@
+.panel { border: 1px solid var(--md-border); border-radius: var(--md-radius-md); box-shadow: var(--md-shadow-sm); }
+.table-scroll { overflow-x: auto; }
+table { width: 100%; min-width: 760px; }
+.actions-cell { display: flex; align-items: center; gap: 3px; }
+.status-chip { display: inline-flex; align-items: center; padding: 4px 9px; border-radius: 6px; font-size: 11px; font-weight: 600; }
+.estado-borrador { color: #475569; background: #f1f5f9; }
+.estado-confirmado { color: #15803d; background: #ecfdf3; }
+.estado-anulado { color: #dc2626; background: #fff1f2; }
+.empty-state { min-height: 220px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; color: var(--md-text-secondary); text-align: center; }
+.empty-state h3, .empty-state p { margin: 0; }
+.empty-state mat-icon { width: 44px; height: 44px; font-size: 44px; }
+:host-context(.md-dark-theme) .estado-borrador { color: #cbd5e1; background: #263248; }
+:host-context(.md-dark-theme) .estado-confirmado { color: #86efac; background: #123b2a; }
+:host-context(.md-dark-theme) .estado-anulado { color: #fca5a5; background: #4b2028; }

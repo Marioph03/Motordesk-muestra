@@ -1,0 +1,23 @@
+.form {
+  display: grid;
+  gap: 16px;
+  margin-top: 12px;
+}
+
+.full-width {
+  width: 100%;
+}
+
+mat-form-field {
+  width: 100%;
+}
+
+.importe-sin-iva {
+  padding: 10px 12px;
+  border-radius: 8px;
+  background: color-mix(
+    in srgb,
+    var(--mat-sys-primary, #0067c8) 8%,
+    transparent
+  );
+}

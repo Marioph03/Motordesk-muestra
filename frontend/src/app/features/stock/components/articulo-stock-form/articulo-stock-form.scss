@@ -1,0 +1,83 @@
+mat-card {
+    margin: 24px;
+}
+
+.stock-form {
+    display: grid;
+
+    grid-template-columns:
+        repeat(
+            3,
+            minmax(0, 1fr)
+        );
+
+    gap: 16px;
+
+    margin-top: 20px;
+}
+
+.doble {
+    grid-column: span 2;
+}
+
+.full-width {
+    grid-column: 1 / -1;
+}
+
+.stock-actual {
+    display: grid;
+
+    grid-template-columns:
+        repeat(
+            3,
+            minmax(0, 1fr)
+        );
+
+    gap: 16px;
+
+    margin: 22px 0;
+}
+
+.stock-actual > div {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.stock-actual span {
+    font-size: 13px;
+    opacity: 0.7;
+}
+
+.stock-actual strong {
+    font-size: 24px;
+}
+
+table {
+    width: 100%;
+}
+
+h3 {
+    margin-top: 22px;
+}
+
+@media (max-width: 800px) {
+
+    .stock-form,
+    .stock-actual {
+        grid-template-columns: 1fr;
+    }
+
+    .doble,
+    .full-width {
+        grid-column: auto;
+    }
+
+}
+
+.acciones-stock {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin: 18px 0 22px;
+}

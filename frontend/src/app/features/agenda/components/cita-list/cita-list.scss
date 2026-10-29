@@ -1,0 +1,565 @@
+.acciones-superiores {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 20px;
+}
+
+.citas-table {
+    width: 100%;
+}
+
+.sin-citas {
+    padding: 40px;
+    text-align: center;
+}
+
+.sin-citas mat-icon {
+    font-size: 48px;
+    width: 48px;
+    height: 48px;
+    opacity: 0.5;
+}
+
+.calendario-placeholder {
+    display: grid;
+    min-height: 260px;
+    padding: 32px 24px;
+    place-content: center;
+    justify-items: center;
+    gap: 10px;
+    text-align: center;
+    color: #5f6368;
+}
+
+.controles-semana {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 20px 16px 0;
+}
+
+.controles-semana strong {
+    min-width: 190px;
+    text-align: center;
+}
+
+.calendario-placeholder h3,
+.calendario-placeholder p {
+    margin: 0;
+}
+
+.calendario-placeholder mat-icon {
+    width: 52px;
+    height: 52px;
+    font-size: 52px;
+    color: #0b67c2;
+}
+
+.calendario-semanal {
+    display: grid;
+    grid-template-columns: repeat(7, minmax(155px, 1fr));
+    min-width: 1085px;
+    border-top: 1px solid #e1e4e8;
+    border-left: 1px solid #e1e4e8;
+}
+
+.agenda-semanal {
+    display: grid;
+    grid-template-columns: 72px repeat(7, minmax(150px, 1fr));
+    min-width: 1122px;
+    border-top: 1px solid #e1e4e8;
+    border-left: 1px solid #e1e4e8;
+}
+
+.columna-horas,
+.dia-agenda {
+    border-right: 1px solid #e1e4e8;
+}
+
+.cabecera-horas,
+.dia-agenda-header {
+    height: 50px;
+    box-sizing: border-box;
+    border-bottom: 1px solid #e1e4e8;
+    background: #f8f9fb;
+}
+
+.dia-agenda-header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    padding: 0 12px;
+    cursor: pointer;
+}
+
+.dia-agenda-header:hover { background: #eef5fc; }
+.dia-agenda-header span { color: #5f6368; font-size: .78rem; font-weight: 600; text-transform: uppercase; }
+
+.hora-label {
+    height: 64px;
+    box-sizing: border-box;
+    padding: 7px 8px 0 0;
+    border-bottom: 1px solid #edf0f2;
+    color: #6b7280;
+    font-size: .78rem;
+    text-align: right;
+}
+
+.dia-agenda-body {
+    position: relative;
+    height: 832px;
+}
+
+.linea-hora {
+    height: 64px;
+    box-sizing: border-box;
+    border-bottom: 1px solid #edf0f2;
+    cursor: pointer;
+}
+
+.linea-hora:hover { background: #f2f7fc; }
+
+.cita-bloque {
+    position: absolute;
+    z-index: 1;
+    right: 5px;
+    left: 5px;
+    display: grid;
+    align-content: start;
+    gap: 3px;
+    box-sizing: border-box;
+    overflow: hidden;
+    padding: 7px 8px;
+    border-left: 4px solid #0b67c2;
+    border-radius: 4px;
+    background: #f0f6fc;
+    color: #1f2937;
+    font-size: .78rem;
+    text-decoration: none;
+}
+
+.cita-bloque:hover { background: #e1eef9; }
+.cita-bloque strong, .cita-bloque span, .cita-bloque small { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.cita-motivo { font-weight: 600; }
+.cita-bloque small { color: #5f6368; }
+
+.dia-columna {
+    min-height: 330px;
+    border-right: 1px solid #e1e4e8;
+    border-bottom: 1px solid #e1e4e8;
+}
+
+.dia-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding: 12px;
+    background: #f8f9fb;
+    border-bottom: 1px solid #e8eaed;
+    cursor: pointer;
+}
+
+.dia-header:hover { background: #eef5fc; }
+
+.dia-header span { color: #5f6368; font-size: .78rem; font-weight: 600; text-transform: uppercase; }
+.dia-citas { display: grid; align-content: start; gap: 8px; padding: 8px; }
+.sin-citas-dia { padding: 12px 4px; color: #9aa0a6; font-size: .8rem; text-align: center; }
+
+.cita-calendario {
+    display: grid;
+    gap: 4px;
+    padding: 9px;
+    border-left: 4px solid #0b67c2;
+    border-radius: 4px;
+    background: #f4f8fd;
+    color: #1f2937;
+    text-decoration: none;
+}
+
+.cita-calendario:hover { background: #e8f1fb; }
+.cita-calendario strong, .cita-calendario span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.cita-hora, .cita-calendario span { color: #5f6368; font-size: .78rem; }
+.cita-hora { font-weight: 600; }
+.cita-cliente,
+.cita-vehiculo {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 12px;
+    opacity: .8;
+}
+
+.cita-cliente mat-icon,
+.cita-vehiculo mat-icon {
+    width: 15px;
+    height: 15px;
+    font-size: 15px;
+}
+
+.resumen-hoy {
+    margin: 16px 0 20px;
+}
+
+.resumen-hoy-card {
+    margin: 0;
+}
+
+.resumen-hoy-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 16px;
+    margin-bottom: 16px;
+}
+
+.resumen-hoy-item {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.resumen-hoy-item span,
+.proxima-label,
+.proxima-cita small,
+.sin-proxima-cita {
+    font-size: 13px;
+    opacity: .7;
+}
+
+.resumen-hoy-item strong {
+    font-size: 24px;
+}
+
+.proxima-cita {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid #e1e5eb;
+}
+
+.proxima-cita > div {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 0;
+}
+
+.proxima-cita strong,
+.proxima-cita small {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.sin-proxima-cita {
+    margin: 16px 0 0;
+}
+
+mat-card {
+    margin: 24px;
+}
+
+.controles-semana {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 20px 0;
+}
+
+.calendario-semanal {
+    display: grid;
+    grid-template-columns:
+        repeat(
+            7,
+            minmax(160px, 1fr)
+        );
+
+    gap: 12px;
+
+    overflow-x: auto;
+
+    padding-bottom: 12px;
+}
+
+.dia-columna {
+    min-height: 420px;
+
+    border: 1px solid
+        rgba(0, 0, 0, 0.12);
+
+    border-radius: 8px;
+
+    background: #fafafa;
+}
+
+.dia-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    padding: 12px;
+
+    border-bottom: 1px solid
+        rgba(0, 0, 0, 0.10);
+}
+
+.dia-citas {
+    display: flex;
+    flex-direction: column;
+
+    gap: 8px;
+
+    padding: 10px;
+}
+
+.cita-calendario {
+    display: flex;
+    flex-direction: column;
+
+    gap: 4px;
+
+    padding: 10px;
+
+    border-left: 4px solid;
+
+    border-radius: 6px;
+
+    background: white;
+
+    text-decoration: none;
+
+    color: inherit;
+
+    box-shadow:
+        0 1px 3px
+        rgba(0, 0, 0, 0.08);
+}
+
+.cita-calendario:hover {
+    box-shadow:
+        0 2px 8px
+        rgba(0, 0, 0, 0.14);
+}
+
+.cita-hora {
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.cita-calendario span {
+    font-size: 12px;
+    opacity: 0.7;
+}
+
+.sin-citas-dia {
+    padding: 20px 8px;
+    text-align: center;
+    opacity: 0.5;
+}
+
+.agenda-semanal {
+    display: grid;
+
+    grid-template-columns:
+        70px
+        repeat(
+            7,
+            minmax(150px, 1fr)
+        );
+
+    overflow-x: auto;
+
+    min-width: 1150px;
+
+    border: 1px solid
+        rgba(0, 0, 0, 0.12);
+}
+
+.columna-horas {
+    border-right: 1px solid
+        rgba(0, 0, 0, 0.12);
+}
+
+.cabecera-horas {
+    height: 55px;
+
+    border-bottom: 1px solid
+        rgba(0, 0, 0, 0.12);
+}
+
+.hora-label {
+    height: 70px;
+
+    padding: 5px 8px;
+
+    box-sizing: border-box;
+
+    font-size: 12px;
+
+    color: rgba(0, 0, 0, 0.6);
+
+    border-bottom: 1px solid
+        rgba(0, 0, 0, 0.08);
+}
+
+.dia-agenda {
+    border-right: 1px solid
+        rgba(0, 0, 0, 0.10);
+}
+
+.dia-agenda-header {
+    height: 55px;
+
+    display: flex;
+    flex-direction: column;
+
+    align-items: center;
+    justify-content: center;
+
+    cursor: pointer;
+
+    border-bottom: 1px solid
+        rgba(0, 0, 0, 0.12);
+}
+
+.dia-agenda-header:hover {
+    background:
+        rgba(0, 0, 0, 0.03);
+}
+
+.dia-agenda-body {
+    position: relative;
+
+    height: calc(
+        70px * 13
+    );
+}
+
+.linea-hora {
+    height: 70px;
+
+    box-sizing: border-box;
+
+    border-bottom: 1px solid
+        rgba(0, 0, 0, 0.08);
+}
+
+.cita-bloque {
+    position: absolute;
+
+    left: 4px;
+    right: 4px;
+
+    padding: 8px;
+
+    box-sizing: border-box;
+
+    border-left: 4px solid;
+
+    border-radius: 5px;
+
+    background: white;
+
+    color: inherit;
+
+    text-decoration: none;
+
+    overflow: hidden;
+
+    box-shadow:
+        0 1px 4px
+        rgba(0, 0, 0, 0.16);
+}
+
+.cita-bloque:hover {
+    z-index: 5;
+
+    box-shadow:
+        0 3px 10px
+        rgba(0, 0, 0, 0.25);
+}
+
+.cita-bloque strong {
+    display: block;
+
+    font-size: 12px;
+}
+
+.cita-motivo {
+    display: block;
+
+    margin-top: 3px;
+
+    font-size: 12px;
+
+    font-weight: 500;
+}
+
+.cita-bloque small {
+    display: block;
+
+    margin-top: 3px;
+
+    opacity: 0.7;
+}
+
+.linea-hora {
+    height: 70px;
+
+    box-sizing: border-box;
+
+    border-bottom: 1px solid
+        rgba(0, 0, 0, 0.08);
+
+    cursor: pointer;
+
+    transition: background 0.15s ease;
+}
+
+.linea-hora:hover {
+    background:
+        rgba(25, 118, 210, 0.06);
+}
+
+/* Una cita representa una hora concreta, no un intervalo: ficha compacta. */
+.dia-agenda-body .cita-bloque {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: flex-start;
+    gap: 3px;
+    padding: 7px 8px;
+}
+
+.dia-agenda-body .cita-bloque .cita-hora {
+    display: block;
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 14px;
+}
+
+.dia-agenda-body .cita-bloque .cita-motivo {
+    display: block;
+    margin: 0;
+    overflow: hidden;
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 16px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+@media (max-width: 700px) {
+    .resumen-hoy-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .proxima-cita {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+}

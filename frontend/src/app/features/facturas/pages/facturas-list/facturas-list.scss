@@ -1,0 +1,45 @@
+.actions-cell {
+  display: flex;
+  gap: 4px;
+
+  button {
+    width: 36px;
+    height: 36px;
+    line-height: 36px;
+  }
+}
+
+.empty-state p {
+
+    margin-top: 10px;
+
+}
+
+mat-paginator {
+
+    margin-top: 20px;
+
+    border-radius: 12px;
+
+}
+
+.invoice-filters {
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.invoice-filters mat-form-field {
+  min-width: 155px;
+}
+
+@media (max-width: 900px) {
+  .invoice-filters {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .invoice-filters mat-form-field,
+  .invoice-filters button {
+    width: 100%;
+  }
+}

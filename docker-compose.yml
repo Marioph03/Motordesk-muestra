@@ -1,0 +1,82 @@
+services:
+  db:
+    image: postgres:17
+    container_name: motordesk-db
+    restart: unless-stopped
+
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+
+    volumes:
+      - motordesk_postgres_data:/var/lib/postgresql/data
+
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U motordesk -d motordesk"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+
+    container_name: motordesk-backend
+    restart: unless-stopped
+
+    # Carga las integraciones configuradas para desarrollo (IA, Meta, etc.).
+    # Los valores definidos en `environment` más abajo tienen prioridad,
+    # especialmente DATABASE_URL, que debe apuntar al PostgreSQL de Docker.
+    env_file:
+      - ./backend/.env
+
+    depends_on:
+      db:
+        condition: service_healthy
+
+    environment:
+      DATABASE_URL: postgresql+psycopg2://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
+      SECRET_KEY: ${SECRET_KEY}
+      ENCRYPTION_KEY: ${ENCRYPTION_KEY}
+      ALGORITHM: HS256
+      ACCESS_TOKEN_EXPIRE_MINUTES: 360
+      # El entorno de desarrollo conserva el mismo comportamiento seguro que
+      # la instalación nativa: copia inicial si no existe y una nueva cada
+      # veinticuatro horas. El volumen ./backups evita que se pierdan al
+      # recrear el contenedor.
+      BACKUP_AUTO_ENABLED: "true"
+      BACKUP_INTERVAL_HOURS: "24"
+      BACKUP_CHECK_MINUTES: "15"
+
+    ports:
+      - "8000:8000"
+
+    volumes:
+      # Archivos privados o descargables: avatares, adjuntos de órdenes y PDFs.
+      - ./backend/uploads:/app/uploads
+      # Claves privadas de certificados fiscales: nunca se sirven por HTTP.
+      - ./backend/storage:/app/storage
+      - ./backend/FE:/app/FE
+      # Recursos estáticos públicos: logo configurado del taller.
+      - ./backend/static/uploads:/app/static/uploads
+      # Copias de seguridad PostgreSQL generadas por el backend.
+      - ./backups:/app/backups
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+
+    container_name: motordesk-frontend
+    restart: unless-stopped
+
+    depends_on:
+      - backend
+
+    ports:
+      - "80:80"
+
+volumes:
+  motordesk_postgres_data:

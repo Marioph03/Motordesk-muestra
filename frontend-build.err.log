@@ -1,0 +1,25 @@
+▲ [WARNING] NG8113: RouterLink is not used within the template of OrdenInternaForm [plugin angular-compiler]
+
+    src/app/features/ordenes/components/orden-interna-form/orden-interna-form.ts:7:96:
+      7 │ ...:[CommonModule,FormsModule,RouterLink,MatButtonModule,MatCardMod...
+        ╵                               ~~~~~~~~~~
+
+
+▲ [WARNING] src/app/layout/components/topbar/topbar.scss exceeded maximum budget. Budget 4.00 kB was not met by 1.52 kB with a total of 5.52 kB.
+
+
+▲ [WARNING] src/app/features/dashboard/pages/dashboard/dashboard.scss exceeded maximum budget. Budget 4.00 kB was not met by 1.86 kB with a total of 5.86 kB.
+
+
+▲ [WARNING] src/app/features/agenda/components/cita-list/cita-list.scss exceeded maximum budget. Budget 4.00 kB was not met by 2.94 kB with a total of 6.95 kB.
+
+
+▲ [WARNING] src/app/features/ordenes/components/orden-form/orden-form.scss exceeded maximum budget. Budget 4.00 kB was not met by 4.21 kB with a total of 8.21 kB.
+
+
+▲ [WARNING] src/app/shared/components/motor-ai-assistant/motor-ai-assistant.scss exceeded maximum budget. Budget 4.00 kB was not met by 5.48 kB with a total of 9.48 kB.
+
+
+▲ [WARNING] src/app/features/facturas/components/factura-form/factura-form.scss exceeded maximum budget. Budget 4.00 kB was not met by 2.33 kB with a total of 6.33 kB.
+
+

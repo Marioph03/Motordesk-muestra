@@ -1,0 +1,76 @@
+.form {
+  min-width: min(760px, calc(100vw - 80px));
+  padding-top: 8px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0 18px;
+}
+
+mat-form-field {
+  width: 100%;
+}
+
+.full-width {
+  grid-column: 1 / -1;
+}
+
+textarea {
+  resize: vertical;
+  min-height: 86px;
+  max-height: 180px;
+}
+
+mat-checkbox {
+  display: block;
+  margin: 4px 0 8px;
+}
+
+mat-dialog-content {
+  max-height: min(70vh, 720px);
+  overflow-x: hidden;
+  padding-top: 12px;
+}
+
+mat-dialog-actions {
+  gap: 12px;
+  padding: 20px 24px;
+}
+
+button[mat-flat-button],
+button[mat-button] {
+  min-width: 132px;
+}
+
+h2[mat-dialog-title] {
+  margin-bottom: 8px;
+  font-size: 26px;
+  font-weight: 600;
+}
+
+:host-context(.md-dark-theme) h2[mat-dialog-title] {
+  color: var(--md-text);
+}
+
+:host-context(.md-dark-theme) mat-dialog-content,
+:host-context(.md-dark-theme) mat-dialog-actions {
+  background: var(--md-surface);
+  color: var(--md-text);
+}
+
+@media (max-width: 680px) {
+  .form {
+    min-width: auto;
+  }
+
+  .grid {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+
+  .full-width {
+    grid-column: auto;
+  }
+}

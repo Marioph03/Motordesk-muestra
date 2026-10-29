@@ -1,0 +1,33 @@
+mat-card{
+
+    max-width:900px;
+
+    margin:40px auto;
+
+}
+
+.grid{
+
+    display:grid;
+
+    grid-template-columns:1fr 1fr;
+
+    gap:20px;
+
+}
+
+mat-form-field{
+
+    width:100%;
+
+}
+
+.full-width {
+  grid-column: 1 / -1;
+}
+
+@media (max-width: 640px) {
+  mat-card { margin: 16px auto; }
+  .grid { grid-template-columns: 1fr; gap: 12px; }
+}
+/* Estructura responsive del formulario de cliente y sus acciones. */

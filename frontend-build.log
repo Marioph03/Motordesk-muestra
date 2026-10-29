@@ -1,0 +1,39 @@
+
+> frontend@0.0.0 prebuild
+> node scripts/check-text-encoding.mjs
+
+Codificación de texto del frontend correcta.
+
+> frontend@0.0.0 build
+> ng build
+
+> Building...
+√ Building...
+Initial chunk files | Names          |  Raw size | Estimated transfer size
+main-YD647SOE.js    | main           | 331.52 kB |                88.82 kB
+styles-QBYURS33.css | styles         |  32.16 kB |                 5.59 kB
+
+                    | Initial total  | 363.68 kB |                94.41 kB
+
+Lazy chunk files    | Names          |  Raw size | Estimated transfer size
+chunk-CHKEn3Uu.js   | orden-form     | 736.44 kB |               152.11 kB
+chunk-C2SQjneD.js   | actividad-list |  91.16 kB |                17.82 kB
+chunk-CsaeE9xl.js   | -              |  89.61 kB |                17.66 kB
+chunk-CK7IB8ZN.js   | main-layout    |  86.34 kB |                17.60 kB
+chunk-V_Vs37I5.js   | -              |  74.00 kB |                17.04 kB
+chunk-Kp6pGXPQ.js   | factura-form   |  61.59 kB |                12.73 kB
+chunk-DE3HZzWS.js   | -              |  61.04 kB |                 9.92 kB
+chunk-4gNiZ8lZ.js   | -              |  57.08 kB |                11.19 kB
+chunk-CLsQJ2gx.js   | -              |  44.65 kB |                 9.53 kB
+chunk-BeiapqZl.js   | -              |  43.40 kB |                 9.35 kB
+chunk-BSB0K7-z.js   | -              |  35.85 kB |                 8.80 kB
+chunk-B1ygjieK.js   | -              |  30.39 kB |                 5.03 kB
+chunk-BevocCkK.js   | -              |  30.04 kB |                 7.08 kB
+chunk-CrY-npsF.js   | informes       |  29.45 kB |                 6.73 kB
+chunk-CUwiH7Q1.js   | -              |  28.93 kB |                 4.88 kB
+...and 88 more lazy chunks files. Use "--verbose" to show all the files.
+
+Application bundle generation complete. [15.705 seconds] - 2026-09-29T06:39:18.752Z
+
+Output location: C:\Users\mario\Documents\MotorDesk\frontend\dist\frontend
+

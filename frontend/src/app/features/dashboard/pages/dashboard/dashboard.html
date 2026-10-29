@@ -1,0 +1,1086 @@
+<section class="page-container">
+
+  <!-- =====================================================
+       CABECERA
+       ===================================================== -->
+
+  <div class="page-header">
+
+    <div>
+
+      <h1>
+        Dashboard
+      </h1>
+
+      <p>
+        Bienvenido de nuevo, {{ nombreUsuario }}.
+        Aquí tienes la actividad de tu taller.
+      </p>
+
+    </div>
+
+
+    <div class="page-actions">
+
+      @if (
+        authService.tienePermiso(
+          'ordenes.crear'
+        )
+      ) {
+
+        <a
+          mat-flat-button
+          color="primary"
+          routerLink="/ordenes/nuevo">
+
+          <mat-icon>
+            add
+          </mat-icon>
+
+          Nueva orden
+
+        </a>
+
+      }
+
+
+      @if (
+        authService.tienePermiso(
+          'clientes.crear'
+        )
+      ) {
+
+        <a
+          mat-stroked-button
+          routerLink="/clientes/nuevo">
+
+          <mat-icon>
+            person_add
+          </mat-icon>
+
+          Nuevo cliente
+
+        </a>
+
+      }
+
+    </div>
+
+  </div>
+
+
+  <!-- =====================================================
+       CARGANDO
+       ===================================================== -->
+
+  @if (cargando) {
+
+    <div class="loading-container">
+
+      <mat-icon class="loading-icon">
+        autorenew
+      </mat-icon>
+
+      <span>
+        Cargando información del taller...
+      </span>
+
+    </div>
+
+  }
+
+
+  <!-- =====================================================
+       ERROR
+       ===================================================== -->
+
+  @else if (errorCarga) {
+
+    <div class="dashboard-error">
+
+      <mat-icon>
+        error_outline
+      </mat-icon>
+
+      <h3>
+        No se ha podido cargar el Dashboard
+      </h3>
+
+      <p>
+        Se ha producido un problema al obtener
+        la información del taller.
+      </p>
+
+      <button
+        mat-flat-button
+        color="primary"
+        type="button"
+        (click)="cargarDashboard()">
+
+        <mat-icon>
+          refresh
+        </mat-icon>
+
+        Reintentar
+
+      </button>
+
+    </div>
+
+  }
+
+
+  <!-- =====================================================
+       DASHBOARD
+       ===================================================== -->
+
+  @else if (dashboard) {
+
+    <!-- ===================================================
+         MÉTRICAS PRINCIPALES
+         =================================================== -->
+
+    <div class="metric-grid">
+
+
+      <!-- FACTURACIÓN -->
+
+      <article class="stat-card blue">
+
+        <div class="stat-icon">
+
+          <mat-icon>
+            receipt_long
+          </mat-icon>
+
+        </div>
+
+        <div>
+
+          <span>
+            Facturación del mes
+          </span>
+
+          <strong>
+            {{
+              dashboard.facturacion_mes
+              ?? 0
+              | number:'1.2-2'
+            }}
+            €
+          </strong>
+
+          <small>
+            Acumulado mensual
+          </small>
+
+        </div>
+
+      </article>
+
+
+      <!-- ÓRDENES ABIERTAS -->
+
+      <article class="stat-card green">
+
+        <div class="stat-icon">
+
+          <mat-icon>
+            assignment
+          </mat-icon>
+
+        </div>
+
+        <div>
+
+          <span>
+            Órdenes abiertas
+          </span>
+
+          <strong>
+            {{
+              dashboard.ordenes_abiertas
+              ?? 0
+            }}
+          </strong>
+
+          <small>
+            Requieren seguimiento
+          </small>
+
+        </div>
+
+      </article>
+
+
+      <!-- ÓRDENES CERRADAS -->
+
+      <article class="stat-card orange">
+
+        <div class="stat-icon">
+
+          <mat-icon>
+            build
+          </mat-icon>
+
+        </div>
+
+        <div>
+
+          <span>
+            Órdenes cerradas
+          </span>
+
+          <strong>
+            {{
+              dashboard.ordenes_cerradas
+              ?? 0
+            }}
+          </strong>
+
+          <small>
+            {{ porcentajeCerradas() }}
+            % del total
+          </small>
+
+        </div>
+
+      </article>
+
+
+      <!-- STOCK ACTUAL -->
+
+      <article class="stat-card purple">
+
+        <div class="stat-icon">
+
+          <mat-icon>
+            inventory_2
+          </mat-icon>
+
+        </div>
+
+        <div>
+
+          <span>
+            Stock actual
+          </span>
+
+          <strong>
+            {{
+              dashboard.stock_actual
+              ?? 0
+              | number:'1.0-2'
+            }}
+          </strong>
+
+          <small>
+            unidades disponibles
+          </small>
+
+        </div>
+
+      </article>
+
+
+      <!-- CLIENTES -->
+
+      <article class="stat-card yellow">
+
+        <div class="stat-icon">
+
+          <mat-icon>
+            groups
+          </mat-icon>
+
+        </div>
+
+        <div>
+
+          <span>
+            Clientes
+          </span>
+
+          <strong>
+            {{
+              dashboard.clientes
+              ?? 0
+              | number
+            }}
+          </strong>
+
+          <small>
+
+            {{
+              dashboard.vehiculos
+              ?? 0
+              | number
+            }}
+
+            vehículos
+
+          </small>
+
+        </div>
+
+      </article>
+
+    </div>
+
+
+    <!-- ===================================================
+         BLOQUE CENTRAL
+         =================================================== -->
+
+    <div class="grid-2-1">
+
+
+      <!-- RESUMEN -->
+
+      <mat-card class="panel overview-panel">
+
+        <mat-card-header>
+
+          <mat-card-title>
+            Facturación últimos 6 meses
+          </mat-card-title>
+
+
+          @if (
+            authService.tienePermiso(
+              'informes.ver'
+            )
+          ) {
+
+            <a routerLink="/informes">
+
+              Ver informes
+
+              <mat-icon>
+                arrow_forward
+              </mat-icon>
+
+            </a>
+
+          }
+
+        </mat-card-header>
+
+
+        <mat-card-content>
+
+          <div class="chart-heading">
+            <div>
+              <span>Facturación acumulada del año</span>
+              <strong>
+                {{ dashboard.facturacion_anual ?? 0 | number:'1.2-2' }} €
+              </strong>
+            </div>
+
+            <span class="chart-unit">€ Euros</span>
+          </div>
+
+          <div class="line-chart" aria-label="Facturación de los últimos seis meses">
+            <svg viewBox="0 0 640 270" role="img">
+              @for (guia of guiasGrafica; track guia) {
+                <line
+                  class="chart-grid-line"
+                  x1="52"
+                  x2="620"
+                  [attr.y1]="posicionGuia(guia)"
+                  [attr.y2]="posicionGuia(guia)"></line>
+                <text class="chart-axis-label" x="44" [attr.y]="posicionGuia(guia) + 4" text-anchor="end">
+                  {{ valorGuia(guia) | number:'1.0-0' }} €
+                </text>
+              }
+
+              <defs>
+                <linearGradient id="facturacionArea" x1="0" x2="0" y1="0" y2="1">
+                  <stop offset="0%" stop-color="#2563eb" stop-opacity=".22"></stop>
+                  <stop offset="100%" stop-color="#2563eb" stop-opacity="0"></stop>
+                </linearGradient>
+              </defs>
+
+              <path class="chart-area" [attr.d]="areaGrafica"></path>
+              <polyline class="chart-line" [attr.points]="puntosGrafica"></polyline>
+
+              @for (mes of facturacionMensual; track mes.periodo; let i = $index) {
+                <circle class="chart-point" [attr.cx]="posicionX(i)" [attr.cy]="posicionY(mes.total)" r="4.5">
+                  <title>{{ mes.etiqueta }}: {{ mes.total | number:'1.2-2' }} €</title>
+                </circle>
+                <text class="chart-month-label" [attr.x]="posicionX(i)" y="236" text-anchor="middle">
+                  {{ mes.etiqueta }}
+                </text>
+              }
+            </svg>
+          </div>
+
+          <div class="bar-chart" aria-label="Resumen mensual">
+
+
+            <!-- FACTURACIÓN -->
+
+            <div class="bar-row">
+
+              <span>
+                Facturación mensual
+              </span>
+
+              <div>
+
+                <i
+                  class="bar-fill blue-fill"
+                  [style.width.%]="100">
+                </i>
+
+              </div>
+
+              <strong>
+
+                {{
+                  dashboard.facturacion_mes
+                  ?? 0
+                  | number:'1.0-0'
+                }}
+
+                €
+
+              </strong>
+
+            </div>
+
+
+            <!-- CERRADAS -->
+
+            <div class="bar-row">
+
+              <span>
+                Órdenes cerradas
+              </span>
+
+              <div>
+
+                <i
+                  class="bar-fill green-fill"
+                  [style.width.%]="
+                    porcentajeCerradas()
+                  ">
+                </i>
+
+              </div>
+
+              <strong>
+                {{
+                  dashboard.ordenes_cerradas
+                  ?? 0
+                }}
+              </strong>
+
+            </div>
+
+
+            <!-- ABIERTAS -->
+
+            <div class="bar-row">
+
+              <span>
+                Órdenes abiertas
+              </span>
+
+              <div>
+
+                <i
+                  class="bar-fill orange-fill"
+                  [style.width.%]="
+                    100 - porcentajeCerradas()
+                  ">
+                </i>
+
+              </div>
+
+              <strong>
+                {{
+                  dashboard.ordenes_abiertas
+                  ?? 0
+                }}
+              </strong>
+
+            </div>
+
+          </div>
+
+        </mat-card-content>
+
+      </mat-card>
+
+
+      <!-- ÓRDENES POR ESTADO -->
+
+      <mat-card class="panel status-panel">
+
+        <mat-card-header>
+
+          <mat-card-title>
+            Órdenes por estado
+          </mat-card-title>
+
+        </mat-card-header>
+
+
+        <mat-card-content>
+
+          <div
+            class="donut"
+            [style.background]="
+              'conic-gradient(' +
+              '#2d79ff 0 ' +
+              (100 - porcentajeCerradas()) +
+              '%, ' +
+              '#60c69d ' +
+              (100 - porcentajeCerradas()) +
+              '% 100%)'
+            ">
+
+            <div>
+
+              <strong>
+
+                {{
+                  (dashboard.ordenes_abiertas ?? 0)
+                  +
+                  (dashboard.ordenes_cerradas ?? 0)
+                }}
+
+              </strong>
+
+              <span>
+                Total
+              </span>
+
+            </div>
+
+          </div>
+
+
+          <div class="legend">
+
+            <div>
+
+              <i class="blue-dot"></i>
+
+              <span>
+                Abiertas
+              </span>
+
+              <strong>
+                {{
+                  dashboard.ordenes_abiertas
+                  ?? 0
+                }}
+              </strong>
+
+            </div>
+
+
+            <div>
+
+              <i class="green-dot"></i>
+
+              <span>
+                Cerradas
+              </span>
+
+              <strong>
+                {{
+                  dashboard.ordenes_cerradas
+                  ?? 0
+                }}
+              </strong>
+
+            </div>
+
+
+            <div>
+
+              <i class="purple-dot"></i>
+
+              <span>
+                Presupuestos
+              </span>
+
+              <strong>
+                {{
+                  dashboard.presupuestos
+                  ?? 0
+                }}
+              </strong>
+
+            </div>
+
+          </div>
+
+        </mat-card-content>
+
+      </mat-card>
+
+
+      <!-- ACCIONES RÁPIDAS -->
+
+      <div class="dashboard-side-stack">
+
+      <mat-card class="panel quick-panel">
+
+        <mat-card-header>
+
+          <mat-card-title>
+            Acciones rápidas
+          </mat-card-title>
+
+        </mat-card-header>
+
+
+        <mat-card-content>
+
+          @if (
+            authService.tienePermiso(
+              'ordenes.crear'
+            )
+          ) {
+
+            <a routerLink="/ordenes/nuevo">
+
+              <mat-icon>
+                build
+              </mat-icon>
+
+              Nueva orden de trabajo
+
+            </a>
+
+          }
+
+
+          @if (
+            authService.tienePermiso(
+              'clientes.crear'
+            )
+          ) {
+
+            <a routerLink="/clientes/nuevo">
+
+              <mat-icon>
+                person_add
+              </mat-icon>
+
+              Nuevo cliente
+
+            </a>
+
+          }
+
+
+          @if (
+            authService.tienePermiso(
+              'agenda.crear'
+            )
+          ) {
+
+            <a routerLink="/agenda/nueva">
+
+              <mat-icon>
+                event_available
+              </mat-icon>
+
+              Nueva cita
+
+            </a>
+
+          }
+
+
+          @if (
+            authService.tienePermiso(
+              'stock.ver'
+            )
+          ) {
+
+            <a routerLink="/stock">
+
+              <mat-icon>
+                inventory_2
+              </mat-icon>
+
+              Consultar almacén
+
+            </a>
+
+          }
+
+        </mat-card-content>
+
+      </mat-card>
+
+      <mat-card class="panel alerts-panel">
+
+        <mat-card-header>
+          <mat-card-title>Avisos y recordatorios</mat-card-title>
+        </mat-card-header>
+
+        <mat-card-content>
+          @if (!dashboard.alertas || dashboard.alertas.length === 0) {
+            <p class="empty-state">No hay alertas pendientes.</p>
+          } @else {
+            @for (alerta of dashboard.alertas; track alerta.tipo) {
+              <a [routerLink]="alerta.ruta" [class]="'alert-row alert-' + alerta.tipo.toLowerCase()">
+                <span class="alert-icon">
+                  @switch (alerta.tipo) {
+                    @case ('STOCK') { <mat-icon>inventory_2</mat-icon> }
+                    @case ('PEDIDO') { <mat-icon>local_shipping</mat-icon> }
+                    @case ('GARANTIA') { <mat-icon>verified_user</mat-icon> }
+                    @case ('PRESUPUESTO') { <mat-icon>request_quote</mat-icon> }
+                    @case ('CITA') { <mat-icon>event</mat-icon> }
+                    @case ('PERSONAL') { <mat-icon>person_off</mat-icon> }
+                    @default { <mat-icon>notifications</mat-icon> }
+                  }
+                </span>
+                <span>
+                  <strong>{{ alerta.titulo }}</strong>
+                  <small>{{ alerta.mensaje }}</small>
+                </span>
+                <mat-icon class="alert-arrow">chevron_right</mat-icon>
+              </a>
+            }
+          }
+
+        </mat-card-content>
+
+      </mat-card>
+
+      </div>
+
+    </div>
+
+
+    <!-- ===================================================
+         BLOQUE INFERIOR
+         =================================================== -->
+
+    <div class="dashboard-bottom-grid">
+
+
+      <!-- ÓRDENES RECIENTES -->
+
+      <mat-card class="panel recent-panel">
+
+        <mat-card-header>
+
+          <mat-card-title>
+            Órdenes recientes
+          </mat-card-title>
+
+          <a routerLink="/ordenes">
+            Ver todas
+          </a>
+
+        </mat-card-header>
+
+
+        <mat-card-content>
+
+          @if (
+            !dashboard.ultimas_ordenes
+            ||
+            dashboard.ultimas_ordenes.length === 0
+          ) {
+
+            <p class="empty-state">
+              Aún no hay órdenes registradas.
+            </p>
+
+          } @else {
+
+            <div class="recent-table">
+
+              <div class="recent-head">
+
+                <span>
+                  Orden
+                </span>
+
+                <span>
+                  Vehículo
+                </span>
+
+                <span>
+                  Estado
+                </span>
+
+                <span>
+                  Importe
+                </span>
+
+              </div>
+
+
+              @for (
+                orden of dashboard.ultimas_ordenes;
+                track orden.id
+              ) {
+
+                <a
+                  class="recent-row"
+                  [routerLink]="[
+                    '/ordenes',
+                    orden.id
+                  ]">
+
+                  <strong>
+                    {{ orden.numero }}
+                  </strong>
+
+
+                  <span>
+
+                    {{
+                      orden.vehiculo?.marca
+                      ?? ''
+                    }}
+
+                    {{
+                      orden.vehiculo?.modelo
+                      ?? ''
+                    }}
+
+                    <small>
+                      {{
+                        orden.vehiculo?.matricula
+                        ?? '-'
+                      }}
+                    </small>
+
+                  </span>
+
+
+                  <em
+                    [class]="
+                      estadoClase(
+                        orden.estado
+                      )
+                    ">
+
+                    {{
+                      orden.estado
+                      || 'Sin estado'
+                    }}
+
+                  </em>
+
+
+                  <strong>
+
+                    {{
+                      orden.importe_total
+                      ?? 0
+                      | number:'1.2-2'
+                    }}
+
+                    €
+
+                  </strong>
+
+                </a>
+
+              }
+
+            </div>
+
+          }
+
+        </mat-card-content>
+
+      </mat-card>
+
+
+      <!-- FACTURAS RECIENTES -->
+
+      <mat-card
+        class="
+          panel
+          recent-panel
+          invoices-panel
+        ">
+
+        <mat-card-header>
+
+          <mat-card-title>
+            Facturas recientes
+          </mat-card-title>
+
+          <a routerLink="/facturas">
+            Ver todas
+          </a>
+
+        </mat-card-header>
+
+
+        <mat-card-content>
+
+          @if (
+            !dashboard.ultimas_facturas
+            ||
+            dashboard.ultimas_facturas.length === 0
+          ) {
+
+            <p class="empty-state">
+              Aún no hay facturas registradas.
+            </p>
+
+          } @else {
+
+            <div class="recent-table">
+
+              <div
+                class="
+                  recent-head
+                  invoice-head
+                ">
+
+                <span>
+                  Factura
+                </span>
+
+                <span>
+                  Cliente
+                </span>
+
+                <span>
+                  Fecha
+                </span>
+
+                <span>
+                  Importe
+                </span>
+
+              </div>
+
+
+              @for (
+                factura of dashboard.ultimas_facturas;
+                track factura.id
+              ) {
+
+                <a
+                  class="
+                    recent-row
+                    invoice-row
+                  "
+                  [routerLink]="[
+                    '/facturas',
+                    factura.id
+                  ]">
+
+                  <strong>
+                    {{ factura.numero }}
+                  </strong>
+
+
+                  <span>
+
+                    {{
+                      factura.cliente?.apellidos
+                      ? (factura.cliente?.apellidos + ', ' + (factura.cliente?.nombre ?? ''))
+                      : (factura.cliente?.nombre ?? '-')
+                    }}
+
+                  </span>
+
+
+                  <span>
+
+                    @if (
+                      factura.fecha_emision
+                    ) {
+
+                      {{
+                        factura.fecha_emision
+                        | date:'dd/MM/yyyy'
+                      }}
+
+                    } @else {
+
+                      -
+
+                    }
+
+                  </span>
+
+
+                  <strong>
+
+                    {{
+                      factura.total
+                      ?? 0
+                      | number:'1.2-2'
+                    }}
+
+                    €
+
+                  </strong>
+
+                </a>
+
+              }
+
+            </div>
+
+          }
+
+        </mat-card-content>
+
+      </mat-card>
+
+    </div>
+
+  }
+
+
+  <!-- =====================================================
+       SIN INFORMACIÓN
+       ===================================================== -->
+
+  @else {
+
+    <div class="dashboard-error">
+
+      <mat-icon>
+        info_outline
+      </mat-icon>
+
+      <h3>
+        No hay información disponible
+      </h3>
+
+      <p>
+        El servidor ha respondido, pero no se han
+        recibido datos para mostrar en el Dashboard.
+      </p>
+
+      <button
+        mat-flat-button
+        color="primary"
+        type="button"
+        (click)="cargarDashboard()">
+
+        <mat-icon>
+          refresh
+        </mat-icon>
+
+        Volver a cargar
+
+      </button>
+
+    </div>
+
+  }
+
+</section>

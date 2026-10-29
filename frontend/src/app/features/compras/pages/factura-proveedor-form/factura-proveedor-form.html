@@ -1,0 +1,18 @@
+<section class="page-container">
+  <div class="page-header"><div class="page-header-content"><h1 class="page-title">Nueva factura de compra</h1><p class="page-subtitle">Registra una factura recibida de proveedor de forma independiente.</p></div></div>
+  <form [formGroup]="form">
+    <mat-card class="panel"><mat-card-header><mat-card-title>Datos generales</mat-card-title></mat-card-header><mat-card-content><div class="form-grid">
+      <app-autocomplete-select formControlName="proveedor_id" etiqueta="Proveedor" placeholder="Escribe nombre o CIF" [items]="proveedores" [mostrar]="mostrarProveedor"></app-autocomplete-select>
+      <mat-form-field appearance="outline"><mat-label>N.º factura proveedor</mat-label><input matInput formControlName="numero_factura"></mat-form-field>
+      <mat-form-field appearance="outline"><mat-label>En que se ha gastado</mat-label><mat-select formControlName="tipo_gasto"><mat-option value="COMPRA">Compra</mat-option><mat-option value="SUMINISTRO">Suministro</mat-option><mat-option value="REPARACION">Reparacion</mat-option><mat-option value="OTRO">Otro</mat-option></mat-select></mat-form-field>
+      <mat-form-field appearance="outline"><mat-label>Fecha factura</mat-label><input matInput type="date" formControlName="fecha_factura"></mat-form-field>
+      <mat-form-field appearance="outline"><mat-label>Vencimiento</mat-label><input matInput type="date" formControlName="fecha_vencimiento"></mat-form-field>
+      <mat-form-field appearance="outline"><mat-label>Base imponible</mat-label><input matInput type="number" min="0" step="0.01" formControlName="base_imponible"><span matTextSuffix>€</span></mat-form-field>
+      <mat-form-field appearance="outline"><mat-label>IVA</mat-label><input matInput type="number" min="0" max="100" step="0.01" formControlName="porcentaje_iva"><span matTextSuffix>%</span><mat-hint>{{ cuotaIva | number:'1.2-2' }} €</mat-hint></mat-form-field>
+      <mat-form-field appearance="outline"><mat-label>Retención IRPF</mat-label><input matInput type="number" min="0" max="100" step="0.01" formControlName="porcentaje_retencion"><span matTextSuffix>%</span><mat-hint>-{{ cuotaRetencion | number:'1.2-2' }} €</mat-hint></mat-form-field>
+      <mat-form-field appearance="outline"><mat-label>Total calculado</mat-label><input matInput [value]="totalCalculado | number:'1.2-2'" readonly><span matTextSuffix>€</span></mat-form-field>
+      <mat-form-field appearance="outline" class="full-width"><mat-label>Observaciones</mat-label><textarea matInput rows="3" formControlName="observaciones"></textarea></mat-form-field>
+    </div></mat-card-content></mat-card>
+    <div class="form-actions"><a mat-stroked-button routerLink="/compras/facturas-proveedor">Cancelar</a><button mat-flat-button class="md-primary-button" type="button" [disabled]="guardando || cargando" (click)="guardar()"><mat-icon>save</mat-icon>{{ guardando ? 'Guardando...' : 'Guardar factura' }}</button></div>
+  </form>
+</section>

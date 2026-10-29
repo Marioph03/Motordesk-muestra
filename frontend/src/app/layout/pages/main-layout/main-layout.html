@@ -1,0 +1,33 @@
+<div
+  class="app-shell"
+  [class.sidebar-colapsada]="sidebarColapsada"
+  [class.sidebar-movil-abierta]="sidebarMovilAbierta">
+  <aside class="sidebar-panel">
+    <div class="brand" aria-label="MotorDesk, Concesionario y Taller">
+      <div class="brand-lockup">
+        <img
+          class="brand-logo"
+          src="/assets/branding/motordesk-car.png"
+          alt=""
+          aria-hidden="true">
+        <div class="brand-copy"><strong>MotorDesk</strong><span>Concesionario &amp; Taller</span></div>
+      </div>
+    </div>
+    <app-sidebar></app-sidebar>
+  </aside>
+
+  <button
+    class="sidebar-backdrop"
+    type="button"
+    aria-label="Cerrar menú"
+    (click)="cerrarSidebarMovil()">
+  </button>
+
+  <section class="workspace">
+    <app-topbar (menuToggle)="alternarSidebar()"></app-topbar>
+    <main><router-outlet></router-outlet></main>
+  </section>
+
+  <app-motor-ai-assistant></app-motor-ai-assistant>
+</div>
+<!-- Carcasa autenticada compartida por todos los módulos funcionales. -->

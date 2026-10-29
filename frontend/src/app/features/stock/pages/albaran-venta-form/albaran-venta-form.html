@@ -1,0 +1,36 @@
+<section class="page-container">
+  <div class="page-header"><div><h1>Nuevo albar&aacute;n de venta</h1><p>El stock se descontar&aacute; al confirmar el albar&aacute;n.</p></div><a mat-stroked-button routerLink="/stock/albaranes-venta">Volver</a></div>
+  <mat-card><mat-card-content>
+    @if (cargando) { <p>Cargando datos...</p> } @else {
+      <div class="form-grid">
+        <app-autocomplete-select [(ngModel)]="clienteId" name="cliente" etiqueta="Cliente" placeholder="Nombre, DNI, teléfono o correo" [items]="clientes" [mostrar]="etiquetaCliente"></app-autocomplete-select>
+        <mat-form-field appearance="outline"><mat-label>Fecha</mat-label><input matInput type="date" [(ngModel)]="fecha" name="fecha"></mat-form-field>
+        <mat-form-field appearance="outline" class="full"><mat-label>Observaciones</mat-label><textarea matInput rows="2" [(ngModel)]="observaciones" name="observaciones"></textarea></mat-form-field>
+      </div>
+
+      <h2>A&ntilde;adir recambio</h2>
+      <div class="linea-grid">
+        <mat-form-field appearance="outline"><mat-label>Art&iacute;culo</mat-label><mat-select [(ngModel)]="articuloId" name="articulo" (selectionChange)="seleccionarArticulo()"><mat-option [value]="null">Selecciona art&iacute;culo</mat-option>@for (articulo of articulos; track articulo.id) { <mat-option [value]="articulo.id">{{ articulo.referencia }} - {{ articulo.nombre }} ({{ articulo.stock_actual }} uds.)</mat-option> }</mat-select></mat-form-field>
+        <mat-form-field appearance="outline"><mat-label>Cantidad</mat-label><input matInput type="number" min="0.01" step="0.01" [(ngModel)]="cantidad" name="cantidad"></mat-form-field>
+        <mat-form-field appearance="outline"><mat-label>Precio sin IVA</mat-label><input matInput type="number" min="0" step="0.01" [(ngModel)]="precioUnitario" name="precio"></mat-form-field>
+        <mat-form-field appearance="outline"><mat-label>Descuento %</mat-label><input matInput type="number" min="0" max="100" step="0.01" [(ngModel)]="descuento" name="descuento"></mat-form-field>
+        <button mat-stroked-button type="button" (click)="agregarLinea()"><mat-icon>add</mat-icon>A&ntilde;adir</button>
+      </div>
+
+      @if (lineas.length === 0) { <p class="empty">A&ntilde;ade los recambios que se van a vender.</p> } @else {
+        <div class="table-scroll"><table mat-table [dataSource]="lineas">
+          <ng-container matColumnDef="referencia"><th mat-header-cell *matHeaderCellDef>Referencia</th><td mat-cell *matCellDef="let l">{{ l.referencia }}</td></ng-container>
+          <ng-container matColumnDef="descripcion"><th mat-header-cell *matHeaderCellDef>Art&iacute;culo</th><td mat-cell *matCellDef="let l">{{ l.descripcion }}</td></ng-container>
+          <ng-container matColumnDef="cantidad"><th mat-header-cell *matHeaderCellDef>Cantidad</th><td mat-cell *matCellDef="let l">{{ l.cantidad }}</td></ng-container>
+          <ng-container matColumnDef="precio"><th mat-header-cell *matHeaderCellDef>Precio sin IVA</th><td mat-cell *matCellDef="let l">{{ l.precio_unitario | number:'1.2-2' }} &euro;</td></ng-container>
+          <ng-container matColumnDef="descuento"><th mat-header-cell *matHeaderCellDef>Dto.</th><td mat-cell *matCellDef="let l">{{ l.descuento_porcentaje }} %</td></ng-container>
+          <ng-container matColumnDef="total"><th mat-header-cell *matHeaderCellDef>Importe</th><td mat-cell *matCellDef="let l">{{ totalLinea(l) | number:'1.2-2' }} &euro;</td></ng-container>
+          <ng-container matColumnDef="acciones"><th mat-header-cell *matHeaderCellDef></th><td mat-cell *matCellDef="let l; let i = index"><button mat-icon-button type="button" (click)="eliminarLinea(i)"><mat-icon>delete</mat-icon></button></td></ng-container>
+          <tr mat-header-row *matHeaderRowDef="['referencia','descripcion','cantidad','precio','descuento','total','acciones']"></tr><tr mat-row *matRowDef="let row; columns: ['referencia','descripcion','cantidad','precio','descuento','total','acciones']"></tr>
+        </table></div>
+        <div class="total">Total sin IVA: <strong>{{ total | number:'1.2-2' }} &euro;</strong></div>
+      }
+      <div class="actions"><a mat-stroked-button routerLink="/stock/albaranes-venta">Cancelar</a><button mat-flat-button color="primary" type="button" [disabled]="guardando" (click)="guardar()">{{ guardando ? 'Guardando...' : 'Crear borrador' }}</button></div>
+    }
+  </mat-card-content></mat-card>
+</section>

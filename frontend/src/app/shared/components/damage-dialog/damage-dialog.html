@@ -1,0 +1,57 @@
+<h2 mat-dialog-title>
+
+  {{ data.piece }}
+
+</h2>
+
+<mat-dialog-content>
+
+  <mat-radio-group [(ngModel)]="selected">
+
+    <mat-radio-button value="scratch">
+      Arañazo
+    </mat-radio-button>
+
+    <br>
+
+    <mat-radio-button value="dent">
+      Abolladura
+    </mat-radio-button>
+
+    <br>
+
+    <mat-radio-button value="broken">
+      Rotura
+    </mat-radio-button>
+
+    <br>
+
+    <mat-radio-button value="replace">
+      Sustituir
+    </mat-radio-button>
+
+  </mat-radio-group>
+
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+
+  <button
+    mat-button
+    (click)="cancelar()">
+
+    Cancelar
+
+  </button>
+
+  <button
+    mat-raised-button
+    color="primary"
+    (click)="guardar()">
+
+    Guardar
+
+  </button>
+
+</mat-dialog-actions>
+<!-- Captura visual de daños para anexar la inspección a una orden. -->

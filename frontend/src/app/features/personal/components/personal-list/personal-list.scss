@@ -1,0 +1,8 @@
+.tabla-contenedor { overflow-x: auto; }
+.acciones-superiores { display: flex; justify-content: flex-end; margin: 16px 0; }
+table { width: 100%; }
+.estado-vacio { margin: 24px 0; opacity: .7; }
+.inactivo { opacity: .6; }
+.chip-disponible { --mdc-chip-elevated-container-color: #e8f5e9; color: #1b5e20; }
+.chip-ausente { --mdc-chip-elevated-container-color: #fff3e0; color: #e65100; }
+.chip-no-disponible { --mdc-chip-elevated-container-color: #f5f5f5; color: #616161; }

@@ -1,0 +1,14 @@
+.page-container { margin: 24px; }
+.page-header { display: flex; justify-content: space-between; gap: 16px; align-items: center; margin-bottom: 20px; }
+.page-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+.page-header h1 { margin: 0; }
+.page-header p { margin: 6px 0 0; opacity: .7; }
+.table-scroll { overflow: auto; }
+table { width: 100%; min-width: 700px; }
+.empty-state { padding: 42px; text-align: center; opacity: .7; }
+.empty-state mat-icon { font-size: 42px; width: 42px; height: 42px; }
+.estado { border-radius: 12px; padding: 4px 10px; font-size: 12px; font-weight: 600; }
+.estado.borrador { background: #fff3cd; color: #7a5b00; }
+.estado.confirmado { background: #d9f5e5; color: #146c43; }
+.estado.anulado { background: #f8d7da; color: #842029; }
+@media (max-width: 700px) { .page-header { align-items: stretch; flex-direction: column; } }
